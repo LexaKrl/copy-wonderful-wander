@@ -1,0 +1,5 @@
+# Example configuration file for sensitive data
+dbUrl=jdbc:postgresql://localhost:5432/your-database
+dbUsername=your-username
+dbPassword=your-password
+dbDriverClassName=your.Driver.ClassName

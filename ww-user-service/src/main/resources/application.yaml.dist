@@ -1,0 +1,7 @@
+# Example configuration file for sensitive data
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/your-database
+    driver-class-name: your.Driver.ClassName
+    username: your-username
+    password: your-password
