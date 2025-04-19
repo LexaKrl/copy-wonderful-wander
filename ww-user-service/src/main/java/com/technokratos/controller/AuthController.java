@@ -3,7 +3,7 @@ package com.technokratos.controller;
 import com.technokratos.model.UserEntity;
 import com.technokratos.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
 
     private final UserService userService;
@@ -19,7 +20,15 @@ public class AuthController {
     @PostMapping("/register")
     public UserEntity register(@RequestBody UserEntity user) {
         userService.register(user);
+        log.info("auth controller register");
         return user;
     }
+
+    @PostMapping("/login")
+    public String login(@RequestBody UserEntity user) {
+        return userService.verify(user);
+    }
+
+
 
 }
