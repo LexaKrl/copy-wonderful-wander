@@ -1,13 +1,14 @@
 package com.technokratos.controller;
 
 import com.technokratos.model.UserEntity;
-import com.technokratos.service.UserService;
+import com.technokratos.service.auth.AuthUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.apache.catalina.User;
+import org.mapstruct.control.MappingControl;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class AuthController {
 
-    private final UserService userService;
+    private final AuthUserService userService;
 
     @PostMapping("/register")
     public UserEntity register(@RequestBody UserEntity user) {
@@ -29,6 +30,10 @@ public class AuthController {
         return userService.verify(user);
     }
 
+    @GetMapping("/users")
+    public List<UserEntity> getUsers() {
+        return userService.getAll();
+    }
 
 
 }
