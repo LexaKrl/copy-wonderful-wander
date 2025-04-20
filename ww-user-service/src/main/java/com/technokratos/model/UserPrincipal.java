@@ -1,5 +1,6 @@
 package com.technokratos.model;
 
+import com.technokratos.model.enums.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -7,10 +8,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
 public class UserPrincipal implements UserDetails {
 
-    private UserEntity user;
+    private final UserEntity user;
 
     public UserPrincipal(UserEntity user) {
         this.user = user;
@@ -18,7 +21,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority("USER"));
+        return List.of(new SimpleGrantedAuthority(user.getRole().name()));
     }
 
     @Override
@@ -29,6 +32,14 @@ public class UserPrincipal implements UserDetails {
     @Override
     public String getUsername() {
         return user.getUsername();
+    }
+
+    public UUID getId() {
+        return user.getId();
+    }
+
+    public UserRole getRole() {
+        return user.getRole();
     }
 
     @Override
