@@ -1,0 +1,184 @@
+package com.technokratos.api;
+
+import com.technokratos.dto.request.WalkRequest;
+import com.technokratos.dto.response.WalkResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
+@Tag(name = "Walk", description = "The Walk API")
+@RequestMapping("/api/walks")
+public interface WalkApi {
+
+    /*
+    *   Get walks
+    *
+    * */
+
+    @Operation(
+            summary = "Get all walks",
+            description = "Get sorted page of walks",
+            tags = {"walks"}
+    )
+    @GetMapping
+    @ApiResponse(
+            responseCode = "200",
+            description = "Walks received",
+            content = @Content(
+                    mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = WalkResponse.class)),
+                    examples = @ExampleObject(
+                            value = "[{\"id\": \"550e8400-e29b-41d4-a716-446655440000\", \"date\": \"2023-05-20\"}]")
+            )
+    )
+    @ApiResponse(
+            responseCode = "404",
+            description = "There is no walks"
+    )
+    ResponseEntity<Page<WalkResponse>> getWalks(
+            @Parameter(
+                    description = "Pageable type with size and sort type",
+                    required = false
+            )
+            @PageableDefault(size = 20, sort = "date")
+            Pageable pageable
+    );
+
+    /*
+    *   Create walk
+    *
+    * */
+
+    @Operation(
+            summary = "Create a walk",
+            description = "Create a walk",
+            tags = {"walks"}
+    )
+    @ApiResponse(
+            responseCode = "201",
+            description = "Walk created"
+    )
+    @ApiResponse(
+            responseCode = "400",
+            description = "Walk creation failed"
+    )
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    void createWalk(
+            @Parameter(
+                    description = "Data for creation walk",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = WalkRequest.class))
+            )
+            @RequestBody
+            WalkRequest walkRequest
+    );
+
+    /*
+    *   Get walk
+    * */
+
+    @Operation(
+            summary = "Get a walk by its ID",
+            description = "There is a walk_id in the path. So we are getting a walk by its ID",
+            tags = {"walks"}
+    )
+    @GetMapping("/{walk_id}")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Walk retrieved",
+            content = @Content(schema = @Schema(implementation = WalkResponse.class))
+    )
+    @ApiResponse(
+            responseCode = "400",
+            description = "Walk not found"
+    )
+    ResponseEntity<WalkResponse> getWalk(
+            @Parameter(
+                    description = "UUID of the walk",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
+            )
+            @PathVariable UUID walk_id
+    );
+
+    /*
+    *   Delete walk
+    * */
+
+    @Operation(
+            summary = "Delete a walk by its ID",
+            description = "There is a path variable walk_id. So we take this and delete walk by its ID",
+            tags = {"walks"}
+    )
+    @DeleteMapping("/{walk_id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiResponse(
+            responseCode = "204",
+            description = "Walk successfully deleted"
+    )
+    @ApiResponse(
+            responseCode = "404",
+            description = "Walk not found"
+    )
+    void deleteWalk(
+            @Parameter(
+                    description = "UUID of the walk to delete",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
+            )
+            @PathVariable UUID walk_id
+    );
+
+    /*
+    *   Update walk
+    * */
+
+    @Operation(
+            summary = "Delete a walk by its ID",
+            description = "There is a path variable walk_id. So we take this and update walk by its ID",
+            tags = {"walks"}
+    )
+    @PutMapping("/{walk_id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiResponse(
+            responseCode = "204",
+            description = "Walk successfully updated"
+    )
+    @ApiResponse(
+            responseCode = "400",
+            description = "Invalid input data"
+    )
+    @ApiResponse(
+            responseCode = "404",
+            description = "Walk not found"
+    )
+    void updateWalk(
+            @Parameter(
+                    description = "The body of the walk request that user sends to the server",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = WalkRequest.class))
+            )
+            @RequestBody WalkRequest walkRequest,
+            @Parameter(
+                    description = "UUID of the walk to update",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
+            )
+            @PathVariable UUID walk_id
+    );
+
+}
