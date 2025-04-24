@@ -96,7 +96,7 @@ public interface WalkApi {
             description = "There is a walk_id in the path. So we are getting a walk by its ID",
             tags = {"walks"}
     )
-    @GetMapping("/{walk_id}")
+    @GetMapping("/{walkId}")
     @ApiResponse(
             responseCode = "200",
             description = "Walk retrieved",
@@ -112,7 +112,7 @@ public interface WalkApi {
                     example = "550e8400-e29b-41d4-a716-446655440000",
                     required = true
             )
-            @PathVariable UUID walk_id
+            @PathVariable UUID walkId
     );
 
     /*
@@ -124,7 +124,7 @@ public interface WalkApi {
             description = "There is a path variable walk_id. So we take this and delete walk by its ID",
             tags = {"walks"}
     )
-    @DeleteMapping("/{walk_id}")
+    @DeleteMapping("/{walkId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiResponse(
             responseCode = "204",
@@ -140,7 +140,7 @@ public interface WalkApi {
                     example = "550e8400-e29b-41d4-a716-446655440000",
                     required = true
             )
-            @PathVariable UUID walk_id
+            @PathVariable UUID walkId
     );
 
     /*
@@ -152,7 +152,7 @@ public interface WalkApi {
             description = "There is a path variable walk_id. So we take this and update walk by its ID",
             tags = {"walks"}
     )
-    @PutMapping("/{walk_id}")
+    @PutMapping("/{walkId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiResponse(
             responseCode = "204",
@@ -178,7 +178,7 @@ public interface WalkApi {
                     example = "550e8400-e29b-41d4-a716-446655440000",
                     required = true
             )
-            @PathVariable UUID walk_id
+            @PathVariable UUID walkId
     );
 
 }
