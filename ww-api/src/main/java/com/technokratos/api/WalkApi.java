@@ -14,8 +14,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -41,17 +43,17 @@ public interface WalkApi {
                     mediaType = "application/json",
                     array = @ArraySchema(schema = @Schema(implementation = WalkResponse.class)),
                     examples = @ExampleObject(
-                            value = "[{\"id\": \"550e8400-e29b-41d4-a716-446655440000\", \"date\": \"2023-05-20\"}]")
+                            value = "[{\"id\": \"550e8400-e29b-41d4-a716-446655440000\"}]")
             )
     )
     @ApiResponse(
             responseCode = "404",
-            description = "There is no walks"
+            description = "Walks not found"
     )
     ResponseEntity<Page<WalkResponse>> getWalks(
             @Parameter(
                     description = "Pageable type with size and sort type",
-                    required = false
+                    required = true
             )
             @PageableDefault(size = 20, sort = "date")
             Pageable pageable
@@ -100,7 +102,10 @@ public interface WalkApi {
     @ApiResponse(
             responseCode = "200",
             description = "Walk retrieved",
-            content = @Content(schema = @Schema(implementation = WalkResponse.class))
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = WalkResponse.class)
+            )
     )
     @ApiResponse(
             responseCode = "400",
@@ -148,7 +153,7 @@ public interface WalkApi {
     * */
 
     @Operation(
-            summary = "Delete a walk by its ID",
+            summary = "Update a walk by its ID",
             description = "There is a path variable walk_id. So we take this and update walk by its ID",
             tags = {"walks"}
     )
@@ -179,6 +184,44 @@ public interface WalkApi {
                     required = true
             )
             @PathVariable UUID walkId
+    );
+
+    /*
+    *   Upload photo while walk
+    *
+    * */
+
+    @Operation(
+            summary = "Upload photo to walk",
+            description = "Upload photo binded to walk",
+            tags = {"walks"}
+    )
+    @PostMapping(value = "/{walkId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ApiResponse(
+            responseCode = "200",
+            description = "Photo uploaded successfully"
+    )
+    @ApiResponse(
+            responseCode = "404",
+            description = "Walk not found"
+    )
+    @ApiResponse(
+            responseCode = "400",
+            description = "Invalid file format or size"
+    )
+    ResponseEntity<Void> uploadWalkPhoto(
+            @Parameter(
+                    description = "UUID of the walk",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
+            )
+            @PathVariable UUID walkId,
+
+            @Parameter(
+                    description = "Image file (JPEG/PNG, max 5MB)",
+                    content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)
+            )
+            @RequestPart("file") MultipartFile file
     );
 
 }
