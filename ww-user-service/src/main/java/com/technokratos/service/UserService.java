@@ -1,20 +1,58 @@
 package com.technokratos.service;
 
+import com.technokratos.dto.response.UserCompactResponse;
+import com.technokratos.dto.response.UserProfileResponse;
 import com.technokratos.dto.response.UserResponse;
+import com.technokratos.exception.UserByIdNotFoundException;
+import com.technokratos.exception.UserByUsernameNotFoundException;
 import com.technokratos.repository.UserRepository;
-import com.technokratos.tables.records.UserInfoRecord;
+import com.technokratos.util.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     public UserResponse getUserById(UUID userId) {
-        UserInfoRecord userFromDb = userRepository.findUserById(userId).orElseThrow(() -> new RuntimeException("Not found user with uuid %s".formatted(userId)));
-        return new UserResponse(userFromDb.getUsername());
+        return userMapper.toUserResponse(userRepository
+                .findUserById(userId)
+                .orElseThrow(() -> new UserByIdNotFoundException(userId)));
+    }
+
+    public UserResponse getUserByUsername(String username) {
+        return userMapper.toUserResponse(userRepository
+                .findUserByUsername(username)
+                .orElseThrow(() -> new UserByUsernameNotFoundException(username)));
+    }
+
+    public List<UserCompactResponse> getFriendsByUserId(UUID userId, UUID targetUserId) {
+        return userMapper.toUserCompactResponseList(userRepository.getFriendsByUserId(userId, targetUserId));
+    }
+
+    public List<UserCompactResponse> getFollowersByUserId(UUID userId) {
+        return userMapper.toUserCompactResponseList(userRepository.getFollowersByUserId(userId));
+    }
+
+    public List<UserCompactResponse> getFollowingByUserId(UUID userId) {
+        return userMapper.toUserCompactResponseList(userRepository.getFollowingByUserId(userId));
+    }
+
+    public void subscribe(UUID userId, UUID targetUserId) {
+        userRepository.subscribe(userId, targetUserId);
+    }
+
+    public void unsubscribe(UUID userId, UUID targetUserId) {
+        userRepository.unsubscribe(userId, targetUserId);
+    }
+
+    public UserProfileResponse getProfileByUserId(UUID userId) {
+        return userMapper.toUserProfileResponse(userRepository.findUserById(userId)
+                .orElseThrow(() -> new UserByIdNotFoundException(userId)));
     }
 }

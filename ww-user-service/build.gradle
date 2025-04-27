@@ -5,13 +5,15 @@ plugins {
     id 'org.liquibase.gradle' version '2.2.0'
 }
 
-ext['jooq.version'] = jooq.version.get()
-
 jar.enabled = false
 
+ext['jooq.version'] = jooq.version.get()
+
 dependencies {
-    implementation('org.springframework.boot:spring-boot-starter-jooq')
+    implementation 'org.springframework.boot:spring-boot-starter-jooq'
     implementation 'org.jooq:jooq-codegen'
+    implementation "org.mapstruct:mapstruct:$mapstructVersion"
+    annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
     runtimeOnly 'org.postgresql:postgresql'
 
     jooqGenerator 'org.postgresql:postgresql'
@@ -24,8 +26,6 @@ dependencies {
     implementation project(':ww-api')
     implementation project(':ww-db')
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
 
 jooq {
@@ -36,7 +36,7 @@ jooq {
             generationTool {
                 logging = Logging.WARN
                 jdbc {
-                    driver = "$dbDriverClassName"
+                    driver = "org.postgresql.Driver"
                     url = "$dbUrl"
                     user = "$dbUsername"
                     password = "$dbPassword"
