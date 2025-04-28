@@ -3,7 +3,6 @@ plugins {
     id 'org.liquibase.gradle' version '2.2.0'
 }
 
-
 jar.enabled = false
 
 ext {
@@ -12,44 +11,87 @@ ext {
     jacksonVersion = '2.18.1'
 }
 
+ext['jooq.version'] = jooq.version.get()
+
 dependencies {
-    implementation project(':ww-api')
-    implementation project(':ww-db')
-
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
-
-    implementation 'org.springframework.boot:spring-boot-starter-amqp'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.amqp:spring-rabbit-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
+    implementation 'org.springframework.boot:spring-boot-starter-jooq'
     implementation "org.springframework.boot:spring-boot-starter-security"
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.1.0'
+    implementation 'org.jooq:jooq-codegen'
+    implementation "org.mapstruct:mapstruct:$mapstructVersion"
+    annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
+    runtimeOnly 'org.postgresql:postgresql'
+
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+
+    jooqGenerator 'org.postgresql:postgresql'
 
     liquibaseRuntime 'org.liquibase:liquibase-core'
     liquibaseRuntime 'org.liquibase:liquibase-groovy-dsl:2.1.1'
     liquibaseRuntime 'info.picocli:picocli:4.7.5'
     liquibaseRuntime 'org.postgresql:postgresql'
 
-    runtimeOnly 'org.postgresql:postgresql'
+    implementation project(':ww-api')
+    implementation project(':ww-db')
 
-    // MapStruct
-    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
-    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
 
-    // Lombok MapStruct Binding
-    annotationProcessor "org.projectlombok:lombok-mapstruct-binding:${lombokMapstructBindingVersion}"
-    implementation "org.projectlombok:lombok-mapstruct-binding:${lombokMapstructBindingVersion}"
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.amqp:spring-rabbit-test'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
 
-    // Jackson
-    implementation "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
-    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+jooq {
+    configurations {
+        main {
+            generateSchemaSourceOnCompilation = true
 
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.1.0'
+            generationTool {
+                jdbc {
+                    driver = "org.postgresql.Driver"
+                    url = "$dbUrl"
+                    user = "$dbUsername"
+                    password = "$dbPassword"
+                }
+                generator {
+                    database {
+                        name = 'org.jooq.meta.postgres.PostgresDatabase'
+                        inputSchema = 'public'
+                    }
+                    generate {
+                        deprecated = false
+                        records = true
+                        immutablePojos = true
+                        fluentSetters = true
+                        implicitJoinPathsToMany = false
+                    }
+                    target {
+                        packageName = 'com.technokratos'
+                        directory = 'build/generated-src/jooq/main'
+                    }
+                    strategy.name = 'org.jooq.codegen.DefaultGeneratorStrategy'
+                }
+            }
+        }
+    }
+}
 
-    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+liquibase {
+    activities {
+        main {
+            changelogFile 'ww-db/src/main/resources/db/changelog/user-service/changelog-master.xml'
+            url "$dbUrl"
+            username "$dbUsername"
+            password "$dbPassword"
+        }
+    }
+}
+
+tasks.named('generateJooq') {
+    dependsOn 'update'
 }
 
 test {
