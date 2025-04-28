@@ -1,5 +1,8 @@
 package com.technokratos.controller;
 
+import com.technokratos.dto.request.UserLoginRequest;
+import com.technokratos.dto.request.UserRegistrationRequest;
+import com.technokratos.dto.response.UserLoginResponse;
 import com.technokratos.model.UserEntity;
 import com.technokratos.service.auth.AuthUserService;
 import lombok.RequiredArgsConstructor;
@@ -19,21 +22,18 @@ public class AuthController {
     private final AuthUserService userService;
 
     @PostMapping("/register")
-    public UserEntity register(@RequestBody UserEntity user) {
-        userService.register(user);
-        log.info("auth controller register");
-        return user;
+    public UserLoginResponse register(@RequestBody UserRegistrationRequest userDto) {
+        return userService.register(userDto);
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody UserEntity user) {
-        return userService.verify(user);
+    public UserLoginResponse login(@RequestBody UserLoginRequest userDto) {
+        return userService.verify(userDto);
     }
 
     @GetMapping("/users")
     public List<UserEntity> getUsers() {
         return userService.getAll();
     }
-
-
+    
 }
