@@ -1,9 +1,12 @@
 package com.technokratos.service.auth;
 
+import com.technokratos.dto.request.UserForJwtTokenRequest;
+import com.technokratos.dto.response.UserLoginResponse;
 import com.technokratos.model.UserEntity;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -31,21 +34,26 @@ public class JWTService {
         }
     }
 
-    public String generateToken(UserEntity user) {
+    public UserLoginResponse generateToken(UserForJwtTokenRequest userInfo) {
 
         Map<String, Object> claims = new HashMap<>();
-        claims.put("id", user.getId());
-        claims.put("role", user.getRole());
+        claims.put("id", userInfo.id());
 
-        return Jwts.builder()
-                .claims()
-                .add(claims)
-                .subject(user.getUsername())
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
-                .and()
-                .signWith(getKey())
-                .compact();
+        String accessToken = Jwts.builder()
+                                    .claims()
+                                    .add(claims)
+                                    .subject(userInfo.username())
+                                    .issuedAt(new Date(System.currentTimeMillis()))
+                                    .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+                                    .and()
+                                    .signWith(getKey())
+                                    .compact();
+
+        return UserLoginResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken("")
+                .id(userInfo.id())
+                .build();
     }
 
     private SecretKey getKey() {
@@ -71,8 +79,8 @@ public class JWTService {
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {
-        final String userName = extractUserName(token);
-        return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        final String username = extractUserName(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
     private boolean isTokenExpired(String token) {
