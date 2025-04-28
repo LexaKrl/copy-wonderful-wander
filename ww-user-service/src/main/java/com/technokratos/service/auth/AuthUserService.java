@@ -1,5 +1,11 @@
 package com.technokratos.service.auth;
 
+import com.technokratos.dto.request.UserForJwtTokenRequest;
+import com.technokratos.dto.request.UserLoginRequest;
+import com.technokratos.dto.request.UserRegistrationRequest;
+import com.technokratos.dto.response.UserLoginResponse;
+import com.technokratos.enums.UserRole;
+import com.technokratos.mapper.UserMapper;
 import com.technokratos.model.UserEntity;
 import com.technokratos.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,25 +28,35 @@ public class AuthUserService {
    private final AuthenticationManager authenticationManager;
    private final BCryptPasswordEncoder passwordEncoder;
    private final JWTService jwtService;
+   private final UserMapper userMapper;
 
 
-   public UserEntity register(UserEntity user) {
+   public UserLoginResponse register(UserRegistrationRequest userDto) {
+       UserEntity user = userMapper.userRegistrationRequestToUserEntity(userDto);
+
        user.setId(UUID.randomUUID());
+       user.setRole(UserRole.ROLE_USER);
        user.setPassword(passwordEncoder.encode(user.getPassword()));
        userRepository.save(user);
+
        log.info("user service register");
-       return user;
+
+       UserForJwtTokenRequest userInfo = userMapper.toJwtUserInfo(user);
+       return jwtService.generateToken(userInfo);
    }
 
-    public String verify(UserEntity user) {
+    public UserLoginResponse verify(UserLoginRequest userDto) {
         Authentication authentication =
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                                                                        user.getUsername(),
-                                                                        user.getPassword()));
+                                                                            userDto.username(),
+                                                                            userDto.password()));
         if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(user);
+            UserEntity userEntity = userRepository.findByUsername(userDto.username());
+            UserForJwtTokenRequest userInfo = userMapper.toJwtUserInfo(userEntity);
+            return jwtService.generateToken(userInfo);
         }
-        return "fail";
+        log.error("User is not authenticated");
+        throw new RuntimeException("User is not authenticated");
     }
 
     public List<UserEntity> getAll() {
