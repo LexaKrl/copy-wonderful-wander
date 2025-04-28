@@ -1,8 +1,6 @@
-import org.jooq.meta.jaxb.Logging
-
 plugins {
-    id 'nu.studer.jooq' version '10.0'
-    id 'org.liquibase.gradle' version '2.2.0'
+    id 'nu.studer.jooq' version "$jooqPluginVersion"
+    id 'org.liquibase.gradle' version "$liquibasePluginVersion"
 }
 
 jar.enabled = false
@@ -10,22 +8,28 @@ jar.enabled = false
 ext['jooq.version'] = jooq.version.get()
 
 dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-jooq'
     implementation 'org.jooq:jooq-codegen'
     implementation "org.mapstruct:mapstruct:$mapstructVersion"
     annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
     runtimeOnly 'org.postgresql:postgresql'
 
+    implementation "io.jsonwebtoken:jjwt-api:$jwtVersion"
+    runtimeOnly "io.jsonwebtoken:jjwt-impl:$jwtVersion"
+    runtimeOnly "io.jsonwebtoken:jjwt-jackson:$jwtVersion"
+
     jooqGenerator 'org.postgresql:postgresql'
 
     liquibaseRuntime 'org.liquibase:liquibase-core'
-    liquibaseRuntime 'org.liquibase:liquibase-groovy-dsl:2.1.1'
-    liquibaseRuntime 'info.picocli:picocli:4.7.5'
+    liquibaseRuntime "org.liquibase:liquibase-groovy-dsl:$liquibaseDslGroovyVersion"
+    liquibaseRuntime "info.picocli:picocli:$picocliVersion"
     liquibaseRuntime 'org.postgresql:postgresql'
 
     implementation project(':ww-api')
     implementation project(':ww-db')
 
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 jooq {
@@ -34,9 +38,8 @@ jooq {
             generateSchemaSourceOnCompilation = true
 
             generationTool {
-                logging = Logging.WARN
                 jdbc {
-                    driver = "org.postgresql.Driver"
+                    driver = 'org.postgresql.Driver'
                     url = "$dbUrl"
                     user = "$dbUsername"
                     password = "$dbPassword"
@@ -45,13 +48,15 @@ jooq {
                     database {
                         name = 'org.jooq.meta.postgres.PostgresDatabase'
                         inputSchema = 'public'
+                        excludes = 'databasechangelog|databasechangeloglock'
+                        outputSchema = 'public'
                     }
                     generate {
                         deprecated = false
                         records = true
                         immutablePojos = true
                         fluentSetters = true
-                        implicitJoinPathsToMany = false
+                        javaTimeTypes = true
                     }
                     target {
                         packageName = 'com.technokratos'
@@ -67,12 +72,17 @@ jooq {
 liquibase {
     activities {
         main {
-            changelogFile 'ww-db/src/main/resources/db/changelog/user-service/changelog-master.xml'
-            url "$dbUrl"
-            username "$dbUsername"
-            password "$dbPassword"
+            arguments = [
+                    logLevel     : "info",
+                    changelogFile: "ww-db/src/main/resources/db/changelog/user-service/changelog-master.xml",
+                    url          : "$dbUrl",
+                    username     : "$dbUsername",
+                    password     : "$dbPassword",
+                    driver       : "org.postgresql.Driver"
+            ]
         }
     }
+    runList = "main"
 }
 
 tasks.named('generateJooq') {
