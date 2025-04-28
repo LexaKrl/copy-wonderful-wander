@@ -1,0 +1,12 @@
+springdoc:
+  api-docs:
+    enabled: true
+    path: /api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+spring:
+  data:
+    web:
+      pageable:
+        max-page-size: 100
