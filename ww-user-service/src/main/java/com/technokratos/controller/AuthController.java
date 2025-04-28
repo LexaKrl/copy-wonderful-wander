@@ -3,6 +3,7 @@ package com.technokratos.controller;
 import com.technokratos.dto.request.UserLoginRequest;
 import com.technokratos.dto.request.UserRegistrationRequest;
 import com.technokratos.dto.response.UserLoginResponse;
+import com.technokratos.dto.response.UserResponse;
 import com.technokratos.model.UserEntity;
 import com.technokratos.service.auth.AuthUserService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @Slf4j
 public class AuthController {
@@ -32,8 +33,7 @@ public class AuthController {
     }
 
     @GetMapping("/users")
-    public List<UserEntity> getUsers() {
+    public List<UserResponse> getUsers() {
         return userService.getAll();
     }
-    
 }
