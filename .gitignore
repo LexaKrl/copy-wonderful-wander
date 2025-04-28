@@ -205,12 +205,12 @@ gradle-app.setting
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 
-# Env
-application*.yaml
-gradle.properties
-
 ### Gradle Patch ###
 # Java heap dump
 *.hprof
+
+# Configuration files
+application*.yaml
+gradle.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/java,intellij,gradle,windows,git

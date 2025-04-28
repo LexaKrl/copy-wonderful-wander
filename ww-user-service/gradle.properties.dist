@@ -1,0 +1,8 @@
+# Example configuration file for sensitive data
+dbUrl=jdbc:postgresql://localhost:5432/your-database
+dbName=your-db-name
+dbUsername=your-username
+dbPassword=your-password
+
+mapstructVersion=1.5.5.Final
+testcontainersVersion=1.19.0
