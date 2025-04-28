@@ -24,6 +24,8 @@ public class JWTService {
 
     private final String secretKey;
 
+    private static final long ACCESS_TOKEN_DURATION = 1000 * 60 * 60;
+
     public JWTService() {
         try {
             KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
@@ -34,26 +36,36 @@ public class JWTService {
         }
     }
 
-    public UserLoginResponse generateToken(UserForJwtTokenRequest userInfo) {
+    public UserLoginResponse generateTokens(UserForJwtTokenRequest userInfo) {
+        String accessToken = generateAccessToken(userInfo);
 
+        String refreshToken = generateRefreshToken();
+
+        return UserLoginResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
+    private String generateAccessToken(UserForJwtTokenRequest userInfo) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", userInfo.id());
 
         String accessToken = Jwts.builder()
-                                    .claims()
-                                    .add(claims)
-                                    .subject(userInfo.username())
-                                    .issuedAt(new Date(System.currentTimeMillis()))
-                                    .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
-                                    .and()
-                                    .signWith(getKey())
-                                    .compact();
+                .claims()
+                .add(claims)
+                .subject(userInfo.username())
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_DURATION))
+                .and()
+                .signWith(getKey())
+                .compact();
 
-        return UserLoginResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken("")
-                .id(userInfo.id())
-                .build();
+        return accessToken;
+    }
+
+    private String generateRefreshToken() {
+        return "";
     }
 
     private SecretKey getKey() {
