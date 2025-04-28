@@ -6,17 +6,22 @@ CREATE TABLE account
     user_id          UUID                NOT NULL,
     username         VARCHAR(50) UNIQUE  NOT NULL,
     email            VARCHAR(255) UNIQUE NOT NULL,
+    firstname        VARCHAR(50),
+    lastname         VARCHAR(50),
+    password         VARCHAR             NOT NULL,
     bio              VARCHAR(255),
+    role             VARCHAR(20)      DEFAULT 'ROLE_USER',
     avatar_url       VARCHAR(2048),
+    created_at       TIMESTAMP        DEFAULT now(),
+    updated_at       TIMESTAMP,
     followers_count  INT              DEFAULT 0,
     following_count  INT              DEFAULT 0,
     friends_count    INT              DEFAULT 0,
     photo_visibility photo_visibility DEFAULT 'PUBLIC',
     walk_visibility  walk_visibility  DEFAULT 'REMEMBER_ONLY',
-    ------------------------------
+    ----------------------------------------------------------
     CONSTRAINT user_id_pk PRIMARY KEY (user_id)
 );
-
 
 CREATE SEQUENCE user_relationships_sequence
     START 100000

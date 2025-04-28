@@ -21,13 +21,13 @@ public class UserService {
 
     public UserResponse getUserById(UUID userId) {
         return userMapper.toUserResponse(userRepository
-                .findUserById(userId)
+                .findById(userId)
                 .orElseThrow(() -> new UserByIdNotFoundException(userId)));
     }
 
     public UserResponse getUserByUsername(String username) {
         return userMapper.toUserResponse(userRepository
-                .findUserByUsername(username)
+                .findByUsername(username)
                 .orElseThrow(() -> new UserByUsernameNotFoundException(username)));
     }
 
@@ -52,7 +52,7 @@ public class UserService {
     }
 
     public UserProfileResponse getProfileByUserId(UUID userId) {
-        return userMapper.toUserProfileResponse(userRepository.findUserById(userId)
+        return userMapper.toUserProfileResponse(userRepository.findById(userId)
                 .orElseThrow(() -> new UserByIdNotFoundException(userId)));
     }
 }

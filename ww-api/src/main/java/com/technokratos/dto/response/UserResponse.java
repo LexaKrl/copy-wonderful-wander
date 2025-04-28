@@ -5,7 +5,15 @@ import com.technokratos.enums.WalkVisibility;
 
 import java.util.UUID;
 
-public record UserResponse(UUID userId, String username, String bio, String email, String avatarUrl,
-                           int followersCount, int followingCount, int friendsCount, PhotoVisibility photoVisibility,
-                           WalkVisibility walkVisibility) {
+public record UserResponse(
+        UUID userId,
+        String username,
+        String bio,
+        String email,
+        String avatarUrl,
+        int followersCount,
+        int followingCount,
+        int friendsCount,
+        PhotoVisibility photoVisibility,
+        WalkVisibility walkVisibility) {
 }

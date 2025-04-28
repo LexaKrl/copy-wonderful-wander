@@ -16,7 +16,7 @@ import java.util.UUID;
 public class UserRepository {
     private final DSLContext dsl;
 
-    public Optional<Account> findUserById(UUID userId) {
+    public Optional<Account> findById(UUID userId) {
         return dsl
                 .selectFrom(Tables.ACCOUNT)
                 .where(Tables.ACCOUNT.USER_ID.eq(userId))
@@ -24,7 +24,7 @@ public class UserRepository {
                 .map(record -> record.into(Account.class));
     }
 
-    public Optional<Account> findUserByUsername(String username) {
+    public Optional<Account> findByUsername(String username) {
         return dsl
                 .selectFrom(Tables.ACCOUNT)
                 .where(Tables.ACCOUNT.USERNAME.eq(username))

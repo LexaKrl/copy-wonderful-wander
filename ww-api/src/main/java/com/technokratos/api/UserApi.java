@@ -15,3 +15,4 @@ public interface UserApi {
     @ResponseStatus(HttpStatus.OK)
     UserResponse getUserById(@PathVariable UUID userId);
 }
+
