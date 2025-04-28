@@ -1,6 +1,6 @@
-package com.technokratos.security.config;
+package com.technokratos.config;
 
-import com.technokratos.security.filter.JwtFilter;
+import com.technokratos.filter.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,7 +31,7 @@ public class SpringSecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/auth/register", "/auth/login")
+                        .requestMatchers("/api/auth/register", "/api/auth/login")
                         .permitAll()
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())

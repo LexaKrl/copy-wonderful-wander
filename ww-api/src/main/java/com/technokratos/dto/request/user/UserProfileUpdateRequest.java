@@ -1,4 +1,4 @@
-package com.technokratos.dto.request;
+package com.technokratos.dto.request.user;
 
 public record UserProfileUpdateRequest(
         String name,

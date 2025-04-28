@@ -1,11 +1,9 @@
-package com.technokratos.dto.response;
+package com.technokratos.dto.response.security;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.UUID;
 
 @Data
 @Builder

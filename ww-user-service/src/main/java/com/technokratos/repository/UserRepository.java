@@ -1,7 +1,7 @@
 package com.technokratos.repository;
 
 import com.technokratos.Tables;
-import com.technokratos.dto.request.UserRegistrationRequest;
+import com.technokratos.model.UserEntity;
 import com.technokratos.tables.pojos.Account;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
@@ -100,15 +100,15 @@ public class UserRepository {
                 .execute();
     }
 
-    public void save(UserRegistrationRequest userDto) {
+    public void save(UserEntity userEntity) {
         dsl
                 .insertInto(Tables.ACCOUNT)
-                .set(Tables.ACCOUNT.USER_ID, userDto.id())
-                .set(Tables.ACCOUNT.USERNAME, userDto.username())
-                .set(Tables.ACCOUNT.PASSWORD, userDto.password())
-                .set(Tables.ACCOUNT.FIRSTNAME, userDto.firstname())
-                .set(Tables.ACCOUNT.LASTNAME, userDto.lastname())
-                .set(Tables.ACCOUNT.EMAIL, userDto.email())
+                .set(Tables.ACCOUNT.USER_ID, userEntity.getId())
+                .set(Tables.ACCOUNT.USERNAME, userEntity.getUsername())
+                .set(Tables.ACCOUNT.PASSWORD, userEntity.getPassword())
+                .set(Tables.ACCOUNT.FIRSTNAME, userEntity.getFirstname())
+                .set(Tables.ACCOUNT.LASTNAME, userEntity.getLastname())
+                .set(Tables.ACCOUNT.EMAIL, userEntity.getEmail())
                 .execute();
     }
 

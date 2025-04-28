@@ -1,4 +1,4 @@
-package com.technokratos.enums;
+package com.technokratos.enums.user;
 
 public enum WalkVisibility {
     PUBLIC,

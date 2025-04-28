@@ -1,6 +1,6 @@
-package com.technokratos.dto.request;
+package com.technokratos.dto.request.security;
 
-import com.technokratos.enums.UserRole;
+import com.technokratos.enums.security.UserRole;
 
 public record AdminUserUpdateRequest(
         String username,

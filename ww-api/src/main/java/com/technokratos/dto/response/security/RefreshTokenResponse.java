@@ -1,4 +1,4 @@
-package com.technokratos.dto.response;
+package com.technokratos.dto.response.security;
 
 public record RefreshTokenResponse(
         String refreshToken,

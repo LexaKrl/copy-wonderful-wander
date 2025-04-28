@@ -1,4 +1,4 @@
-package com.technokratos.dto.request;
+package com.technokratos.dto.request.walk;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

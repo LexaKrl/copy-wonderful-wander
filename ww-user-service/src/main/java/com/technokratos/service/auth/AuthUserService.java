@@ -1,17 +1,15 @@
 package com.technokratos.service.auth;
 
-import com.technokratos.dto.request.UserForJwtTokenRequest;
-import com.technokratos.dto.request.UserLoginRequest;
-import com.technokratos.dto.request.UserRegistrationRequest;
-import com.technokratos.dto.response.UserLoginResponse;
-import com.technokratos.dto.response.UserResponse;
-import com.technokratos.enums.UserRole;
-import com.technokratos.mapper.UserMapper;
+import com.technokratos.dto.request.security.UserForJwtTokenRequest;
+import com.technokratos.dto.request.security.UserLoginRequest;
+import com.technokratos.dto.request.security.UserRegistrationRequest;
+import com.technokratos.dto.response.security.UserLoginResponse;
+import com.technokratos.dto.response.user.UserResponse;
+import com.technokratos.enums.security.UserRole;
 import com.technokratos.model.UserEntity;
 import com.technokratos.repository.UserRepository;
-
-
 import com.technokratos.tables.pojos.Account;
+import com.technokratos.util.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,32 +26,32 @@ import java.util.UUID;
 @Slf4j
 public class AuthUserService {
 
-   private final UserRepository userRepository;
-   private final AuthenticationManager authenticationManager;
-   private final BCryptPasswordEncoder passwordEncoder;
-   private final JWTService jwtService;
-   private final UserMapper userMapper;
+    private final UserRepository userRepository;
+    private final AuthenticationManager authenticationManager;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final JWTService jwtService;
+    private final UserMapper userMapper;
 
 
-   public UserLoginResponse register(UserRegistrationRequest userDto) {
-       UserEntity user = userMapper.userRegistrationRequestToUserEntity(userDto);
+    public UserLoginResponse register(UserRegistrationRequest userDto) {
+        UserEntity user = userMapper.userRegistrationRequestToUserEntity(userDto);
 
-       user.setId(UUID.randomUUID());
-       user.setRole(UserRole.ROLE_USER);
-       user.setPassword(passwordEncoder.encode(user.getPassword()));
-       userRepository.save(userDto);
+        user.setId(UUID.randomUUID());
+        user.setRole(UserRole.ROLE_USER);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
 
-       log.info("user service register");
+        log.info("user service register");
 
-       UserForJwtTokenRequest userInfo = userMapper.toJwtUserInfo(user);
-       return jwtService.generateTokens(userInfo);
-   }
+        UserForJwtTokenRequest userInfo = userMapper.toJwtUserInfo(user);
+        return jwtService.generateTokens(userInfo);
+    }
 
     public UserLoginResponse verify(UserLoginRequest userDto) {
         Authentication authentication =
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                                                                            userDto.username(),
-                                                                            userDto.password()));
+                        userDto.username(),
+                        userDto.password()));
         if (authentication.isAuthenticated()) {
             Account account = userRepository.findByUsername(userDto.username()).orElseThrow(() -> new RuntimeException("User not found"));
             UserEntity userEntity = userMapper.accountToUserEntity(account);
@@ -65,6 +63,6 @@ public class AuthUserService {
     }
 
     public List<UserResponse> getAll() {
-       return userMapper.toResponse(userRepository.findAll());
+        return userMapper.toResponse(userRepository.findAll());
     }
 }

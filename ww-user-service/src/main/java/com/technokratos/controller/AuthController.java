@@ -1,16 +1,12 @@
 package com.technokratos.controller;
 
-import com.technokratos.dto.request.UserLoginRequest;
-import com.technokratos.dto.request.UserRegistrationRequest;
-import com.technokratos.dto.response.UserLoginResponse;
-import com.technokratos.dto.response.UserResponse;
-import com.technokratos.model.UserEntity;
+import com.technokratos.dto.request.security.UserLoginRequest;
+import com.technokratos.dto.request.security.UserRegistrationRequest;
+import com.technokratos.dto.response.security.UserLoginResponse;
+import com.technokratos.dto.response.user.UserResponse;
 import com.technokratos.service.auth.AuthUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
-import org.mapstruct.control.MappingControl;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

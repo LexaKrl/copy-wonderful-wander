@@ -1,7 +1,7 @@
 package com.technokratos.controller;
 
 import com.technokratos.api.UserApi;
-import com.technokratos.dto.response.UserResponse;
+import com.technokratos.dto.response.user.UserResponse;
 import com.technokratos.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;

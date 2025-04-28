@@ -1,6 +1,6 @@
 package com.technokratos.service;
 
-import com.technokratos.dto.response.UserCompactResponse;
+import com.technokratos.dto.response.user.UserCompactResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

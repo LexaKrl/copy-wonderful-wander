@@ -1,8 +1,8 @@
 package com.technokratos.service;
 
-import com.technokratos.dto.response.UserCompactResponse;
-import com.technokratos.dto.response.UserProfileResponse;
-import com.technokratos.dto.response.UserResponse;
+import com.technokratos.dto.response.user.UserCompactResponse;
+import com.technokratos.dto.response.user.UserProfileResponse;
+import com.technokratos.dto.response.user.UserResponse;
 import com.technokratos.exception.UserByIdNotFoundException;
 import com.technokratos.exception.UserByUsernameNotFoundException;
 import com.technokratos.repository.UserRepository;
@@ -32,15 +32,15 @@ public class UserService {
     }
 
     public List<UserCompactResponse> getFriendsByUserId(UUID userId, UUID targetUserId) {
-        return userMapper.toUserCompactResponseList(userRepository.getFriendsByUserId(userId, targetUserId));
+        return userMapper.toUserCompactResponse(userRepository.getFriendsByUserId(userId, targetUserId));
     }
 
     public List<UserCompactResponse> getFollowersByUserId(UUID userId) {
-        return userMapper.toUserCompactResponseList(userRepository.getFollowersByUserId(userId));
+        return userMapper.toUserCompactResponse(userRepository.getFollowersByUserId(userId));
     }
 
     public List<UserCompactResponse> getFollowingByUserId(UUID userId) {
-        return userMapper.toUserCompactResponseList(userRepository.getFollowingByUserId(userId));
+        return userMapper.toUserCompactResponse(userRepository.getFollowingByUserId(userId));
     }
 
     public void subscribe(UUID userId, UUID targetUserId) {

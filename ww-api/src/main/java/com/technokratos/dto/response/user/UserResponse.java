@@ -1,7 +1,7 @@
-package com.technokratos.dto.response;
+package com.technokratos.dto.response.user;
 
-import com.technokratos.enums.PhotoVisibility;
-import com.technokratos.enums.WalkVisibility;
+import com.technokratos.enums.user.PhotoVisibility;
+import com.technokratos.enums.user.WalkVisibility;
 
 import java.util.UUID;
 
