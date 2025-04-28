@@ -4,10 +4,14 @@ import com.technokratos.dto.request.UserForJwtTokenRequest;
 import com.technokratos.dto.request.UserLoginRequest;
 import com.technokratos.dto.request.UserRegistrationRequest;
 import com.technokratos.dto.response.UserLoginResponse;
+import com.technokratos.dto.response.UserResponse;
 import com.technokratos.enums.UserRole;
 import com.technokratos.mapper.UserMapper;
 import com.technokratos.model.UserEntity;
 import com.technokratos.repository.UserRepository;
+
+
+import com.technokratos.tables.pojos.Account;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,7 +41,7 @@ public class AuthUserService {
        user.setId(UUID.randomUUID());
        user.setRole(UserRole.ROLE_USER);
        user.setPassword(passwordEncoder.encode(user.getPassword()));
-       userRepository.save(user);
+       userRepository.save(userDto);
 
        log.info("user service register");
 
@@ -51,7 +55,8 @@ public class AuthUserService {
                                                                             userDto.username(),
                                                                             userDto.password()));
         if (authentication.isAuthenticated()) {
-            UserEntity userEntity = userRepository.findByUsername(userDto.username());
+            Account account = userRepository.findByUsername(userDto.username()).orElseThrow(() -> new RuntimeException("User not found"));
+            UserEntity userEntity = userMapper.accountToUserEntity(account);
             UserForJwtTokenRequest userInfo = userMapper.toJwtUserInfo(userEntity);
             return jwtService.generateTokens(userInfo);
         }
@@ -59,7 +64,7 @@ public class AuthUserService {
         throw new RuntimeException("User is not authenticated");
     }
 
-    public List<UserEntity> getAll() {
-       return userRepository.findAll();
+    public List<UserResponse> getAll() {
+       return userMapper.toResponse(userRepository.findAll());
     }
 }
