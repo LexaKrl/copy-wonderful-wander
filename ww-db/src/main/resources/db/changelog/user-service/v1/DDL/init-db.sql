@@ -9,13 +9,14 @@ CREATE TABLE user_info
     lastname   VARCHAR(50),
     email      VARCHAR(255) UNIQUE NOT NULL,
     bio        VARCHAR(255),
-    role       user_role DEFAULT 'ROLE_USER',
+    role       varchar(20) DEFAULT 'ROLE_USER',
     avatar_url VARCHAR(2048),
-    created_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT now(),
     updated_at TIMESTAMP,
     -------------------------
     CONSTRAINT user_id_pk PRIMARY KEY (user_id)
 );
+
 
 CREATE TYPE photo_visibility AS ENUM ('public', 'friends_only', 'private');
 CREATE TYPE walk_visibility AS ENUM ('public', 'friends_only', 'remember_only', 'private');
