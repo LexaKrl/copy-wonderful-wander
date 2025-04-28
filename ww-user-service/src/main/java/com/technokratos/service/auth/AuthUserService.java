@@ -42,7 +42,7 @@ public class AuthUserService {
        log.info("user service register");
 
        UserForJwtTokenRequest userInfo = userMapper.toJwtUserInfo(user);
-       return jwtService.generateToken(userInfo);
+       return jwtService.generateTokens(userInfo);
    }
 
     public UserLoginResponse verify(UserLoginRequest userDto) {
@@ -53,7 +53,7 @@ public class AuthUserService {
         if (authentication.isAuthenticated()) {
             UserEntity userEntity = userRepository.findByUsername(userDto.username());
             UserForJwtTokenRequest userInfo = userMapper.toJwtUserInfo(userEntity);
-            return jwtService.generateToken(userInfo);
+            return jwtService.generateTokens(userInfo);
         }
         log.error("User is not authenticated");
         throw new RuntimeException("User is not authenticated");
