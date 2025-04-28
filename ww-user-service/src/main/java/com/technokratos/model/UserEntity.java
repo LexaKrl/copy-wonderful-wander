@@ -1,6 +1,6 @@
 package com.technokratos.model;
 
-import com.technokratos.model.enums.UserRole;
+import com.technokratos.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -21,7 +19,6 @@ import java.util.UUID;
 public class UserEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private UUID id;
     private String username;
@@ -32,6 +29,7 @@ public class UserEntity {
     private String bio;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "role")
     private UserRole role;
 
     @Column(name = "avatar_url")
