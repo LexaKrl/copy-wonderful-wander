@@ -103,7 +103,7 @@ public class UserRepository {
     public void save(UserEntity userEntity) {
         dsl
                 .insertInto(Tables.ACCOUNT)
-                .set(Tables.ACCOUNT.USER_ID, userEntity.getId())
+                .set(Tables.ACCOUNT.USER_ID, userEntity.getUserId())
                 .set(Tables.ACCOUNT.USERNAME, userEntity.getUsername())
                 .set(Tables.ACCOUNT.PASSWORD, userEntity.getPassword())
                 .set(Tables.ACCOUNT.FIRSTNAME, userEntity.getFirstname())
