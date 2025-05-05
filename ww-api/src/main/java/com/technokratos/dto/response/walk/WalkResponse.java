@@ -3,6 +3,7 @@ package com.technokratos.dto.response.walk;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,6 +33,9 @@ public record WalkResponse(
                         ]
                         """
         )
-        List<String> uuids
+        List<String> uuids,
+
+        @Schema(description = "Time walk was created", example = "2023-10-05 14:30:00")
+        LocalDateTime createdAt
 ) {
 }
