@@ -1,55 +1,92 @@
 plugins {
-    id 'nu.studer.jooq' version '10.0'
-    id 'org.liquibase.gradle' version '2.2.0'
+    id 'nu.studer.jooq' version "$jooqPluginVersion"
+    id 'org.liquibase.gradle' version "$liquibasePluginVersion"
 }
-
 
 jar.enabled = false
 
-ext {
-    mapstructVersion = '1.5.5.Final'
-    lombokMapstructBindingVersion = '0.2.0'
-    jacksonVersion = '2.18.1'
-}
+ext['jooq.version'] = jooq.version.get()
 
 dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-jooq'
+    implementation 'org.jooq:jooq-codegen'
+    implementation "org.mapstruct:mapstruct:$mapstructVersion"
+    annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
+    runtimeOnly 'org.postgresql:postgresql'
+
+    implementation "io.jsonwebtoken:jjwt-api:$jwtVersion"
+    runtimeOnly "io.jsonwebtoken:jjwt-impl:$jwtVersion"
+    runtimeOnly "io.jsonwebtoken:jjwt-jackson:$jwtVersion"
+
+    jooqGenerator 'org.postgresql:postgresql'
+
+    liquibaseRuntime 'org.liquibase:liquibase-core'
+    liquibaseRuntime "org.liquibase:liquibase-groovy-dsl:$liquibaseDslGroovyVersion"
+    liquibaseRuntime "info.picocli:picocli:$picocliVersion"
+    liquibaseRuntime 'org.postgresql:postgresql'
+
     implementation project(':ww-api')
     implementation project(':ww-db')
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
-
-    implementation 'org.springframework.boot:spring-boot-starter-amqp'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.amqp:spring-rabbit-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
 
-    implementation "org.springframework.boot:spring-boot-starter-security"
+jooq {
+    configurations {
+        main {
+            generateSchemaSourceOnCompilation = true
 
-    liquibaseRuntime 'org.liquibase:liquibase-core'
-    liquibaseRuntime 'org.liquibase:liquibase-groovy-dsl:2.1.1'
-    liquibaseRuntime 'info.picocli:picocli:4.7.5'
-    liquibaseRuntime 'org.postgresql:postgresql'
+            generationTool {
+                jdbc {
+                    driver = 'org.postgresql.Driver'
+                    url = "$dbUrl"
+                    user = "$dbUsername"
+                    password = "$dbPassword"
+                }
+                generator {
+                    database {
+                        name = 'org.jooq.meta.postgres.PostgresDatabase'
+                        inputSchema = 'public'
+                        excludes = 'databasechangelog|databasechangeloglock'
+                        outputSchema = 'public'
+                    }
+                    generate {
+                        deprecated = false
+                        records = true
+                        immutablePojos = true
+                        fluentSetters = true
+                        javaTimeTypes = true
+                    }
+                    target {
+                        packageName = 'com.technokratos'
+                        directory = 'build/generated-src/jooq/main'
+                    }
+                    strategy.name = 'org.jooq.codegen.DefaultGeneratorStrategy'
+                }
+            }
+        }
+    }
+}
 
-    runtimeOnly 'org.postgresql:postgresql'
+liquibase {
+    activities {
+        main {
+            arguments = [
+                    logLevel     : "info",
+                    changelogFile: "ww-db/src/main/resources/db/changelog/user-service/changelog-master.xml",
+                    url          : "$dbUrl",
+                    username     : "$dbUsername",
+                    password     : "$dbPassword",
+                    driver       : "org.postgresql.Driver"
+            ]
+        }
+    }
+    runList = "main"
+}
 
-    // MapStruct
-    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
-    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
-
-    // Lombok MapStruct Binding
-    annotationProcessor "org.projectlombok:lombok-mapstruct-binding:${lombokMapstructBindingVersion}"
-    implementation "org.projectlombok:lombok-mapstruct-binding:${lombokMapstructBindingVersion}"
-
-    // Jackson
-    implementation "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
-    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
-
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.1.0'
-
-    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+tasks.named('generateJooq') {
+    dependsOn 'update'
 }
 
 test {
