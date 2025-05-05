@@ -4,9 +4,11 @@ package com.technokratos.wwwalkservice.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -35,5 +37,11 @@ public class Walk {
     private Integer meters;
 
     @Column(name = "created_at")
+    @CreationTimestamp
     private LocalDateTime createdAt;
+
+    @ElementCollection
+    @CollectionTable(name = "walk_participants")
+    private Set<String> walkParticipants;
+
 }
