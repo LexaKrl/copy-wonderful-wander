@@ -20,7 +20,7 @@ public record WalkResponse(
         String description,
 
         @Schema(
-                description = "Username or UUID list of participants of the walk",
+                description = "UUID list of participants of the walk",
                 example = """
                         [
                             "a1e5f6d4-e2f3-4a8b-eb5c-1e2f3a4b5c6d",
@@ -31,7 +31,7 @@ public record WalkResponse(
                         ]
                         """
         )
-        List<String> uuids,
+        List<String> walkParticipants,
 
         @Schema(description = "Time walk was created", example = "2023-10-05 14:30:00")
         LocalDateTime createdAt

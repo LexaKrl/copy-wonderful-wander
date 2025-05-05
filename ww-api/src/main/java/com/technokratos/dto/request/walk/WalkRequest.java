@@ -16,7 +16,7 @@ public record WalkRequest(
         String description,
 
         @Schema(
-                description = "Username or UUID list of participants of the walk",
+                description = "UUID list of participants of the walk",
                 example = """
                         [
                             "a1e5f6d4-e2f3-4a8b-eb5c-1e2f3a4b5c6d",
@@ -27,6 +27,6 @@ public record WalkRequest(
                         ]
                         """
         )
-        List<String> uuids
+        List<String> walkParticipants
 ) {
 }
