@@ -4,8 +4,11 @@ import com.technokratos.Tables;
 import com.technokratos.model.UserEntity;
 import com.technokratos.tables.pojos.Account;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,6 +17,7 @@ import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class UserRepository {
 
     private final DSLContext dsl;
@@ -27,6 +31,7 @@ public class UserRepository {
     }
 
     public Optional<Account> findByUsername(String username) {
+        log.info("findByUsername doing..");
         return dsl
                 .selectFrom(Tables.ACCOUNT)
                 .where(Tables.ACCOUNT.USERNAME.eq(username))
