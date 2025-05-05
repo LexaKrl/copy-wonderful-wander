@@ -1,7 +1,8 @@
 package com.technokratos.wwwalkservice.service;
 
-import com.technokratos.dto.request.WalkRequest;
-import com.technokratos.dto.response.WalkResponse;
+
+import com.technokratos.dto.request.walk.WalkRequest;
+import com.technokratos.dto.response.walk.WalkResponse;
 import com.technokratos.wwwalkservice.entity.Walk;
 import com.technokratos.wwwalkservice.mapper.WalkMapper;
 import com.technokratos.wwwalkservice.repository.WalkRepository;
@@ -42,24 +43,9 @@ public class BaseWalkService implements WalkService {
 
     @Override
     public void updateById(UUID id, WalkRequest walkRequest) {
-        Walk updatedWalk = walkMapper.toEntity(walkRequest);
-
-        if (walkRequest.userId() != null) {
-            walkRepository.updateUserIdById(
-                    id,
-                    updatedWalk.getUserId().toString()
-            );
-        } else if (walkRequest.name() != null) {
-            walkRepository.updateNameById(
-                    id,
-                    updatedWalk.getName()
-            );
-        } else if (walkRequest.description() != null) {
-            walkRepository.updateDescriptionById(
-                    id,
-                    updatedWalk.getDescription()
-            );
-        }
+        Walk walk = walkMapper.toEntity(walkRequest);
+        walk.setWalkId(id);
+        walkRepository.save(walk);
     }
 
 }

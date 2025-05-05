@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 @Entity
@@ -25,4 +27,13 @@ public class Walk {
 
     @Column(name = "description")
     private String description;
+
+    @Column(name = "steps")
+    private Integer steps;
+
+    @Column(name = "meters")
+    private Integer meters;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 }

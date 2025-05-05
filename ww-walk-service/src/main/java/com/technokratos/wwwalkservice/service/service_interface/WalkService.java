@@ -1,7 +1,8 @@
 package com.technokratos.wwwalkservice.service.service_interface;
 
-import com.technokratos.dto.request.WalkRequest;
-import com.technokratos.dto.response.WalkResponse;
+
+import com.technokratos.dto.request.walk.WalkRequest;
+import com.technokratos.dto.response.walk.WalkResponse;
 import com.technokratos.wwwalkservice.entity.Walk;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
