@@ -1,6 +1,6 @@
 package com.technokratos.api;
 
-import com.technokratos.dto.request.walk.LocationData;
+import com.technokratos.dto.request.walk.WalkDataRequest;
 import com.technokratos.dto.request.walk.WalkRequest;
 import com.technokratos.dto.response.walk.WalkResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,11 +14,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.UUID;
 
 @Tag(name = "Walk", description = "The Walk API")
@@ -194,45 +193,6 @@ public interface WalkApi {
             @PathVariable UUID walkId
     );
 
-    /*
-     *   Upload photo while walk
-     *
-     * */
-
-    @Operation(
-            summary = "Upload photo to walk",
-            description = "Upload photo binded to walk",
-            tags = {"walks"},
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Photo uploaded successfully"
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Walk not found"
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Invalid file format or size"
-                    ),
-            }
-    )
-    @PostMapping(value = "/{walkId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<Void> uploadWalkPhoto(
-            @Parameter(
-                    description = "UUID of the walk",
-                    example = "550e8400-e29b-41d4-a716-446655440000",
-                    required = true
-            )
-            @PathVariable UUID walkId,
-
-            @Parameter(
-                    description = "Image file (JPEG/PNG, max 5MB)",
-                    content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)
-            )
-            @RequestPart("file") MultipartFile file
-    );
 
     /*
      *   Record data using method
@@ -258,7 +218,7 @@ public interface WalkApi {
                     )
             }
     )
-    @PostMapping("/record/{walkId}")
+    @PostMapping("/{walkId}/record")
     void recordData(
             @Parameter(
                     description = "UUID of the walk which data is recording",
@@ -270,10 +230,10 @@ public interface WalkApi {
                     description = "The location data",
                     required = true,
                     content = @Content(
-                            schema = @Schema(implementation = LocationData.class)
+                            mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = WalkDataRequest.class))
                     )
             )
-            @RequestBody LocationData location
+            @RequestBody List<WalkDataRequest> walkDataRequests
     );
-
 }
