@@ -54,7 +54,7 @@ public interface WalkApi {
                     description = "Pageable type with size and sort type",
                     required = true
             )
-            @PageableDefault(size = 20, sort = "created_at")
+            @PageableDefault(size = 20, sort = "createdAt")
             Pageable pageable
     );
 
