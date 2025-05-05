@@ -25,6 +25,7 @@ public class JwtFilter extends OncePerRequestFilter {
     public static final String HEADER_NAME = "Authorization";
 
     private final JWTService jwtService;
+    private final MyUserDetailsService userDetailsService;
     private final ApplicationContext context;
 
     @Override
@@ -40,7 +41,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails = context.getBean(MyUserDetailsService.class).loadUserByUsername(username);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
             if (jwtService.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken =

@@ -34,16 +34,17 @@ public class AuthUserService {
 
 
     public UserLoginResponse register(UserRegistrationRequest userDto) {
+        log.info("user service register doing");
         log.info("register data: userdto: {}", userDto);
+
         UserEntity user = userMapper.userRegistrationRequestToUserEntity(userDto);
 
         user.setUserId(UUID.randomUUID());
         user.setRole(UserRole.ROLE_USER);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         log.info("register data: user: {}", user);
-        userRepository.save(user);
 
-        log.info("user service register");
+        userRepository.save(user);
 
         UserForJwtTokenRequest userInfo = userMapper.toJwtUserInfo(user);
         log.info("register data: userInfo for jwt: {}", userInfo);
