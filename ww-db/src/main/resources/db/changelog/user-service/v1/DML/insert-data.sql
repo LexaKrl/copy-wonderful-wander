@@ -77,3 +77,6 @@ VALUES ('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-2222222
        ('55555555-5555-5555-5555-555555555555', '11111111-1111-1111-1111-111111111111'), -- user5 -> user1
        ('55555555-5555-5555-5555-555555555555', '22222222-2222-2222-2222-222222222222'), -- user5 -> user2
        ('55555555-5555-5555-5555-555555555555', '33333333-3333-3333-3333-333333333333'); -- user5 -> user3
+
+INSERT INTO account(user_id, username, email, firstname, password, role, created_at, followers_count, following_count, friends_count, photo_visibility, walk_visibility)
+VALUES ('1978b53d-d03d-46e3-8a70-9d87468f4677','selsieshka','kir@gmail.com','Кирилл','$2a$12$7KirbPMGbSe7o3rnOmLiMOJ.XzY5fhj.aWOTApLIBsSJthvEhF6g2','ROLE_USER','2025-05-04 23:48:23.122466',0,0,0,'PUBLIC','REMEMBER_ONLY')
