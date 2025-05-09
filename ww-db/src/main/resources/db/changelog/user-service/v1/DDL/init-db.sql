@@ -34,3 +34,60 @@ CREATE TABLE user_relationships
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES account (user_id) ON DELETE SET NULL,
     CONSTRAINT fk_target_user FOREIGN KEY (target_user_id) REFERENCES account (user_id) ON DELETE SET NULL
 );
+
+CREATE OR REPLACE FUNCTION update_user_stats()
+    RETURNS TRIGGER AS
+$$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        -- Увеличиваем подписки и подписчики
+        UPDATE account SET following_count = following_count + 1 WHERE user_id = NEW.user_id;
+        UPDATE account SET followers_count = followers_count + 1 WHERE user_id = NEW.target_user_id;
+
+        -- Проверяем, есть ли обратная подписка → это дружба
+        PERFORM 1
+        FROM user_relationships
+        WHERE user_id = NEW.target_user_id
+          AND target_user_id = NEW.user_id;
+
+        IF FOUND THEN
+            -- Оба пользователя подписаны друг на друга → это дружба
+            UPDATE account
+            SET friends_count = friends_count + 1
+            WHERE user_id IN (NEW.user_id, NEW.target_user_id);
+        END IF;
+
+    ELSIF TG_OP = 'DELETE' THEN
+        -- Получаем ID пользователей до удаления записи
+        PERFORM 1
+        FROM user_relationships
+        WHERE user_id = OLD.target_user_id
+          AND target_user_id = OLD.user_id;
+
+        -- Сохраняем флаг, были ли друзьями
+        IF FOUND THEN
+            -- Это была взаимная подписка → значит, они были друзьями
+            UPDATE account
+            SET friends_count = GREATEST(friends_count - 1, 0)
+            WHERE user_id IN (OLD.user_id, OLD.target_user_id);
+        END IF;
+
+        -- Уменьшаем подписки и подписчики
+        UPDATE account
+        SET following_count = GREATEST(following_count - 1, 0)
+        WHERE user_id = OLD.user_id;
+
+        UPDATE account
+        SET followers_count = GREATEST(followers_count - 1, 0)
+        WHERE user_id = OLD.target_user_id;
+    END IF;
+
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_update_user_stats
+    AFTER INSERT OR DELETE
+    ON user_relationships
+    FOR EACH ROW
+EXECUTE FUNCTION update_user_stats();
