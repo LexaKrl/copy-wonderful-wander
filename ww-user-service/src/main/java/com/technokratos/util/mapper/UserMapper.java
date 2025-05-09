@@ -2,7 +2,6 @@ package com.technokratos.util.mapper;
 
 import com.technokratos.dto.request.security.*;
 import com.technokratos.dto.request.user.UserProfileUpdateRequest;
-import com.technokratos.dto.response.user.UserCompactResponse;
 import com.technokratos.dto.response.user.UserProfileResponse;
 import com.technokratos.dto.response.user.UserResponse;
 import com.technokratos.model.UserEntity;
@@ -46,7 +45,5 @@ public interface UserMapper {
 
     UserProfileResponse toUserProfileResponse(Account account);
 
-    UserCompactResponse toUserCompactResponse(Account account);
-
-    List<UserCompactResponse> toUserCompactResponse(List<Account> accounts);
+    List<UserProfileResponse> toUserProfileResponse(List<Account> accounts);
 }
