@@ -10,6 +10,7 @@ ext['jooq.version'] = jooq.version.get()
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-jooq'
+    implementation 'org.springframework.data:spring-data-commons'
     implementation 'org.jooq:jooq-codegen'
     implementation "org.mapstruct:mapstruct:$mapstructVersion"
     annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
