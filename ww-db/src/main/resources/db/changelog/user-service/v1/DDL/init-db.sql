@@ -12,7 +12,7 @@ CREATE TABLE account
     bio              VARCHAR(255),
     role             VARCHAR(20)      DEFAULT 'ROLE_USER',
     avatar_url       VARCHAR(2048),
-    created_at       TIMESTAMP        DEFAULT now(),
+    created_at       TIMESTAMP        DEFAULT NOW(),
     updated_at       TIMESTAMP,
     followers_count  INT              DEFAULT 0,
     following_count  INT              DEFAULT 0,
@@ -23,19 +23,14 @@ CREATE TABLE account
     CONSTRAINT user_id_pk PRIMARY KEY (user_id)
 );
 
-CREATE SEQUENCE user_relationships_sequence
-    START 100000
-    INCREMENT BY 1
-    CACHE 50;
-
 CREATE TABLE user_relationships
 (
-    relationship_id BIGINT NOT NULL DEFAULT NEXTVAL('user_relationships_sequence'),
-    user_id         UUID   NOT NULL,
-    target_user_id  UUID   NOT NULL,
+    user_id        UUID NOT NULL,
+    target_user_id UUID NOT NULL,
+    created_at     TIMESTAMP DEFAULT NOW(),
     ---------------------------------------
-    CONSTRAINT user_relationships_id_fk FOREIGN KEY (user_id) REFERENCES account (user_id) ON DELETE SET NULL,
-    CONSTRAINT user_relationships_target_fk FOREIGN KEY (target_user_id) REFERENCES account (user_id) ON DELETE SET NULL,
-    CONSTRAINT user_relationship_uq UNIQUE (user_id, target_user_id),
-    CONSTRAINT user_relationship_chk CHECK (user_id != target_user_id)
+    CONSTRAINT pk_user_relationship PRIMARY KEY (user_id, target_user_id),
+    CONSTRAINT chk_not_self CHECK (user_id != target_user_id),
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES account (user_id) ON DELETE SET NULL,
+    CONSTRAINT fk_target_user FOREIGN KEY (target_user_id) REFERENCES account (user_id) ON DELETE SET NULL
 );
