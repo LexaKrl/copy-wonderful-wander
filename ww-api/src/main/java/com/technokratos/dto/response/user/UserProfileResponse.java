@@ -5,6 +5,8 @@ import java.util.UUID;
 public record UserProfileResponse(
         UUID userId,
         String username,
+        String firstname,
+        String lastname,
         String bio,
         String avatarUrl,
         int followersCount,
