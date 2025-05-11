@@ -160,4 +160,12 @@ public class UserRepository {
                 .where(Tables.ACCOUNT.USER_ID.eq(userId))
                 .execute();
     }
+
+    public boolean existsById(UUID userId) {
+        return dsl.fetchExists(
+                dsl
+                        .selectFrom(Tables.ACCOUNT)
+                        .where(Tables.ACCOUNT.USER_ID.eq(userId))
+        );
+    }
 }

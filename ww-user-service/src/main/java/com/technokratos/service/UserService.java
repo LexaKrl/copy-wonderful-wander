@@ -33,22 +33,27 @@ public class UserService {
     }
 
     public List<UserProfileResponse> getFriendsByUserId(UUID userId, Pageable pageable) {
+        if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(userId);
         return userMapper.toUserProfileResponse(userRepository.getFriendsByUserId(userId, pageable));
     }
 
     public List<UserProfileResponse> getFollowersByUserId(UUID userId, Pageable pageable) {
+        if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(userId);
         return userMapper.toUserProfileResponse(userRepository.getFollowersByUserId(userId, pageable));
     }
 
     public List<UserProfileResponse> getFollowingByUserId(UUID userId, Pageable pageable) {
+        if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(userId);
         return userMapper.toUserProfileResponse(userRepository.getFollowingByUserId(userId, pageable));
     }
 
     public void follow(UUID userId, UUID targetUserId) {
+        if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(targetUserId);
         userRepository.follow(userId, targetUserId);
     }
 
     public void unfollow(UUID userId, UUID targetUserId) {
+        if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(targetUserId);
         userRepository.unfollow(userId, targetUserId);
     }
 
@@ -66,4 +71,9 @@ public class UserService {
     public void deleteUser(UUID userId) {
         userRepository.delete(userId);
     }
+
+    private boolean checkUserNotExists(UUID userId) {
+        return !userRepository.existsById(userId);
+    }
+
 }
