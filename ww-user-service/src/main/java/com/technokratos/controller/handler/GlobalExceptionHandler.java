@@ -1,7 +1,7 @@
 package com.technokratos.controller.handler;
 
-import com.technokratos.controller.handler.exception.BaseExceptionMessage;
-import com.technokratos.controller.handler.exception.ValidationExceptionMessage;
+import com.technokratos.dto.exception.BaseExceptionMessage;
+import com.technokratos.dto.exception.ValidationExceptionMessage;
 import com.technokratos.exception.ServiceException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
