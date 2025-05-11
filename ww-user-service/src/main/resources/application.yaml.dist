@@ -1,7 +1,18 @@
-# Example configuration file for sensitive data
+# Example application file
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/your-database
-    driver-class-name: your.Driver.ClassName
-    username: your-username
-    password: your-password
+    username:
+    password:
+    url:
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/user-service/changelog-master.xml
+  jooq:
+    sql-dialect: postgres
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+logging:
+  level:
+    org.jooq: WARN
