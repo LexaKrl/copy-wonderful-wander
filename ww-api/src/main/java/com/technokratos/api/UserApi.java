@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+@Validated
 @RequestMapping("/api/users")
 public interface UserApi {
     @GetMapping("/me")
