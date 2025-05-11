@@ -3,9 +3,9 @@ package com.technokratos.controller.handler;
 import com.technokratos.controller.handler.exception.BaseExceptionMessage;
 import com.technokratos.controller.handler.exception.ValidationExceptionMessage;
 import com.technokratos.exception.ServiceException;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -28,14 +28,22 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ValidationExceptionMessage handleValidationException(HttpServletRequest req, MethodArgumentNotValidException ex) {
+    public final ValidationExceptionMessage handleValidationException(MethodArgumentNotValidException exception) {
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach(error ->
+        exception.getBindingResult().getFieldErrors().forEach(error ->
                 errors.put(error.getField(), error.getDefaultMessage()));
-        System.out.println(req.getRequestURL());
         return ValidationExceptionMessage.builder()
                 .error("Validation Exception")
                 .fieldErrors(errors)
+                .build();
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public final BaseExceptionMessage handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
+        return BaseExceptionMessage.builder()
+                .error(exception.getClass().getSimpleName())
+                .message(exception.getMessage())
                 .build();
     }
 }
