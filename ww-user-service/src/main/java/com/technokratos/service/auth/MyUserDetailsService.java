@@ -21,7 +21,7 @@ public class MyUserDetailsService implements UserDetailsService {
 
 
     /*
-    Настроить кэширование, чтобы при запросе на /profile/me не ходить всегда в бд
+    todo Настроить кэширование, чтобы при запросе на /profile/me не ходить всегда в бд
     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
