@@ -1,61 +1,37 @@
 package com.technokratos.service.auth;
 
+import com.technokratos.config.properties.JwtProperties;
 import com.technokratos.dto.request.security.UserForJwtTokenRequest;
-import com.technokratos.dto.response.security.UserLoginResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 @Service
+@RequiredArgsConstructor
 public class JWTService {
 
-    private final String secretKey;
+    private final JwtProperties jwtProperties;
 
-    private static final long ACCESS_TOKEN_DURATION = 1000 * 60 * 60;
-
-    public JWTService() {
-        try {
-            KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
-            SecretKey sk = keyGenerator.generateKey();
-            secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public UserLoginResponse generateTokens(UserForJwtTokenRequest userInfo) {
-        String accessToken = generateAccessToken(userInfo);
-
-        String refreshToken = generateRefreshToken();
-
-        return UserLoginResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
-    }
-
-    private String generateAccessToken(UserForJwtTokenRequest userInfo) {
+    public String generateAccessToken(UserForJwtTokenRequest userInfo) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("id", userInfo.id());
+        claims.put("id", userInfo.userId());
 
-        String accessToken = Jwts.builder()
+        return Jwts.builder()
                 .claims()
                 .add(claims)
                 .subject(userInfo.username())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_DURATION))
+                .expiration(new Date(System.currentTimeMillis() + jwtProperties.getAccessTokenDuration()))
                 .and()
                 .signWith(getKey())
                 .compact();
@@ -68,7 +44,7 @@ public class JWTService {
     }
 
     private SecretKey getKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.getSecretKey());
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
@@ -91,14 +67,16 @@ public class JWTService {
 
     public boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUserName(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        return (username.equals(userDetails.getUsername()) && !isTokenExpiredSoon(token));
     }
 
-    private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+    public boolean isTokenExpiredSoon(String token) {
+        Date expiration = extractExpiration(token);
+        long timeLeft = expiration.getTime() - System.currentTimeMillis();
+        return timeLeft < jwtProperties.getTimeTokenEndSoon();
     }
 
-    private Date extractExpiration(String token) {
+    public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
