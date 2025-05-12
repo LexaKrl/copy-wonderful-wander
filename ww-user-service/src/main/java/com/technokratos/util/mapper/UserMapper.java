@@ -25,6 +25,8 @@ public interface UserMapper {
 
     UserForJwtTokenRequest toJwtUserInfo(UserEntity userEntity);
 
+    UserForJwtTokenRequest toJwtUserInfo(Account account);
+
     UserEntity accountToUserEntity(Account account);
 
     @Mapping(target = "userId", ignore = true)
