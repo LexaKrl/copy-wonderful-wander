@@ -39,3 +39,14 @@ CREATE TABLE user_relationships
     CONSTRAINT user_relationship_uq UNIQUE (user_id, target_user_id),
     CONSTRAINT user_relationship_chk CHECK (user_id != target_user_id)
 );
+
+CREATE TABLE refresh_token
+(
+    refresh_token_id UUID                   NOT NULL,
+    token            VARCHAR(255) UNIQUE    NOT NULL,
+    user_id          UUID                   NOT NULL,
+    expiry_date      TIMESTAMP              NOT NULL,
+    ----------------------------------------------------------
+    CONSTRAINT refresh_token_id_pk PRIMARY KEY (refresh_token_id),
+    CONSTRAINT refresh_token_user_id_fk FOREIGN KEY (user_id) REFERENCES account (user_id) ON DELETE SET NULL
+);
