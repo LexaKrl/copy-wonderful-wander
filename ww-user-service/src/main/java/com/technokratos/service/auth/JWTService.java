@@ -35,12 +35,17 @@ public class JWTService {
                 .and()
                 .signWith(getKey())
                 .compact();
-
-        return accessToken;
     }
 
-    private String generateRefreshToken() {
-        return "";
+    public String generateRefreshToken(String username) {
+        Map<String, Object> claims = new HashMap<>();
+
+        return Jwts.builder()
+                .subject(username)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + jwtProperties.getRefreshTokenDuration()))
+                .signWith(getKey())
+                .compact();
     }
 
     private SecretKey getKey() {
