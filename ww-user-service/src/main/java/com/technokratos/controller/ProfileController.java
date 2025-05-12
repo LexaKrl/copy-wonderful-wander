@@ -3,6 +3,7 @@ package com.technokratos.controller;
 import com.technokratos.dto.response.user.UserResponse;
 import com.technokratos.model.UserEntity;
 import com.technokratos.model.UserPrincipal;
+import com.technokratos.security.BaseUserContextHolder;
 import com.technokratos.util.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,12 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class ProfileController {
 
+    private final BaseUserContextHolder baseUserContextHolder;
     private final UserMapper userMapper;
 
     @GetMapping("/me")
-    public UserResponse getProfile(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        log.info("UserPrincipal: {}", userPrincipal);
-        UserEntity user = userPrincipal.getUser();
+    public UserResponse getProfile() {
+        UserEntity user = baseUserContextHolder.getUserFromSecurityContext();
+        log.info("User: {}", user);
         return userMapper.toResponse(user);
     }
 }
