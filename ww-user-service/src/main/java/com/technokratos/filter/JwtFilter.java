@@ -1,6 +1,7 @@
 package com.technokratos.filter;
 
 import com.technokratos.service.auth.JWTService;
+import com.technokratos.service.auth.JwtProvider;
 import com.technokratos.service.auth.MyUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -25,7 +26,7 @@ public class JwtFilter extends OncePerRequestFilter {
     public static final String HEADER_NAME = "Authorization";
 
     private final JWTService jwtService;
-    private final ApplicationContext context;
+    private final MyUserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -40,7 +41,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails = context.getBean(MyUserDetailsService.class).loadUserByUsername(username);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
             if (jwtService.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken =

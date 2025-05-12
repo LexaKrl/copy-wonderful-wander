@@ -25,21 +25,23 @@ public interface UserMapper {
 
     UserForJwtTokenRequest toJwtUserInfo(UserEntity userEntity);
 
+    UserForJwtTokenRequest toJwtUserInfo(Account account);
+
     UserEntity accountToUserEntity(Account account);
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "userId", ignore = true)
     UserEntity userRegistrationRequestToUserEntity(UserRegistrationRequest userRegistrationRequest);
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "userId", ignore = true)
     UserEntity userProfileUpdateRequestToUserEntity(UserProfileUpdateRequest userProfileUpdateRequest);
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "userId", ignore = true)
     UserEntity adminUserUpdateRequestToUserEntity(AdminUserUpdateRequest adminUserUpdateRequest);
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "userId", ignore = true)
     UserEntity userLoginRequestToUserEntity(UserLoginRequest userLoginRequest);
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "userId", ignore = true)
     UserEntity passwordChangeRequestToUserEntity(PasswordChangeRequest passwordChangeReq);
 
     UserResponse toUserResponse(Account account);
