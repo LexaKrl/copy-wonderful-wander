@@ -1,6 +1,7 @@
 package com.technokratos.filter;
 
 import com.technokratos.service.auth.JWTService;
+import com.technokratos.service.auth.JwtProvider;
 import com.technokratos.service.auth.MyUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -26,7 +27,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final JWTService jwtService;
     private final MyUserDetailsService userDetailsService;
-    private final ApplicationContext context;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

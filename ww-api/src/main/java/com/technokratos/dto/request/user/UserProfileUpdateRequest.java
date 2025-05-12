@@ -1,7 +1,7 @@
 package com.technokratos.dto.request.user;
 
 public record UserProfileUpdateRequest(
-        String name,
+        String firstname,
         String lastname,
         String username,
         String email,

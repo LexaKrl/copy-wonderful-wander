@@ -35,6 +35,17 @@ CREATE TABLE user_relationships
     CONSTRAINT fk_target_user FOREIGN KEY (target_user_id) REFERENCES account (user_id) ON DELETE SET NULL
 );
 
+CREATE TABLE refresh_token
+(
+    refresh_token_id UUID                   NOT NULL,
+    token            VARCHAR(255) UNIQUE    NOT NULL,
+    user_id          UUID                   NOT NULL,
+    expiry_date      TIMESTAMP              NOT NULL,
+    ----------------------------------------------------------
+    CONSTRAINT refresh_token_id_pk PRIMARY KEY (refresh_token_id),
+    CONSTRAINT refresh_token_user_id_fk FOREIGN KEY (user_id) REFERENCES account (user_id) ON DELETE SET NULL
+);
+
 CREATE OR REPLACE FUNCTION update_user_stats()
     RETURNS TRIGGER AS
 $$
