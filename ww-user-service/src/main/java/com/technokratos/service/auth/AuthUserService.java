@@ -3,9 +3,10 @@ package com.technokratos.service.auth;
 import com.technokratos.dto.request.security.UserForJwtTokenRequest;
 import com.technokratos.dto.request.security.UserLoginRequest;
 import com.technokratos.dto.request.security.UserRegistrationRequest;
-import com.technokratos.dto.response.security.UserLoginResponse;
+import com.technokratos.dto.response.security.AuthResponse;
 import com.technokratos.dto.response.user.UserResponse;
 import com.technokratos.enums.security.UserRole;
+import com.technokratos.exception.UserByUsernameNotFoundException;
 import com.technokratos.model.UserEntity;
 import com.technokratos.repository.UserRepository;
 import com.technokratos.tables.pojos.Account;
@@ -33,7 +34,7 @@ public class AuthUserService {
     private final UserMapper userMapper;
 
 
-    public UserLoginResponse register(UserRegistrationRequest userDto) {
+    public AuthResponse register(UserRegistrationRequest userDto) {
         log.info("user service register doing");
         log.info("register data: userdto: {}", userDto);
 
@@ -51,15 +52,15 @@ public class AuthUserService {
         return jwtService.generateTokens(userInfo);
     }
 
-    public UserLoginResponse verify(UserLoginRequest userDto) {
+    public AuthResponse verify(UserLoginRequest userDto) {
         Authentication authentication =
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                         userDto.username(),
                         userDto.password()));
         if (authentication.isAuthenticated()) {
-            Account account = userRepository.findByUsername(userDto.username()).orElseThrow(() -> new RuntimeException("User not found"));
-            UserEntity userEntity = userMapper.accountToUserEntity(account);
-            UserForJwtTokenRequest userInfo = userMapper.toJwtUserInfo(userEntity);
+            Account account = userRepository.findByUsername(userDto.username())
+                    .orElseThrow(() -> new UserByUsernameNotFoundException(userDto.username()));
+            UserForJwtTokenRequest userInfo = userMapper.toJwtUserInfo(account);
             return jwtService.generateTokens(userInfo);
         }
         log.error("User is not authenticated");
