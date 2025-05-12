@@ -30,7 +30,7 @@ public class AuthUserService {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final JWTService jwtService;
+    private final JwtProvider jwtProvider;
     private final UserMapper userMapper;
 
 
@@ -49,7 +49,7 @@ public class AuthUserService {
 
         UserForJwtTokenRequest userInfo = userMapper.toJwtUserInfo(user);
         log.info("register data: userInfo for jwt: {}", userInfo);
-        return jwtService.generateTokens(userInfo);
+        return jwtProvider.generateTokens(userInfo);
     }
 
     public AuthResponse verify(UserLoginRequest userDto) {
@@ -61,7 +61,7 @@ public class AuthUserService {
             Account account = userRepository.findByUsername(userDto.username())
                     .orElseThrow(() -> new UserByUsernameNotFoundException(userDto.username()));
             UserForJwtTokenRequest userInfo = userMapper.toJwtUserInfo(account);
-            return jwtService.generateTokens(userInfo);
+            return jwtProvider.generateTokens(userInfo);
         }
         log.error("User is not authenticated");
         throw new RuntimeException("User is not authenticated");
