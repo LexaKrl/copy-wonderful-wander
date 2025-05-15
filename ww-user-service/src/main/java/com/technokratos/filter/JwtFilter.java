@@ -1,14 +1,12 @@
 package com.technokratos.filter;
 
-import com.technokratos.service.auth.JWTService;
-import com.technokratos.service.auth.JwtProvider;
+import com.technokratos.service.auth.JwtService;
 import com.technokratos.service.auth.MyUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +23,7 @@ public class JwtFilter extends OncePerRequestFilter {
     public static final String BEARER_PREFIX = "Bearer ";
     public static final String HEADER_NAME = "Authorization";
 
-    private final JWTService jwtService;
+    private final JwtService jwtService;
     private final MyUserDetailsService userDetailsService;
 
     @Override

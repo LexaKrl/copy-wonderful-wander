@@ -18,7 +18,7 @@ import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
-public class JWTService {
+public class JwtService {
 
     private final JwtProperties jwtProperties;
 

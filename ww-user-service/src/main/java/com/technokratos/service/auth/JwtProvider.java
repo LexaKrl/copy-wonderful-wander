@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class JwtProvider {
 
     private final RefreshTokenService refreshTokenService;
-    private final JWTService jwtService;
+    private final JwtService jwtService;
 
     public AuthResponse generateTokens(UserForJwtTokenRequest userInfo) {
         String accessToken = jwtService.generateAccessToken(userInfo);

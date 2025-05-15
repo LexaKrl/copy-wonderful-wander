@@ -22,7 +22,7 @@ import java.util.UUID;
 public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
-    private final JWTService jwtService;
+    private final JwtService jwtService;
     private final UserRepository userRepository;//todo переделать на сервис
     private final UserMapper userMapper;
     private final DateConverter dateConverter;
