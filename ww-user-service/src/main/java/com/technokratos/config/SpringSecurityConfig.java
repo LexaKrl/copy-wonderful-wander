@@ -23,6 +23,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SpringSecurityConfig {
 
+    private final static String[] PUBLIC_URLS = {
+                "/api/auth/register",
+                "/api/auth/login",
+                "/api/auth/refresh-token",
+                "/swagger-ui/**",
+                "/v3/api-docs/**",
+                "/swagger-ui.html",
+                "/error"
+    };
+
     private final UserDetailsService userDetailsService;
     private final JwtFilter jwtFilter;
 
@@ -31,8 +41,7 @@ public class SpringSecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/refresh-token",
-                                "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/error")
+                        .requestMatchers(PUBLIC_URLS)
                         .permitAll()
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
@@ -59,5 +68,4 @@ public class SpringSecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
 }
