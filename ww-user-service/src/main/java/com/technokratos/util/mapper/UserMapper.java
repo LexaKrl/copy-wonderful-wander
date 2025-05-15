@@ -28,7 +28,6 @@ public interface UserMapper {
 
     UserEntity accountToUserEntity(Account account);
 
-    @Mapping(target = "userId", ignore = true)
     UserEntity userRegistrationRequestToUserEntity(UserRegistrationRequest userRegistrationRequest);
 
     @Mapping(target = "userId", ignore = true)

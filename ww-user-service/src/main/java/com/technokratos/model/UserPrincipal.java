@@ -14,32 +14,26 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Getter
-@ToString
 public class UserPrincipal implements UserDetails {
 
-    private final UserEntity user;
+    private final UUID userId;
+    private final String username;
+    private final UserRole userRole;
+    private final String password;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(user.getRole().name()));
+        return List.of(new SimpleGrantedAuthority(userRole.name()));
     }
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return user.getUsername();
-    }
-
-    public UUID getId() {
-        return user.getUserId();
-    }
-
-    public UserRole getRole() {
-        return user.getRole();
+        return username;
     }
 
     @Override

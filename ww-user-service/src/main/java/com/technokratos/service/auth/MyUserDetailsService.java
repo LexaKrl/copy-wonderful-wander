@@ -1,6 +1,7 @@
 package com.technokratos.service.auth;
 
 import com.technokratos.exception.UserByUsernameNotFoundException;
+import com.technokratos.model.UserEntity;
 import com.technokratos.model.UserPrincipal;
 import com.technokratos.repository.UserRepository;
 import com.technokratos.util.mapper.UserMapper;
@@ -25,12 +26,14 @@ public class MyUserDetailsService implements UserDetailsService {
     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        log.info("loadByUsername doing... {}", username);
-        return new UserPrincipal(userMapper.accountToUserEntity(
+        log.info("MyUserDetailsService loadByUsername doing... {}", username);
+        UserEntity user = userMapper.accountToUserEntity(
                 userRepository
                         .findByUsername(username)
                         .orElseThrow(() ->
                                 new UserByUsernameNotFoundException(username))
-        ));
+        );
+        log.info("user: {}", user);
+        return new UserPrincipal(user.getUserId(), user.getUsername(), user.getRole(), user.getPassword());
     }
 }

@@ -1,5 +1,7 @@
 package com.technokratos.filter;
 
+import com.technokratos.enums.security.UserRole;
+import com.technokratos.model.UserPrincipal;
 import com.technokratos.service.auth.JwtService;
 import com.technokratos.service.auth.MyUserDetailsService;
 import jakarta.servlet.FilterChain;
@@ -15,31 +17,36 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
     public static final String BEARER_PREFIX = "Bearer ";
-    public static final String HEADER_NAME = "Authorization";
+    public static final String AUTHORIZATION_HEADER_NAME = "Authorization";
 
     private final JwtService jwtService;
     private final MyUserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String authHeader = request.getHeader(HEADER_NAME);
+        String authHeader = request.getHeader(AUTHORIZATION_HEADER_NAME);
         String token = null;
+        UUID userId = null;
         String username = null;
+        UserRole userRole = null;
 
         if (authHeader != null && authHeader.startsWith(BEARER_PREFIX)) {
             token = authHeader.substring(BEARER_PREFIX.length());
-            username = jwtService.extractUserName(token);
+            userId = jwtService.extractUserId(token);
+            username = jwtService.extractUsername(token);
+            userRole = jwtService.extractUserRole(token);
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = new UserPrincipal(userId, username, userRole, "");
 
             if (jwtService.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken =

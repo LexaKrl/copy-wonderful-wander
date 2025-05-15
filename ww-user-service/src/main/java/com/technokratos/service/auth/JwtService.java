@@ -2,11 +2,13 @@ package com.technokratos.service.auth;
 
 import com.technokratos.config.properties.JwtProperties;
 import com.technokratos.dto.request.security.UserForJwtTokenRequest;
+import com.technokratos.enums.security.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,7 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 @Service
@@ -24,7 +27,8 @@ public class JwtService {
 
     public String generateAccessToken(UserForJwtTokenRequest userInfo) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("id", userInfo.userId());
+        claims.put("userId", userInfo.userId());
+        claims.put("userRole", userInfo.role());
 
         return Jwts.builder()
                 .claims()
@@ -53,8 +57,18 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String extractUserName(String token) {
+    public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public UUID extractUserId(String token) {
+        Claims claims = extractAllClaims(token);
+        return UUID.fromString(claims.get("userId", String.class));
+    }
+
+    public UserRole extractUserRole(String token) {
+        Claims claims = extractAllClaims(token);
+        return UserRole.valueOf(claims.get("userRole", String.class));
     }
 
     private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
@@ -71,7 +85,7 @@ public class JwtService {
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUserName(token);
+        final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpiredSoon(token));
     }
 
