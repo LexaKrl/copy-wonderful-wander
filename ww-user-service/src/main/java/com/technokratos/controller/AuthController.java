@@ -1,5 +1,6 @@
 package com.technokratos.controller;
 
+import com.technokratos.api.AuthApi;
 import com.technokratos.dto.request.security.RefreshTokenRequest;
 import com.technokratos.dto.request.security.UserLoginRequest;
 import com.technokratos.dto.request.security.UserRegistrationRequest;
@@ -14,30 +15,23 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@Slf4j
-public class AuthController {
+public class AuthController implements AuthApi {
 
     private final AuthUserService userService;
     private final RefreshTokenService refreshTokenService;
 
-    @PostMapping("/register")
+    @Override
     public AuthResponse register(@RequestBody UserRegistrationRequest userDto) {
         return userService.register(userDto);
     }
 
-    @PostMapping("/login")
+    @Override
     public AuthResponse login(@RequestBody UserLoginRequest userDto) {
         return userService.verify(userDto);
     }
 
-    @GetMapping("/users")
-    public List<UserResponse> getUsers() {
-        return userService.getAll();
-    }
-
-    @PostMapping("/refresh-token")
+    @Override
     public AuthResponse refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
         return refreshTokenService.refreshAccessToken(refreshTokenRequest.refreshToken());
     }
