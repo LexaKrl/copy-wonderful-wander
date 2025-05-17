@@ -49,15 +49,17 @@ public class UserService {
     }
 
     public void follow(UUID userId, UUID targetUserId) {
+        if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(userId);
         if (checkUserNotExists(targetUserId)) throw new UserByIdNotFoundException(targetUserId);
         if (userId.equals(targetUserId)) throw new FollowConflictException("You can't follow to yourself");
         if (userRepository.existsFollowByUserId(userId, targetUserId))
-            throw new FollowConflictException("Follow already exists to the user with id = %s".formatted(userId));
+            throw new FollowConflictException("Follow already exists from user with id = %s to user with id = %s".formatted(userId, targetUserId));
         userRepository.follow(userId, targetUserId);
     }
 
     public void unfollow(UUID userId, UUID targetUserId) {
-        if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(targetUserId);
+        if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(userId);
+        if (checkUserNotExists(targetUserId)) throw new UserByIdNotFoundException(targetUserId);
         if (userId.equals(targetUserId)) throw new FollowConflictException("You can't unfollow from yourself");
         userRepository.unfollow(userId, targetUserId);
     }
@@ -74,11 +76,11 @@ public class UserService {
     }
 
     public void deleteUser(UUID userId) {
+        if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(userId);
         userRepository.delete(userId);
     }
 
     private boolean checkUserNotExists(UUID userId) {
         return !userRepository.existsById(userId);
     }
-
 }
