@@ -8,6 +8,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -21,11 +22,13 @@ import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class JwtService {
 
     private final JwtProperties jwtProperties;
 
     public String generateAccessToken(UserForJwtTokenRequest userInfo) {
+        log.info("Access token generating for user: {}", userInfo);
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userInfo.userId());
         claims.put("userRole", userInfo.role());
@@ -42,6 +45,7 @@ public class JwtService {
     }
 
     public String generateRefreshToken(String username) {
+        log.info("Refresh token generating");
         Map<String, Object> claims = new HashMap<>();
 
         return Jwts.builder()
@@ -63,12 +67,24 @@ public class JwtService {
 
     public UUID extractUserId(String token) {
         Claims claims = extractAllClaims(token);
-        return UUID.fromString(claims.get("userId", String.class));
+        String userId = claims.get("userId", String.class);
+
+        if (userId == null) {
+            throw new RuntimeException("UserId in jwt is null");
+        }
+
+        return UUID.fromString(userId);
     }
 
     public UserRole extractUserRole(String token) {
         Claims claims = extractAllClaims(token);
-        return UserRole.valueOf(claims.get("userRole", String.class));
+        String userRole = claims.get("userRole", String.class);
+
+        if (userRole == null) {
+            throw new RuntimeException("Role in jwt is null");
+        }
+
+        return UserRole.valueOf(userRole);
     }
 
     private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {

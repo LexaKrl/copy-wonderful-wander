@@ -29,6 +29,7 @@ public class RefreshTokenService {
 
 
     public String createRefreshToken(UUID userId) {
+        log.info("Create refresh token for user with id = {}", userId);
         Account user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserByIdNotFoundException(userId));
         String token = jwtService.generateRefreshToken(user.getUsername());

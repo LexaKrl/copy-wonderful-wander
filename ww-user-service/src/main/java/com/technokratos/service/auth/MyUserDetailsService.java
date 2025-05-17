@@ -20,7 +20,6 @@ public class MyUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-
     /*
     todo Настроить кэширование, чтобы при запросе на /profile/me не ходить всегда в бд
     */
@@ -34,6 +33,6 @@ public class MyUserDetailsService implements UserDetailsService {
                                 new UserByUsernameNotFoundException(username))
         );
         log.info("user: {}", user);
-        return new UserPrincipal(user.getUserId(), user.getUsername(), user.getRole(), user.getPassword());
+        return new UserPrincipal(user.getUserId(), user.getUsername(), user.getRole(), user.getPassword());//todo мб сделать билдер
     }
 }
