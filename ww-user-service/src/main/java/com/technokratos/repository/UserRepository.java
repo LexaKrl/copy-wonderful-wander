@@ -168,4 +168,13 @@ public class UserRepository {
                         .where(Tables.ACCOUNT.USER_ID.eq(userId))
         );
     }
+
+    public boolean existsFollowByUserId(UUID userId, UUID targetUserId) {
+        return dsl.fetchExists(
+                dsl
+                        .selectFrom(Tables.USER_RELATIONSHIPS)
+                        .where(Tables.USER_RELATIONSHIPS.USER_ID.eq(userId)
+                                .and(Tables.USER_RELATIONSHIPS.TARGET_USER_ID.eq(targetUserId)))
+        );
+    }
 }

@@ -3,6 +3,7 @@ package com.technokratos.service;
 import com.technokratos.dto.request.user.UserRequest;
 import com.technokratos.dto.response.user.UserProfileResponse;
 import com.technokratos.dto.response.user.UserResponse;
+import com.technokratos.exception.FollowConflictException;
 import com.technokratos.exception.UserByIdNotFoundException;
 import com.technokratos.exception.UserByUsernameNotFoundException;
 import com.technokratos.repository.UserRepository;
@@ -48,12 +49,16 @@ public class UserService {
     }
 
     public void follow(UUID userId, UUID targetUserId) {
-        if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(targetUserId);
+        if (checkUserNotExists(targetUserId)) throw new UserByIdNotFoundException(targetUserId);
+        if (userId.equals(targetUserId)) throw new FollowConflictException("You can't follow to yourself");
+        if (userRepository.existsFollowByUserId(userId, targetUserId))
+            throw new FollowConflictException("Follow already exists to the user with id = %s".formatted(userId));
         userRepository.follow(userId, targetUserId);
     }
 
     public void unfollow(UUID userId, UUID targetUserId) {
         if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(targetUserId);
+        if (userId.equals(targetUserId)) throw new FollowConflictException("You can't unfollow from yourself");
         userRepository.unfollow(userId, targetUserId);
     }
 
