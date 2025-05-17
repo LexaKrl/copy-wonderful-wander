@@ -3,6 +3,7 @@ package com.technokratos.controller.handler;
 import com.technokratos.dto.exception.BaseExceptionMessage;
 import com.technokratos.dto.exception.ValidationExceptionMessage;
 import com.technokratos.exception.ServiceException;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 /**
  * Глобальный обработчик исключений для REST API.
  */
+@Hidden
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     /**
