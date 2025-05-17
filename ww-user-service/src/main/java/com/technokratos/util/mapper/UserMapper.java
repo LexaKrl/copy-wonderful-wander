@@ -1,7 +1,6 @@
 package com.technokratos.util.mapper;
 
 import com.technokratos.dto.request.security.*;
-import com.technokratos.dto.request.user.UserProfileUpdateRequest;
 import com.technokratos.dto.response.user.UserProfileResponse;
 import com.technokratos.dto.response.user.UserResponse;
 import com.technokratos.model.UserEntity;
@@ -30,9 +29,6 @@ public interface UserMapper {
 
     @Mapping(target = "userId", ignore = true)
     UserEntity userRegistrationRequestToUserEntity(UserRegistrationRequest userRegistrationRequest);
-
-    @Mapping(target = "userId", ignore = true)
-    UserEntity userProfileUpdateRequestToUserEntity(UserProfileUpdateRequest userProfileUpdateRequest);
 
     @Mapping(target = "userId", ignore = true)
     UserEntity adminUserUpdateRequestToUserEntity(AdminUserUpdateRequest adminUserUpdateRequest);
