@@ -36,15 +36,9 @@ public interface UserApi {
             @ApiResponse(responseCode = "200", description = "Профиль успешно получен",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = UserResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Ошибка на уровне сервера или бизнес-логики",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = BaseExceptionMessage.class))),
             @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class))),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
     UserResponse getCurrentUserProfile();
 
@@ -65,9 +59,6 @@ public interface UserApi {
             @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class))),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
     UserResponse updateCurrentUser(
             @Parameter(description = "Данные для обновления профиля пользователя", required = true)
@@ -78,13 +69,7 @@ public interface UserApi {
     @Operation(summary = "Удалить текущего пользователя")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Пользователь успешно удалён"),
-            @ApiResponse(responseCode = "400", description = "Ошибка при удалении пользователя",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = BaseExceptionMessage.class))),
             @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = BaseExceptionMessage.class))),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
@@ -97,10 +82,13 @@ public interface UserApi {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Подписка успешно осуществлена"),
-            @ApiResponse(responseCode = "400", description = "Ошибка при подписке",
+            @ApiResponse(responseCode = "400", description = "Ошибка валидации",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class))),
             @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = BaseExceptionMessage.class))),
+            @ApiResponse(responseCode = "409", description = "Конфликт при подписке",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class))),
             @ApiResponse(responseCode = "404", description = "Пользователь с указанным targetId не найден",
@@ -119,7 +107,7 @@ public interface UserApi {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Подписка успешно удалена"),
-            @ApiResponse(responseCode = "400", description = "Ошибка при отписке",
+            @ApiResponse(responseCode = "400", description = "Ошибка валидации",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class))),
             @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован",
@@ -140,7 +128,7 @@ public interface UserApi {
             @ApiResponse(responseCode = "200", description = "Профиль пользователя успешно получен",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = UserProfileResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Ошибка при получении профиля",
+            @ApiResponse(responseCode = "400", description = "Ошибка валидации",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class))),
             @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован",
@@ -164,7 +152,7 @@ public interface UserApi {
             @ApiResponse(responseCode = "200", description = "Список друзей успешно получен",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = UserProfileResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Ошибка при получении списка друзей",
+            @ApiResponse(responseCode = "400", description = "Ошибка валидации",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class))),
             @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован",
@@ -189,7 +177,7 @@ public interface UserApi {
             @ApiResponse(responseCode = "200", description = "Список подписок успешно получен",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = UserProfileResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Ошибка при получении списка подписок",
+            @ApiResponse(responseCode = "400", description = "Ошибка валидации",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class))),
             @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован",
@@ -214,7 +202,7 @@ public interface UserApi {
             @ApiResponse(responseCode = "200", description = "Список подписчиков успешно получен",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = UserProfileResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Ошибка при получении списка подписчиков",
+            @ApiResponse(responseCode = "400", description = "Ошибка валидации",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class))),
             @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован",
