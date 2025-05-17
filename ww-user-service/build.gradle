@@ -14,6 +14,7 @@ dependencies {
     implementation 'org.springframework.data:spring-data-commons'
     implementation 'org.jooq:jooq-codegen'
     implementation "org.mapstruct:mapstruct:$mapstructVersion"
+    implementation 'org.liquibase:liquibase-core'
     annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
     runtimeOnly 'org.postgresql:postgresql'
 
@@ -32,6 +33,10 @@ dependencies {
     implementation project(':ww-db')
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:postgresql'
 }
 
 jooq {
@@ -86,6 +91,17 @@ liquibase {
     }
     runList = "main"
 }
+
+sourceSets {
+    test {
+        resources {
+            srcDirs += [
+                    project(":ww-db").sourceSets.main.resources
+            ]
+        }
+    }
+}
+
 
 tasks.named('generateJooq') {
     dependsOn 'update'
