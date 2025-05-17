@@ -3,6 +3,7 @@ package com.technokratos.api;
 import com.technokratos.dto.exception.BaseExceptionMessage;
 import com.technokratos.dto.exception.ValidationExceptionMessage;
 import com.technokratos.dto.request.user.UserRequest;
+import com.technokratos.dto.response.user.UserCompactResponse;
 import com.technokratos.dto.response.user.UserProfileResponse;
 import com.technokratos.dto.response.user.UserResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -121,7 +122,7 @@ public interface UserApi {
             @Parameter(description = "ID пользователя, от которого нужно отписаться", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable UUID targetUserId);
 
-    @GetMapping("/{userId}")
+    @GetMapping("/{targetUserId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Получить профиль любого пользователя по id")
     @ApiResponses(value = {
@@ -140,7 +141,7 @@ public interface UserApi {
     })
     UserProfileResponse getUserProfileById(
             @Parameter(description = "ID пользователя", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID userId);
+            @PathVariable UUID targetUserId);
 
     @GetMapping("/{userId}/friends")
     @ResponseStatus(HttpStatus.OK)
@@ -162,7 +163,7 @@ public interface UserApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    List<UserProfileResponse> getFriendsByUserId(
+    List<UserCompactResponse> getFriendsByUserId(
             @Parameter(description = "ID пользователя", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable UUID userId,
             Pageable pageable);
@@ -187,7 +188,7 @@ public interface UserApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    List<UserProfileResponse> getFollowingByUserId(
+    List<UserCompactResponse> getFollowingByUserId(
             @Parameter(description = "ID пользователя", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable UUID userId,
             Pageable pageable);
@@ -212,7 +213,7 @@ public interface UserApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    List<UserProfileResponse> getFollowersByUserId(
+    List<UserCompactResponse> getFollowersByUserId(
             @Parameter(description = "ID пользователя", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable UUID userId,
             Pageable pageable);

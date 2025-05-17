@@ -1,6 +1,7 @@
 package com.technokratos.util.mapper;
 
 import com.technokratos.dto.request.security.*;
+import com.technokratos.dto.response.user.UserCompactResponse;
 import com.technokratos.dto.response.user.UserProfileResponse;
 import com.technokratos.dto.response.user.UserResponse;
 import com.technokratos.model.UserEntity;
@@ -41,7 +42,13 @@ public interface UserMapper {
 
     UserResponse toUserResponse(Account account);
 
-    UserProfileResponse toUserProfileResponse(Account account);
+    @Mapping(target = "isFollowedByUser")
+    @Mapping(target = "isFollowingByUser")
+    @Mapping(target = "isFriends")
+    UserProfileResponse toUserProfileResponse(Account account,
+                                              boolean isFollowedByUser,
+                                              boolean isFollowingByUser,
+                                              boolean isFriends);
 
-    List<UserProfileResponse> toUserProfileResponse(List<Account> accounts);
+    List<UserCompactResponse> toUserCompactResponse(List<Account> followersByUserId);
 }

@@ -169,7 +169,7 @@ public class UserRepository {
         );
     }
 
-    public boolean existsFollowByUserId(UUID userId, UUID targetUserId) {
+    public boolean existsFollow(UUID userId, UUID targetUserId) {
         return dsl.fetchExists(
                 dsl
                         .selectFrom(Tables.USER_RELATIONSHIPS)

@@ -2,6 +2,7 @@ package com.technokratos.controller;
 
 import com.technokratos.api.UserApi;
 import com.technokratos.dto.request.user.UserRequest;
+import com.technokratos.dto.response.user.UserCompactResponse;
 import com.technokratos.dto.response.user.UserProfileResponse;
 import com.technokratos.dto.response.user.UserResponse;
 import com.technokratos.model.UserEntity;
@@ -46,22 +47,22 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public UserProfileResponse getUserProfileById(UUID userId) {
-        return userService.getProfileByUserId(userId);
+    public UserProfileResponse getUserProfileById(UUID targetUserId) {
+        return userService.getProfileByUserId(getCurrentUserId(), targetUserId);
     }
 
     @Override
-    public List<UserProfileResponse> getFriendsByUserId(UUID userId, Pageable pageable) {
+    public List<UserCompactResponse> getFriendsByUserId(UUID userId, Pageable pageable) {
         return userService.getFriendsByUserId(userId, pageable);
     }
 
     @Override
-    public List<UserProfileResponse> getFollowingByUserId(UUID userId, Pageable pageable) {
+    public List<UserCompactResponse> getFollowingByUserId(UUID userId, Pageable pageable) {
         return userService.getFollowingByUserId(userId, pageable);
     }
 
     @Override
-    public List<UserProfileResponse> getFollowersByUserId(UUID userId, Pageable pageable) {
+    public List<UserCompactResponse> getFollowersByUserId(UUID userId, Pageable pageable) {
         return userService.getFollowersByUserId(userId, pageable);
     }
 
