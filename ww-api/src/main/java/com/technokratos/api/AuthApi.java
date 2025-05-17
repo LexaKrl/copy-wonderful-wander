@@ -1,6 +1,7 @@
 package com.technokratos.api;
 
 
+import com.technokratos.dto.request.security.PasswordChangeRequest;
 import com.technokratos.dto.request.security.RefreshTokenRequest;
 import com.technokratos.dto.request.security.UserLoginRequest;
 import com.technokratos.dto.request.security.UserRegistrationRequest;
@@ -29,4 +30,7 @@ public interface AuthApi {
     @PostMapping("/refresh-token")
     @ResponseStatus(HttpStatus.OK)
     AuthResponse refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest);
+
+    @PostMapping("/change-pass")
+    void changePassword(@RequestBody PasswordChangeRequest passwordChangeRequest);
 }

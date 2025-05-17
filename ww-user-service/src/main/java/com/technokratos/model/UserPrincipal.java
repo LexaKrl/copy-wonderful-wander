@@ -18,12 +18,12 @@ public class UserPrincipal implements UserDetails {
 
     private final UUID userId;
     private final String username;
-    private final UserRole userRole;
+    private final UserRole role;
     private final String password;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(userRole.name()));
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override

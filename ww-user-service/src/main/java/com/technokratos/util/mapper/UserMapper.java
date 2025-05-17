@@ -5,6 +5,7 @@ import com.technokratos.dto.request.user.UserProfileUpdateRequest;
 import com.technokratos.dto.response.user.UserProfileResponse;
 import com.technokratos.dto.response.user.UserResponse;
 import com.technokratos.model.UserEntity;
+import com.technokratos.model.UserPrincipal;
 import com.technokratos.tables.pojos.Account;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -25,6 +26,8 @@ public interface UserMapper {
     UserForJwtTokenRequest toJwtUserInfo(UserEntity userEntity);
 
     UserForJwtTokenRequest toJwtUserInfo(Account account);
+
+    UserForJwtTokenRequest toJwtUserInfo(UserPrincipal userPrincipal);
 
     UserEntity accountToUserEntity(Account account);
 
