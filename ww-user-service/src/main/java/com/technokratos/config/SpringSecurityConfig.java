@@ -23,7 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SpringSecurityConfig {
 
-    private final static String[] PUBLIC_URLS = {
+    public final static String[] PUBLIC_URLS = {
                 "/api/auth/register",
                 "/api/auth/login",
                 "/api/auth/refresh-token",
