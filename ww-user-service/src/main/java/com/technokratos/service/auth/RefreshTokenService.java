@@ -1,10 +1,10 @@
 package com.technokratos.service.auth;
 
 import com.technokratos.dto.response.security.AuthResponse;
-import com.technokratos.exception.UserByIdNotFoundException;
+import com.technokratos.dto.response.user.UserResponse;
+import com.technokratos.exception.InvalidJwtException;
 import com.technokratos.repository.RefreshTokenRepository;
-import com.technokratos.repository.UserRepository;
-import com.technokratos.tables.pojos.Account;
+import com.technokratos.service.UserService;
 import com.technokratos.tables.pojos.RefreshToken;
 import com.technokratos.util.DateConverter;
 import com.technokratos.util.mapper.UserMapper;
@@ -23,16 +23,15 @@ public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtService jwtService;
-    private final UserRepository userRepository;//todo переделать на сервис
+    private final UserService userService;
     private final UserMapper userMapper;
     private final DateConverter dateConverter;
 
 
     public String createRefreshToken(UUID userId) {
         log.info("Create refresh token for user with id = {}", userId);
-        Account user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserByIdNotFoundException(userId));
-        String token = jwtService.generateRefreshToken(user.getUsername());
+        UserResponse user = userService.getUserById(userId);
+        String token = jwtService.generateRefreshToken(user.username());
         LocalDateTime expiryDate = dateConverter.dateToLocalDateTime(jwtService.extractExpiration(token));
 
         RefreshToken refreshToken = new RefreshToken(UUID.randomUUID(), token, userId, expiryDate);
@@ -43,7 +42,7 @@ public class RefreshTokenService {
 
     public AuthResponse refreshAccessToken(String refreshToken) {
         RefreshToken storedToken = refreshTokenRepository.findByToken(refreshToken)
-                .orElseThrow(() -> new RuntimeException("Invalid Refresh Token"));
+                .orElseThrow(() -> new InvalidJwtException("Invalid Refresh token"));
 
         UUID userId = storedToken.getUserId();
         String newRefreshToken = storedToken.getToken();
@@ -51,7 +50,7 @@ public class RefreshTokenService {
         Instant expiryInstant = dateConverter.localDateTimeToInstant(storedToken.getExpiryDate());
         if (expiryInstant.isBefore(Instant.now())) {
             refreshTokenRepository.deleteByToken(storedToken.getToken());
-            throw new RuntimeException("Refresh Token was expired");
+            throw new InvalidJwtException("Refresh Token was expired");
         }
 
         if (jwtService.isTokenExpiredSoon(refreshToken)) {
@@ -60,8 +59,8 @@ public class RefreshTokenService {
             log.info("The refresh token has been updated to: {}", newRefreshToken);
         }
 
-        Account account = userRepository.findById(userId).orElseThrow(() -> new UserByIdNotFoundException(userId));
-        String newAccessToken = jwtService.generateAccessToken(userMapper.toJwtUserInfo(account));
+        UserResponse user = userService.getUserById(userId);
+        String newAccessToken = jwtService.generateAccessToken(userMapper.toJwtUserInfo(user));
 
         return new AuthResponse(newAccessToken, newRefreshToken);
     }

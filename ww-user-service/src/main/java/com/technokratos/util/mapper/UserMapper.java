@@ -25,7 +25,7 @@ public interface UserMapper {
 
     UserForJwtTokenRequest toJwtUserInfo(UserEntity userEntity);
 
-    UserForJwtTokenRequest toJwtUserInfo(Account account);
+    UserForJwtTokenRequest toJwtUserInfo(UserResponse user);
 
     UserForJwtTokenRequest toJwtUserInfo(UserPrincipal userPrincipal);
 
