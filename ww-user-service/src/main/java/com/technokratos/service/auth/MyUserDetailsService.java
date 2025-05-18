@@ -33,6 +33,11 @@ public class MyUserDetailsService implements UserDetailsService {
                                 new UserByUsernameNotFoundException(username))
         );
         log.info("user: {}", user);
-        return new UserPrincipal(user.getUserId(), user.getUsername(), user.getRole(), user.getPassword());//todo мб сделать билдер
+        return UserPrincipal.builder()
+                            .userId(user.getUserId())
+                            .username(user.getUsername())
+                            .role(user.getRole())
+                            .password(user.getPassword())
+                            .build();
     }
 }

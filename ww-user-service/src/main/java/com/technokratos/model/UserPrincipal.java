@@ -1,6 +1,7 @@
 package com.technokratos.model;
 
 import com.technokratos.enums.security.UserRole;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -14,6 +15,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Getter
+@Builder
 public class UserPrincipal implements UserDetails {
 
     private final UUID userId;
