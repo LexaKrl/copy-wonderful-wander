@@ -3,13 +3,14 @@ package com.technokratos.service.auth;
 import com.technokratos.config.properties.JwtProperties;
 import com.technokratos.dto.request.security.UserForJwtTokenRequest;
 import com.technokratos.enums.security.UserRole;
+import com.technokratos.exception.InvalidJwtException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -93,22 +94,32 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser()
-                .verifyWith(getKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+        try {
+            return Jwts.parser()
+                    .verifyWith(getKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+        } catch (JwtException e) {
+            log.warn("Invalid access token");
+            throw new InvalidJwtException("Invalid access token");
+        }
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpiredSoon(token));
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
     public boolean isTokenExpiredSoon(String token) {
         Date expiration = extractExpiration(token);
         long timeLeft = expiration.getTime() - System.currentTimeMillis();
         return timeLeft < jwtProperties.getTimeTokenEndSoon();
+    }
+
+    public boolean isTokenExpired(String token) {
+        Date expiration = extractExpiration(token);
+        return expiration.before(new Date());
     }
 
     public Date extractExpiration(String token) {

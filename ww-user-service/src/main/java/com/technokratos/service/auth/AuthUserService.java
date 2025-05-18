@@ -5,10 +5,10 @@ import com.technokratos.dto.request.security.UserForJwtTokenRequest;
 import com.technokratos.dto.request.security.UserLoginRequest;
 import com.technokratos.dto.request.security.UserRegistrationRequest;
 import com.technokratos.dto.response.security.AuthResponse;
-import com.technokratos.dto.response.user.UserResponse;
 import com.technokratos.enums.security.UserRole;
+import com.technokratos.exception.PasswordNotMatchException;
 import com.technokratos.exception.UserByIdNotFoundException;
-import com.technokratos.exception.UserByUsernameNotFoundException;
+import com.technokratos.exception.UsernameNotUniqueException;
 import com.technokratos.model.UserEntity;
 import com.technokratos.model.UserPrincipal;
 import com.technokratos.repository.UserRepository;
@@ -19,11 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -43,19 +41,17 @@ public class AuthUserService {
         log.info("user service register doing");
 
         if (!userDto.password().equals(userDto.duplicatePassword())) {
-            throw new RuntimeException("Пароли не совпадают");//todo поменять на свою ошибку
+            throw new PasswordNotMatchException("Passwords don't match");
         }
 
         if (userRepository.findByUsername(userDto.username()).isPresent()) {
-            throw new RuntimeException("Пользователь с таким именем уже есть");//todo поменять на свою ошибку
+            throw new UsernameNotUniqueException(userDto.username());
         }
 
         UserEntity user = userMapper.userRegistrationRequestToUserEntity(userDto);
 
         user.setUserId(UUID.randomUUID());
         user.setRole(UserRole.ROLE_USER);
-
-
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         userRepository.save(user);
@@ -86,11 +82,11 @@ public class AuthUserService {
                 .orElseThrow(() -> new UserByIdNotFoundException(userId));
 
         if (!passwordEncoder.matches(oldPassword, account.getPassword())){
-            throw new RuntimeException("Неверный пароль");//todo кастомная ошибка
+            throw new PasswordNotMatchException("The old password doesn't match");
         }
 
         if (!newPassword.equals(newDuplicatePassword)) {
-            throw new RuntimeException("Пароли не совпадают");//todo кастомная ошибка
+            throw new PasswordNotMatchException("The duplicated password doesn't match");
         }
 
         userRepository.changePassword(userId, passwordEncoder.encode(passwordChangeRequest.newPassword()));
