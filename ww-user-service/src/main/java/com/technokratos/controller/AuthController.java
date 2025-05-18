@@ -6,18 +6,15 @@ import com.technokratos.dto.request.security.RefreshTokenRequest;
 import com.technokratos.dto.request.security.UserLoginRequest;
 import com.technokratos.dto.request.security.UserRegistrationRequest;
 import com.technokratos.dto.response.security.AuthResponse;
-import com.technokratos.dto.response.user.UserResponse;
-import com.technokratos.model.UserEntity;
 import com.technokratos.model.UserPrincipal;
 import com.technokratos.security.BaseUserContextHolder;
 import com.technokratos.service.auth.AuthUserService;
-import com.technokratos.service.auth.JwtService;
 import com.technokratos.service.auth.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
