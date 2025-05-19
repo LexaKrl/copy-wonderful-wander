@@ -6,16 +6,13 @@ import com.technokratos.exception.InvalidJwtException;
 import com.technokratos.exception.UnauthorizedException;
 import com.technokratos.model.UserPrincipal;
 import com.technokratos.service.auth.JwtService;
-import com.technokratos.service.auth.MyUserDetailsService;
 import com.technokratos.util.ErrorResponse;
-import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +22,6 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.util.UUID;
 
 @Component
