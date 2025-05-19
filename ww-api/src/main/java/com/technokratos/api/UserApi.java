@@ -89,10 +89,10 @@ public interface UserApi {
             @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class))),
-            @ApiResponse(responseCode = "409", description = "Конфликт при подписке",
+            @ApiResponse(responseCode = "404", description = "Пользователь с указанным targetId не найден",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class))),
-            @ApiResponse(responseCode = "404", description = "Пользователь с указанным targetId не найден",
+            @ApiResponse(responseCode = "409", description = "Конфликт при подписке",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
