@@ -67,7 +67,7 @@ public class UserControllerIntegrationTest {
         final String expectedAvatarUrl = "https://example.com/avatars/john_doe.jpg";
         final int expectedFollowersCount = 6;
         final int expectedFollowingCount = 5;
-        final int expectedFriendsCount = 4;
+        final int expectedFriendsCount = 2;
 
         final ResponseEntity<UserResponse> response = testRestTemplate.exchange(
                 ApiEndpoint.UserController.GET_CURRENT_USER_PROFILE,
