@@ -9,3 +9,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/mydatabase

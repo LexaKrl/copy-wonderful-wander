@@ -4,6 +4,7 @@ package com.technokratos.wwwalkservice.service;
 import com.technokratos.dto.request.walk.WalkRequest;
 import com.technokratos.dto.response.walk.WalkResponse;
 import com.technokratos.wwwalkservice.entity.Walk;
+import com.technokratos.wwwalkservice.exception.WalkNotFoundException;
 import com.technokratos.wwwalkservice.mapper.WalkMapper;
 import com.technokratos.wwwalkservice.repository.WalkRepository;
 import com.technokratos.wwwalkservice.service.service_interface.WalkService;
@@ -28,7 +29,7 @@ public class BaseWalkService implements WalkService {
 
     @Override
     public Walk findById(UUID id) {
-        return walkRepository.findById(id).orElse(null);
+        return walkRepository.findById(id).orElseThrow(() -> new WalkNotFoundException(id));
     }
 
     @Override
