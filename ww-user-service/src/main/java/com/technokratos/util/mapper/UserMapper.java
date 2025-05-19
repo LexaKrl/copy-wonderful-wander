@@ -2,7 +2,6 @@ package com.technokratos.util.mapper;
 
 import com.technokratos.dto.request.security.UserForJwtTokenRequest;
 import com.technokratos.dto.request.security.UserRegistrationRequest;
-import com.technokratos.dto.request.security.*;
 import com.technokratos.dto.response.user.UserCompactResponse;
 import com.technokratos.dto.response.user.UserProfileResponse;
 import com.technokratos.dto.response.user.UserResponse;
@@ -10,6 +9,7 @@ import com.technokratos.model.UserEntity;
 import com.technokratos.model.UserPrincipal;
 import com.technokratos.tables.pojos.Account;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.springframework.stereotype.Component;
 
@@ -29,15 +29,6 @@ public interface UserMapper {
     UserEntity accountToUserEntity(Account account);
 
     UserEntity userRegistrationRequestToUserEntity(UserRegistrationRequest userRegistrationRequest);
-
-    @Mapping(target = "userId", ignore = true)
-    UserEntity adminUserUpdateRequestToUserEntity(AdminUserUpdateRequest adminUserUpdateRequest);
-
-    @Mapping(target = "userId", ignore = true)
-    UserEntity userLoginRequestToUserEntity(UserLoginRequest userLoginRequest);
-
-    @Mapping(target = "userId", ignore = true)
-    UserEntity passwordChangeRequestToUserEntity(PasswordChangeRequest passwordChangeReq);
 
     UserResponse toUserResponse(Account account);
 
