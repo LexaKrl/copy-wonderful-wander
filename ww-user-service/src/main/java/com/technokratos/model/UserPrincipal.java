@@ -1,9 +1,9 @@
 package com.technokratos.model;
 
 import com.technokratos.enums.security.UserRole;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,32 +14,27 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Getter
-@ToString
+@Builder
 public class UserPrincipal implements UserDetails {
 
-    private final UserEntity user;
+    private final UUID userId;
+    private final String username;
+    private final UserRole role;
+    private final String password;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(user.getRole().name()));
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return user.getUsername();
-    }
-
-    public UUID getId() {
-        return user.getUserId();
-    }
-
-    public UserRole getRole() {
-        return user.getRole();
+        return username;
     }
 
     @Override

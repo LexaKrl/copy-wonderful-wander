@@ -1,8 +1,6 @@
 package com.technokratos.security;
 
-import com.technokratos.model.UserEntity;
 import com.technokratos.model.UserPrincipal;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class BaseUserContextHolder {
 
-    public UserEntity getUserFromSecurityContext() {
+    public UserPrincipal getUserFromSecurityContext() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -22,10 +20,8 @@ public class BaseUserContextHolder {
 
         if (principal instanceof UserPrincipal) {
             UserPrincipal userDetails = (UserPrincipal) principal;
-            return userDetails.getUser();
+            return userDetails;
 
-        } else if (principal instanceof UserEntity) {
-            return (UserEntity) principal;
         }
         throw new UsernameNotFoundException("Unknown principal type: " + principal.getClass().getName());
     }

@@ -1,8 +1,6 @@
 package com.technokratos.repository;
 
 
-import com.technokratos.Tables;
-import com.technokratos.tables.pojos.Account;
 import com.technokratos.tables.pojos.RefreshToken;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;

@@ -177,4 +177,14 @@ public class UserRepository {
                                 .and(Tables.USER_RELATIONSHIPS.TARGET_USER_ID.eq(targetUserId)))
         );
     }
+
+    public void changePassword(UUID userId, String newPassword) {
+        dsl
+                .update(Tables.ACCOUNT)
+                .set(Tables.ACCOUNT.PASSWORD, newPassword)
+                .where(Tables.ACCOUNT.USER_ID.eq(userId))
+                .returning()
+                .fetchOptional()
+                .map(record -> record.into(Account.class));
+    }
 }
