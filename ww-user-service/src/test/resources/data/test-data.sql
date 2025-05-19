@@ -75,14 +75,31 @@ VALUES ('11111111-1111-1111-1111-111111111111', 'user1', 'user1@example.com', 'A
         'ROLE_USER', 'http://example.com/avatar20.jpg', 'FRIENDS_ONLY', 'PUBLIC');
 
 INSERT INTO user_relationships(user_id, target_user_id, created_at)
-VALUES ('550e8400-e29b-41d4-a716-446655440000', '22222222-2222-2222-2222-222222222222', '2023-01-15 08:30:45'),
-       ('550e8400-e29b-41d4-a716-446655440000', '33333333-3333-3333-3333-333333333333', '2023-02-20 12:45:10'),
-       ('550e8400-e29b-41d4-a716-446655440000', '44444444-4444-4444-4444-444444444444', '2023-07-22 16:44:55'),
-       ('550e8400-e29b-41d4-a716-446655440000', '55555555-5555-5555-5555-555555555555', '2023-04-05 09:15:28'),
-       ('550e8400-e29b-41d4-a716-446655440000', '66666666-6666-6666-6666-666666666666', '2023-05-12 14:50:03'),
-       ('33333333-3333-3333-3333-333333333333', '550e8400-e29b-41d4-a716-446655440000', '2023-08-30 10:05:17'),
-       ('44444444-4444-4444-4444-444444444444', '550e8400-e29b-41d4-a716-446655440000', '2023-03-10 18:22:37'),
-       ('ffffffff-ffff-ffff-ffff-ffffffffffff', '550e8400-e29b-41d4-a716-446655440000', '2023-09-14 07:20:33'),
-       ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', '550e8400-e29b-41d4-a716-446655440000', '2023-10-01 13:11:49'),
-       ('88888888-8888-8888-8888-888888888888', '550e8400-e29b-41d4-a716-446655440000', '2023-11-05 19:55:01'),
-       ('cccccccc-cccc-cccc-cccc-cccccccccccc', '550e8400-e29b-41d4-a716-446655440000', '2023-12-12 22:40:38');
+VALUES ('550e8400-e29b-41d4-a716-446655440000', '22222222-2222-2222-2222-222222222222', '2023-01-15 08:30:45');
+INSERT INTO user_relationships(user_id, target_user_id, created_at)
+VALUES ('550e8400-e29b-41d4-a716-446655440000', '33333333-3333-3333-3333-333333333333', '2023-02-20 12:45:10');
+
+INSERT INTO user_relationships(user_id, target_user_id, created_at)
+VALUES ('550e8400-e29b-41d4-a716-446655440000', '44444444-4444-4444-4444-444444444444', '2023-07-22 16:44:55');
+INSERT INTO user_relationships(user_id, target_user_id, created_at)
+VALUES ('550e8400-e29b-41d4-a716-446655440000', '55555555-5555-5555-5555-555555555555', '2023-04-05 09:15:28');
+
+INSERT INTO user_relationships(user_id, target_user_id, created_at)
+VALUES ('550e8400-e29b-41d4-a716-446655440000', '66666666-6666-6666-6666-666666666666', '2023-05-12 14:50:03');
+INSERT INTO user_relationships(user_id, target_user_id, created_at)
+VALUES ('33333333-3333-3333-3333-333333333333', '550e8400-e29b-41d4-a716-446655440000', '2023-08-30 10:05:17');
+
+INSERT INTO user_relationships(user_id, target_user_id, created_at)
+VALUES ('44444444-4444-4444-4444-444444444444', '550e8400-e29b-41d4-a716-446655440000', '2023-03-10 18:22:37');
+
+INSERT INTO user_relationships(user_id, target_user_id, created_at)
+VALUES ('ffffffff-ffff-ffff-ffff-ffffffffffff', '550e8400-e29b-41d4-a716-446655440000', '2023-09-14 07:20:33');
+
+INSERT INTO user_relationships(user_id, target_user_id, created_at)
+VALUES ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', '550e8400-e29b-41d4-a716-446655440000', '2023-10-01 13:11:49');
+
+INSERT INTO user_relationships(user_id, target_user_id, created_at)
+VALUES ('88888888-8888-8888-8888-888888888888', '550e8400-e29b-41d4-a716-446655440000', '2023-11-05 19:55:01');
+
+INSERT INTO user_relationships(user_id, target_user_id, created_at)
+VALUES ('cccccccc-cccc-cccc-cccc-cccccccccccc', '550e8400-e29b-41d4-a716-446655440000', '2023-12-12 22:40:38');
