@@ -2,22 +2,27 @@ package com.technokratos.controller;
 
 import com.technokratos.dto.request.security.UserForJwtTokenRequest;
 import com.technokratos.dto.request.user.UserRequest;
+import com.technokratos.dto.response.user.UserCompactResponse;
 import com.technokratos.dto.response.user.UserProfileResponse;
 import com.technokratos.dto.response.user.UserResponse;
 import com.technokratos.enums.security.UserRole;
 import com.technokratos.enums.user.PhotoVisibility;
 import com.technokratos.service.auth.JWTService;
 import com.technokratos.util.ApiEndpoint;
+import com.technokratos.util.PathVariable;
+import com.technokratos.util.QueryParameter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -115,7 +120,7 @@ public class UserControllerIntegrationTest {
         final UserResponse expectedUserResponse = getCurrentUserProfileResponse.getBody();
 
         assertThat(getCurrentUserProfileResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(getCurrentUserProfileResponse.getBody()).isNotNull();
+        assertThat(expectedUserResponse).isNotNull();
 
         final UserRequest UserRequestToUpdate = new UserRequest(
                 "updated_email@example.com",
@@ -212,7 +217,7 @@ public class UserControllerIntegrationTest {
         final ResponseEntity<String> followResponse = testRestTemplate.exchange(
                 UriComponentsBuilder.fromUriString(ApiEndpoint.UserController.FOLLOW)
                         .buildAndExpand(Map.of(
-                                ApiEndpoint.UserControllerParameters.TARGET_USER_ID, targetUserUuid)
+                                PathVariable.UserController.TARGET_USER_ID, targetUserUuid)
                         )
                         .toUri(),
                 HttpMethod.POST,
@@ -247,7 +252,7 @@ public class UserControllerIntegrationTest {
         final ResponseEntity<String> followResponse = testRestTemplate.exchange(
                 UriComponentsBuilder.fromUriString(ApiEndpoint.UserController.FOLLOW)
                         .buildAndExpand(Map.of(
-                                ApiEndpoint.UserControllerParameters.TARGET_USER_ID, notValidUuid)
+                                PathVariable.UserController.TARGET_USER_ID, notValidUuid)
                         )
                         .toUri(),
                 HttpMethod.POST,
@@ -266,7 +271,7 @@ public class UserControllerIntegrationTest {
         final ResponseEntity<String> followResponse = testRestTemplate.exchange(
                 UriComponentsBuilder.fromUriString(ApiEndpoint.UserController.FOLLOW)
                         .buildAndExpand(Map.of(
-                                ApiEndpoint.UserControllerParameters.TARGET_USER_ID, randomUuid)
+                                PathVariable.UserController.TARGET_USER_ID, randomUuid)
                         )
                         .toUri(),
                 HttpMethod.POST,
@@ -285,7 +290,7 @@ public class UserControllerIntegrationTest {
         final ResponseEntity<String> firstFollowResponse = testRestTemplate.exchange(
                 UriComponentsBuilder.fromUriString(ApiEndpoint.UserController.FOLLOW)
                         .buildAndExpand(Map.of(
-                                ApiEndpoint.UserControllerParameters.TARGET_USER_ID, targetUserUuid)
+                                PathVariable.UserController.TARGET_USER_ID, targetUserUuid)
                         )
                         .toUri(),
                 HttpMethod.POST,
@@ -299,7 +304,7 @@ public class UserControllerIntegrationTest {
         final ResponseEntity<String> secondFollowResponse = testRestTemplate.exchange(
                 UriComponentsBuilder.fromUriString(ApiEndpoint.UserController.FOLLOW)
                         .buildAndExpand(Map.of(
-                                ApiEndpoint.UserControllerParameters.TARGET_USER_ID, targetUserUuid)
+                                PathVariable.UserController.TARGET_USER_ID, targetUserUuid)
                         )
                         .toUri(),
                 HttpMethod.POST,
@@ -336,7 +341,7 @@ public class UserControllerIntegrationTest {
         final ResponseEntity<String> followResponse = testRestTemplate.exchange(
                 UriComponentsBuilder.fromUriString(ApiEndpoint.UserController.FOLLOW)
                         .buildAndExpand(Map.of(
-                                ApiEndpoint.UserControllerParameters.TARGET_USER_ID, targetUserUuid)
+                                PathVariable.UserController.TARGET_USER_ID, targetUserUuid)
                         )
                         .toUri(),
                 HttpMethod.POST,
@@ -353,7 +358,7 @@ public class UserControllerIntegrationTest {
         final ResponseEntity<String> unfollowResponse = testRestTemplate.exchange(
                 UriComponentsBuilder.fromUriString(ApiEndpoint.UserController.UNFOLLOW)
                         .buildAndExpand(Map.of(
-                                ApiEndpoint.UserControllerParameters.TARGET_USER_ID, targetUserUuid)
+                                PathVariable.UserController.TARGET_USER_ID, targetUserUuid)
                         )
                         .toUri(),
                 HttpMethod.DELETE,
@@ -361,8 +366,8 @@ public class UserControllerIntegrationTest {
                 String.class
         );
 
-        assertThat(followResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-        assertThat(followResponse.getBody()).isNull();
+        assertThat(unfollowResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        assertThat(unfollowResponse.getBody()).isNull();
 
         /*
          * Getting the final values
@@ -391,7 +396,7 @@ public class UserControllerIntegrationTest {
         final ResponseEntity<String> unfollowResponse = testRestTemplate.exchange(
                 UriComponentsBuilder.fromUriString(ApiEndpoint.UserController.UNFOLLOW)
                         .buildAndExpand(Map.of(
-                                ApiEndpoint.UserControllerParameters.TARGET_USER_ID, randomUuid)
+                                PathVariable.UserController.TARGET_USER_ID, randomUuid)
                         )
                         .toUri(),
                 HttpMethod.DELETE,
@@ -421,7 +426,7 @@ public class UserControllerIntegrationTest {
         final ResponseEntity<UserProfileResponse> getUserProfileByIdResponse = testRestTemplate.exchange(
                 UriComponentsBuilder.fromUriString(ApiEndpoint.UserController.GET_USER_PROFILE_BY_ID)
                         .buildAndExpand(Map.of(
-                                ApiEndpoint.UserControllerParameters.TARGET_USER_ID, expectedUserId)
+                                PathVariable.UserController.TARGET_USER_ID, expectedUserId)
                         )
                         .toUri(),
                 HttpMethod.GET,
@@ -446,5 +451,107 @@ public class UserControllerIntegrationTest {
         assertThat(actualUserProfileResponse.isFollowedByUser()).isEqualTo(expectedIsFollowedByUser);
         assertThat(actualUserProfileResponse.isFollowingByUser()).isEqualTo(expectedIsFollowingByUser);
         assertThat(actualUserProfileResponse.isFriends()).isEqualTo(expectedIsFriends);
+    }
+
+    @Test
+    void getFriendsByUserId_whenEverythingIsCorrect_thenReturnOkAndListWithUserCompactResponse() {
+        final UUID userId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
+        final int page = 0;
+        final int size = 2;
+
+        final ResponseEntity<List<UserCompactResponse>> friendsResponse = testRestTemplate.exchange(
+                UriComponentsBuilder.fromUriString(ApiEndpoint.UserController.GET_FRIENDS_BY_USER_ID)
+                        .queryParam(QueryParameter.Pageable.PAGE, page)
+                        .queryParam(QueryParameter.Pageable.SIZE, size)
+                        .buildAndExpand(Map.of(
+                                PathVariable.UserController.USER_ID, userId
+                        ))
+                        .toUri(),
+                HttpMethod.GET,
+                new HttpEntity<>(baseHttpHeaders),
+                new ParameterizedTypeReference<>() {
+                }
+        );
+
+        List<UserCompactResponse> friends = friendsResponse.getBody();
+
+        assertThat(friendsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(friends).isNotNull();
+
+        assertThat(friends.size()).isEqualTo(2);
+        assertThat(friends.get(0)).isNotNull();
+        assertThat(friends.get(1)).isNotNull();
+        assertThat(friends.get(0).userId()).isNotNull();
+        assertThat(friends.get(0).username()).isNotNull();
+        assertThat(friends.get(1).userId()).isNotNull();
+        assertThat(friends.get(1).username()).isNotNull();
+    }
+
+    @Test
+    void getFollowingByUserId_whenEverythingIsCorrect_thenReturnOkAndListWithUserCompactResponse() {
+        final UUID userId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
+        final int page = 0;
+        final int size = 2;
+
+        final ResponseEntity<List<UserCompactResponse>> followingResponse = testRestTemplate.exchange(
+                UriComponentsBuilder.fromUriString(ApiEndpoint.UserController.GET_FOLLOWING_BY_USER_ID)
+                        .queryParam(QueryParameter.Pageable.PAGE, page)
+                        .queryParam(QueryParameter.Pageable.SIZE, size)
+                        .buildAndExpand(Map.of(
+                                PathVariable.UserController.USER_ID, userId
+                        ))
+                        .toUri(),
+                HttpMethod.GET,
+                new HttpEntity<>(baseHttpHeaders),
+                new ParameterizedTypeReference<>() {
+                }
+        );
+
+        List<UserCompactResponse> following = followingResponse.getBody();
+
+        assertThat(followingResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(following).isNotNull();
+
+        assertThat(following.size()).isEqualTo(2);
+        assertThat(following.get(0)).isNotNull();
+        assertThat(following.get(1)).isNotNull();
+        assertThat(following.get(0).userId()).isNotNull();
+        assertThat(following.get(0).username()).isNotNull();
+        assertThat(following.get(1).userId()).isNotNull();
+        assertThat(following.get(1).username()).isNotNull();
+    }
+
+    @Test
+    void getFollowersByUserId_whenEverythingIsCorrect_thenReturnOkAndListWithUserCompactResponse() {
+        final UUID userId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
+        final int page = 0;
+        final int size = 2;
+
+        final ResponseEntity<List<UserCompactResponse>> followersResponse = testRestTemplate.exchange(
+                UriComponentsBuilder.fromUriString(ApiEndpoint.UserController.GET_FOLLOWERS_BY_USER_ID)
+                        .queryParam(QueryParameter.Pageable.PAGE, page)
+                        .queryParam(QueryParameter.Pageable.SIZE, size)
+                        .buildAndExpand(Map.of(
+                                PathVariable.UserController.USER_ID, userId
+                        ))
+                        .toUri(),
+                HttpMethod.GET,
+                new HttpEntity<>(baseHttpHeaders),
+                new ParameterizedTypeReference<>() {
+                }
+        );
+
+        List<UserCompactResponse> followers = followersResponse.getBody();
+
+        assertThat(followersResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(followers).isNotNull();
+
+        assertThat(followers.size()).isEqualTo(2);
+        assertThat(followers.get(0)).isNotNull();
+        assertThat(followers.get(1)).isNotNull();
+        assertThat(followers.get(0).userId()).isNotNull();
+        assertThat(followers.get(0).username()).isNotNull();
+        assertThat(followers.get(1).userId()).isNotNull();
+        assertThat(followers.get(1).username()).isNotNull();
     }
 }
