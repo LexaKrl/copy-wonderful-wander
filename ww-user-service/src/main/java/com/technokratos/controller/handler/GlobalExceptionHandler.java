@@ -32,6 +32,7 @@ public class GlobalExceptionHandler {
     public final ResponseEntity<BaseExceptionMessage> handleServiceException(ServiceException exception) {
         return ResponseEntity.status(exception.getHttpStatus())
                 .body(BaseExceptionMessage.builder()
+                        .status(exception.getHttpStatus().value())
                         .error(exception.getClass().getSimpleName())
                         .message(exception.getMessage())
                         .build()
@@ -58,6 +59,7 @@ public class GlobalExceptionHandler {
                 )
                 .collect(Collectors.toList());
         return ValidationExceptionMessage.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
                 .error(exception.getClass().getSimpleName())
                 .violations(violations)
                 .build();
@@ -74,6 +76,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public final BaseExceptionMessage handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
         return BaseExceptionMessage.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
                 .error(exception.getClass().getSimpleName())
                 .message(exception.getMessage())
                 .build();
@@ -99,6 +102,7 @@ public class GlobalExceptionHandler {
                 )
                 .collect(Collectors.toList());
         return ValidationExceptionMessage.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
                 .error(exception.getClass().getSimpleName())
                 .violations(violations)
                 .build();
@@ -116,6 +120,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public final BaseExceptionMessage handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException exception) {
         return BaseExceptionMessage.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
                 .error(exception.getClass().getSimpleName())
                 .message(exception.getMessage())
                 .build();
