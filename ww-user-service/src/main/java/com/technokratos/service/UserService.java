@@ -1,11 +1,15 @@
 package com.technokratos.service;
 
 import com.technokratos.dto.request.user.UserRequest;
+import com.technokratos.dto.response.user.UserCompactResponse;
 import com.technokratos.dto.response.user.UserProfileResponse;
 import com.technokratos.dto.response.user.UserResponse;
+import com.technokratos.exception.ConflictServiceException;
+import com.technokratos.exception.FollowConflictException;
 import com.technokratos.exception.UserByIdNotFoundException;
 import com.technokratos.exception.UserByUsernameNotFoundException;
 import com.technokratos.repository.UserRepository;
+import com.technokratos.tables.pojos.Account;
 import com.technokratos.util.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -32,34 +36,46 @@ public class UserService {
                 .orElseThrow(() -> new UserByUsernameNotFoundException(username)));
     }
 
-    public List<UserProfileResponse> getFriendsByUserId(UUID userId, Pageable pageable) {
+    public List<UserCompactResponse> getFriendsByUserId(UUID userId, Pageable pageable) {
         if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(userId);
-        return userMapper.toUserProfileResponse(userRepository.getFriendsByUserId(userId, pageable));
+        return userMapper.toUserCompactResponse(userRepository.getFriendsByUserId(userId, pageable));
     }
 
-    public List<UserProfileResponse> getFollowersByUserId(UUID userId, Pageable pageable) {
+    public List<UserCompactResponse> getFollowersByUserId(UUID userId, Pageable pageable) {
         if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(userId);
-        return userMapper.toUserProfileResponse(userRepository.getFollowersByUserId(userId, pageable));
+        return userMapper.toUserCompactResponse(userRepository.getFollowersByUserId(userId, pageable));
     }
 
-    public List<UserProfileResponse> getFollowingByUserId(UUID userId, Pageable pageable) {
+    public List<UserCompactResponse> getFollowingByUserId(UUID userId, Pageable pageable) {
         if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(userId);
-        return userMapper.toUserProfileResponse(userRepository.getFollowingByUserId(userId, pageable));
+        return userMapper.toUserCompactResponse(userRepository.getFollowingByUserId(userId, pageable));
     }
 
     public void follow(UUID userId, UUID targetUserId) {
-        if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(targetUserId);
+        if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(userId);
+        if (checkUserNotExists(targetUserId)) throw new UserByIdNotFoundException(targetUserId);
+        if (userId.equals(targetUserId)) throw new FollowConflictException("You can't follow to yourself");
+        if (checkOnFollow(userId, targetUserId))
+            throw new FollowConflictException("Follow already exists from user with id = %s to user with id = %s".formatted(userId, targetUserId));
         userRepository.follow(userId, targetUserId);
     }
 
     public void unfollow(UUID userId, UUID targetUserId) {
-        if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(targetUserId);
+        if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(userId);
+        if (checkUserNotExists(targetUserId)) throw new UserByIdNotFoundException(targetUserId);
+        if (userId.equals(targetUserId)) throw new FollowConflictException("You can't unfollow from yourself");
         userRepository.unfollow(userId, targetUserId);
     }
 
-    public UserProfileResponse getProfileByUserId(UUID userId) {
-        return userMapper.toUserProfileResponse(userRepository.findById(userId)
-                .orElseThrow(() -> new UserByIdNotFoundException(userId)));
+    public UserProfileResponse getProfileByUserId(UUID userId, UUID targetUserId) {
+        if (targetUserId.equals(userId))
+            throw new ConflictServiceException("You can't get profile information as its owner, use a different method");
+        Account account = userRepository.findById(targetUserId)
+                .orElseThrow(() -> new UserByIdNotFoundException(targetUserId));
+        boolean isFollowed = checkOnFollow(userId, targetUserId);
+        boolean isFollowing = checkOnFollow(targetUserId, userId);
+        boolean isFriends = isFollowed && isFollowing;
+        return userMapper.toUserProfileResponse(account, isFollowed, isFollowing, isFriends);
     }
 
     public UserResponse updateUser(UUID userId, UserRequest userRequest) {
@@ -69,6 +85,7 @@ public class UserService {
     }
 
     public void deleteUser(UUID userId) {
+        if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(userId);
         userRepository.delete(userId);
     }
 
@@ -76,4 +93,7 @@ public class UserService {
         return !userRepository.existsById(userId);
     }
 
+    private boolean checkOnFollow(UUID userId, UUID targetId) {
+        return userRepository.existsFollow(userId, targetId);
+    }
 }

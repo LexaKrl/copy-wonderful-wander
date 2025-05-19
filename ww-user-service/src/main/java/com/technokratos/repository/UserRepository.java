@@ -169,6 +169,15 @@ public class UserRepository {
         );
     }
 
+    public boolean existsFollow(UUID userId, UUID targetUserId) {
+        return dsl.fetchExists(
+                dsl
+                        .selectFrom(Tables.USER_RELATIONSHIPS)
+                        .where(Tables.USER_RELATIONSHIPS.USER_ID.eq(userId)
+                                .and(Tables.USER_RELATIONSHIPS.TARGET_USER_ID.eq(targetUserId)))
+        );
+    }
+
     public void changePassword(UUID userId, String newPassword) {
         dsl
                 .update(Tables.ACCOUNT)
