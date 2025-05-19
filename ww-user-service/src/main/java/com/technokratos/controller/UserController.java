@@ -5,7 +5,6 @@ import com.technokratos.dto.request.user.UserRequest;
 import com.technokratos.dto.response.user.UserCompactResponse;
 import com.technokratos.dto.response.user.UserProfileResponse;
 import com.technokratos.dto.response.user.UserResponse;
-import com.technokratos.model.UserEntity;
 import com.technokratos.security.BaseUserContextHolder;
 import com.technokratos.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -67,7 +66,6 @@ public class UserController implements UserApi {
     }
 
     private UUID getCurrentUserId() {
-        UserEntity userFromSecurityContext = userContextHolder.getUserFromSecurityContext();
-        return userFromSecurityContext.getUserId();
+        return userContextHolder.getUserFromSecurityContext().getUserId();
     }
 }
