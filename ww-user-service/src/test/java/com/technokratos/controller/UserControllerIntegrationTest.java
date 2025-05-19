@@ -7,7 +7,7 @@ import com.technokratos.dto.response.user.UserProfileResponse;
 import com.technokratos.dto.response.user.UserResponse;
 import com.technokratos.enums.security.UserRole;
 import com.technokratos.enums.user.PhotoVisibility;
-import com.technokratos.service.auth.JWTService;
+import com.technokratos.service.auth.JwtService;
 import com.technokratos.util.ApiEndpoint;
 import com.technokratos.util.PathVariable;
 import com.technokratos.util.QueryParameter;
@@ -40,14 +40,15 @@ public class UserControllerIntegrationTest {
     @Autowired
     TestRestTemplate testRestTemplate;
     @Autowired
-    JWTService jwtService;
+    JwtService jwtService;
 
     @BeforeEach
     void init() {
         final String jwtToken = jwtService.generateAccessToken(
                 new UserForJwtTokenRequest(
                         UUID.fromString("550e8400-e29b-41d4-a716-446655440000"),
-                        "john_doe"
+                        "john_doe",
+                        UserRole.ROLE_USER
                 )
         );
         baseHttpHeaders = new HttpHeaders();
