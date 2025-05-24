@@ -1,7 +1,9 @@
 package com.technokratos.api;
 
+import com.technokratos.validation.image.Image;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -14,5 +16,5 @@ public interface PhotoApi {
 
     @PostMapping(value = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    void uploadAvatar(@RequestPart("avatar") MultipartFile multipartFile);
+    void uploadAvatar(@Validated @Image @RequestPart("avatar") MultipartFile avatar);
 }
