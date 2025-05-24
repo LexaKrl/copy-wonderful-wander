@@ -1,6 +1,6 @@
 package com.technokratos.listener;
 
-import com.technokratos.util.MinioConstant;
+import com.technokratos.util.s3.MinioConstant;
 import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
@@ -17,9 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MinioBucketInitializer {
     private static final List<String> BUCKETS = List.of(
-            MinioConstant.BucketName.AVATARS,
-            MinioConstant.BucketName.POSTS,
-            MinioConstant.BucketName.WALKS
+            MinioConstant.BucketName.PHOTOS
     );
     private final MinioClient minioClient;
 
