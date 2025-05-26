@@ -3,6 +3,7 @@ package com.technokratos.api;
 import com.technokratos.dto.exception.BaseExceptionMessage;
 import com.technokratos.dto.exception.ValidationExceptionMessage;
 import com.technokratos.dto.request.user.UserRequest;
+import com.technokratos.dto.response.user.UserCompactResponse;
 import com.technokratos.dto.response.user.UserProfileResponse;
 import com.technokratos.dto.response.user.UserResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,15 +37,9 @@ public interface UserApi {
             @ApiResponse(responseCode = "200", description = "Профиль успешно получен",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = UserResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Ошибка на уровне сервера или бизнес-логики",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = BaseExceptionMessage.class))),
             @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class))),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
     UserResponse getCurrentUserProfile();
 
@@ -65,9 +60,6 @@ public interface UserApi {
             @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class))),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
     UserResponse updateCurrentUser(
             @Parameter(description = "Данные для обновления профиля пользователя", required = true)
@@ -78,13 +70,7 @@ public interface UserApi {
     @Operation(summary = "Удалить текущего пользователя")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Пользователь успешно удалён"),
-            @ApiResponse(responseCode = "400", description = "Ошибка при удалении пользователя",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = BaseExceptionMessage.class))),
             @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = BaseExceptionMessage.class))),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
@@ -97,13 +83,16 @@ public interface UserApi {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Подписка успешно осуществлена"),
-            @ApiResponse(responseCode = "400", description = "Ошибка при подписке",
+            @ApiResponse(responseCode = "400", description = "Ошибка валидации",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class))),
             @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class))),
             @ApiResponse(responseCode = "404", description = "Пользователь с указанным targetId не найден",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = BaseExceptionMessage.class))),
+            @ApiResponse(responseCode = "409", description = "Конфликт при подписке",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
@@ -119,7 +108,7 @@ public interface UserApi {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Подписка успешно удалена"),
-            @ApiResponse(responseCode = "400", description = "Ошибка при отписке",
+            @ApiResponse(responseCode = "400", description = "Ошибка валидации",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class))),
             @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован",
@@ -133,14 +122,14 @@ public interface UserApi {
             @Parameter(description = "ID пользователя, от которого нужно отписаться", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable UUID targetUserId);
 
-    @GetMapping("/{userId}")
+    @GetMapping("/{targetUserId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Получить профиль любого пользователя по id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Профиль пользователя успешно получен",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = UserProfileResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Ошибка при получении профиля",
+                            schema = @Schema(implementation = UserCompactResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Ошибка валидации",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class))),
             @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован",
@@ -152,7 +141,7 @@ public interface UserApi {
     })
     UserProfileResponse getUserProfileById(
             @Parameter(description = "ID пользователя", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID userId);
+            @PathVariable UUID targetUserId);
 
     @GetMapping("/{userId}/friends")
     @ResponseStatus(HttpStatus.OK)
@@ -163,8 +152,8 @@ public interface UserApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Список друзей успешно получен",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = UserProfileResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Ошибка при получении списка друзей",
+                            schema = @Schema(implementation = UserCompactResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Ошибка валидации",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class))),
             @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован",
@@ -174,7 +163,7 @@ public interface UserApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    List<UserProfileResponse> getFriendsByUserId(
+    List<UserCompactResponse> getFriendsByUserId(
             @Parameter(description = "ID пользователя", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable UUID userId,
             Pageable pageable);
@@ -188,8 +177,8 @@ public interface UserApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Список подписок успешно получен",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = UserProfileResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Ошибка при получении списка подписок",
+                            schema = @Schema(implementation = UserCompactResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Ошибка валидации",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class))),
             @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован",
@@ -199,7 +188,7 @@ public interface UserApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    List<UserProfileResponse> getFollowingByUserId(
+    List<UserCompactResponse> getFollowingByUserId(
             @Parameter(description = "ID пользователя", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable UUID userId,
             Pageable pageable);
@@ -214,7 +203,7 @@ public interface UserApi {
             @ApiResponse(responseCode = "200", description = "Список подписчиков успешно получен",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = UserProfileResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Ошибка при получении списка подписчиков",
+            @ApiResponse(responseCode = "400", description = "Ошибка валидации",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class))),
             @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован",
@@ -224,7 +213,7 @@ public interface UserApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    List<UserProfileResponse> getFollowersByUserId(
+    List<UserCompactResponse> getFollowersByUserId(
             @Parameter(description = "ID пользователя", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable UUID userId,
             Pageable pageable);

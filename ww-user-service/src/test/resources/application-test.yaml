@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:15:///wonderful-wander
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    hikari:
+      maximum-pool-size: 2
+  jooq:
+    sql-dialect: postgres
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+  liquibase:
+    change-log: classpath:db/changelog/user-service/changelog-master.xml
+
+jwt:
+  access-token-duration: 3_600_000
+  refresh-token-duration: 86_400_00
+  time-token-end-soon: 900_000
+  secret-key: f2vEOtCG2vyUn9hiNqWCYNvHQ4rno/V6HhAbdmAMSZ8=g

@@ -2,12 +2,14 @@ package com.technokratos.util.mapper;
 
 import com.technokratos.dto.request.security.UserForJwtTokenRequest;
 import com.technokratos.dto.request.security.UserRegistrationRequest;
+import com.technokratos.dto.response.user.UserCompactResponse;
 import com.technokratos.dto.response.user.UserProfileResponse;
 import com.technokratos.dto.response.user.UserResponse;
 import com.technokratos.model.UserEntity;
 import com.technokratos.model.UserPrincipal;
 import com.technokratos.tables.pojos.Account;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +32,13 @@ public interface UserMapper {
 
     UserResponse toUserResponse(Account account);
 
-    UserProfileResponse toUserProfileResponse(Account account);
+    @Mapping(target = "isFollowedByUser")
+    @Mapping(target = "isFollowingByUser")
+    @Mapping(target = "isFriends")
+    UserProfileResponse toUserProfileResponse(Account account,
+                                              boolean isFollowedByUser,
+                                              boolean isFollowingByUser,
+                                              boolean isFriends);
 
-    List<UserProfileResponse> toUserProfileResponse(List<Account> accounts);
+    List<UserCompactResponse> toUserCompactResponse(List<Account> followersByUserId);
 }

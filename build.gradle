@@ -21,6 +21,7 @@ subprojects {
 
     ext {
         lombokVersion = '1.18.38'
+        openApiVersion = '2.8.6'
     }
 
     sourceCompatibility = JavaVersion.VERSION_21
@@ -38,7 +39,9 @@ subprojects {
         implementation 'org.springframework.boot:spring-boot-starter'
         implementation 'org.springframework.boot:spring-boot-starter-web'
         implementation 'org.springframework.boot:spring-boot-starter-validation'
+        implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${openApiVersion}"
         compileOnly "org.projectlombok:lombok:${lombokVersion}"
+        testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
         annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     }
 }

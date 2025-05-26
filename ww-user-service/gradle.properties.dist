@@ -1,7 +1,7 @@
 ######## Postgres Credentials ########
 dbUrl=
 dbName=
-dbUsername=
+dbUsername=s
 dbPassword=
 ######## Plugin Versions ########
 jooqPluginVersion=10.0
@@ -12,3 +12,4 @@ liquibaseDslGroovyVersion=2.1.1
 picocliVersion=4.7.5
 mapstructVersion=1.5.5.Final
 testcontainersVersion=1.19.0
+jooqMetaExtensionsLiquibase=3.20.3

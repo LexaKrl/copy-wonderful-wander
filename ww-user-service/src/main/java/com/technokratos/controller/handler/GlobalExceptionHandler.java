@@ -3,6 +3,7 @@ package com.technokratos.controller.handler;
 import com.technokratos.dto.exception.BaseExceptionMessage;
 import com.technokratos.dto.exception.ValidationExceptionMessage;
 import com.technokratos.exception.ServiceException;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 /**
  * Глобальный обработчик исключений для REST API.
  */
+@Hidden
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     /**
@@ -30,6 +32,7 @@ public class GlobalExceptionHandler {
     public final ResponseEntity<BaseExceptionMessage> handleServiceException(ServiceException exception) {
         return ResponseEntity.status(exception.getHttpStatus())
                 .body(BaseExceptionMessage.builder()
+                        .status(exception.getHttpStatus().value())
                         .error(exception.getClass().getSimpleName())
                         .message(exception.getMessage())
                         .build()
@@ -56,6 +59,7 @@ public class GlobalExceptionHandler {
                 )
                 .collect(Collectors.toList());
         return ValidationExceptionMessage.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
                 .error(exception.getClass().getSimpleName())
                 .violations(violations)
                 .build();
@@ -72,6 +76,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public final BaseExceptionMessage handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
         return BaseExceptionMessage.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
                 .error(exception.getClass().getSimpleName())
                 .message(exception.getMessage())
                 .build();
@@ -97,6 +102,7 @@ public class GlobalExceptionHandler {
                 )
                 .collect(Collectors.toList());
         return ValidationExceptionMessage.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
                 .error(exception.getClass().getSimpleName())
                 .violations(violations)
                 .build();
@@ -114,6 +120,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public final BaseExceptionMessage handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException exception) {
         return BaseExceptionMessage.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
                 .error(exception.getClass().getSimpleName())
                 .message(exception.getMessage())
                 .build();

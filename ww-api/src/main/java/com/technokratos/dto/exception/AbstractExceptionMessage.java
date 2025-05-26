@@ -16,4 +16,6 @@ public abstract class AbstractExceptionMessage {
     private LocalDateTime timestamp = LocalDateTime.now();
     @Schema(description = "Тип ошибки", example = "MethodArgumentNotValidException")
     private String error;
+    @Schema(description = "Статус ответа", example = "200")
+    private int status;
 }

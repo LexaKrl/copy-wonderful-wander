@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB_NAME}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+  liquibase:
+    change-log: classpath:/db/changelog/user-service/changelog-master.xml
+  jooq:
+    sql-dialect: postgres
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+
+logging:
+  level:
+    org.springframework: INFO
+    org.jooq: WARN
+
+jwt:
+  access-token-duration: ${ACCESS_TOKEN_DURATION}
+  refresh-token-duration: ${REFRESH_TOKEN_DURATION}
+  time-token-end-soon: ${TIME_TOKEN_END_SOON}
+  secret-key: ${SECRET_KEY}

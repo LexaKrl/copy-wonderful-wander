@@ -2,8 +2,10 @@ package com.technokratos.controller;
 
 import com.technokratos.api.UserApi;
 import com.technokratos.dto.request.user.UserRequest;
+import com.technokratos.dto.response.user.UserCompactResponse;
 import com.technokratos.dto.response.user.UserProfileResponse;
 import com.technokratos.dto.response.user.UserResponse;
+import com.technokratos.security.BaseUserContextHolder;
 import com.technokratos.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -16,54 +18,54 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserController implements UserApi {
     private final UserService userService;
+    private final BaseUserContextHolder userContextHolder;
 
     @Override
     public UserResponse getCurrentUserProfile() {
-        UUID userId = UUID.fromString("1978b53d-d03d-46e3-8a70-9d87468f4677");
-        return userService.getUserById(userId);
+        return userService.getUserById(getCurrentUserId());
     }
 
     @Override
     public UserResponse updateCurrentUser(UserRequest userRequest) {
-        UUID userId = UUID.fromString("1978b53d-d03d-46e3-8a70-9d87468f4677");
-        return userService.updateUser(userId, userRequest);
+        return userService.updateUser(getCurrentUserId(), userRequest);
     }
 
     @Override
     public void deleteCurrentUser() {
-        UUID userId = UUID.fromString("1978b53d-d03d-46e3-8a70-9d87468f4677");
-        userService.deleteUser(userId);
+        userService.deleteUser(getCurrentUserId());
     }
 
     @Override
     public void follow(UUID targetUserId) {
-        UUID userId = UUID.fromString("1978b53d-d03d-46e3-8a70-9d87468f4677");
-        userService.follow(userId, targetUserId);
+        userService.follow(getCurrentUserId(), targetUserId);
     }
 
     @Override
     public void unfollow(UUID targetUserId) {
-        UUID userId = UUID.fromString("1978b53d-d03d-46e3-8a70-9d87468f4677");
-        userService.unfollow(userId, targetUserId);
+        userService.unfollow(getCurrentUserId(), targetUserId);
     }
 
     @Override
-    public UserProfileResponse getUserProfileById(UUID userId) {
-        return userService.getProfileByUserId(userId);
+    public UserProfileResponse getUserProfileById(UUID targetUserId) {
+        return userService.getProfileByUserId(getCurrentUserId(), targetUserId);
     }
 
     @Override
-    public List<UserProfileResponse> getFriendsByUserId(UUID userId, Pageable pageable) {
+    public List<UserCompactResponse> getFriendsByUserId(UUID userId, Pageable pageable) {
         return userService.getFriendsByUserId(userId, pageable);
     }
 
     @Override
-    public List<UserProfileResponse> getFollowingByUserId(UUID userId, Pageable pageable) {
+    public List<UserCompactResponse> getFollowingByUserId(UUID userId, Pageable pageable) {
         return userService.getFollowingByUserId(userId, pageable);
     }
 
     @Override
-    public List<UserProfileResponse> getFollowersByUserId(UUID userId, Pageable pageable) {
+    public List<UserCompactResponse> getFollowersByUserId(UUID userId, Pageable pageable) {
         return userService.getFollowersByUserId(userId, pageable);
+    }
+
+    private UUID getCurrentUserId() {
+        return userContextHolder.getUserFromSecurityContext().getUserId();
     }
 }

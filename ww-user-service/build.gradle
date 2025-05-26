@@ -1,3 +1,11 @@
+import org.testcontainers.containers.PostgreSQLContainer
+
+buildscript {
+    dependencies {
+        classpath "org.testcontainers:postgresql:$testcontainersVersion"
+    }
+}
+
 plugins {
     id 'nu.studer.jooq' version "$jooqPluginVersion"
     id 'org.liquibase.gradle' version "$liquibasePluginVersion"
@@ -7,6 +15,15 @@ jar.enabled = false
 
 ext['jooq.version'] = jooq.version.get()
 
+final PostgreSQLContainer postgres = new PostgreSQLContainer("postgres:15-alpine")
+        .withDatabaseName("$dbName")
+        .withUsername("$dbUsername")
+        .withPassword("$dbPassword")
+        .withEnv("TESTCONTAINERS_RYUK_DISABLED", "true")
+        .withEnv("default_schema", "public")
+
+postgres.start()
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-jooq'
@@ -14,6 +31,7 @@ dependencies {
     implementation 'org.springframework.data:spring-data-commons'
     implementation 'org.jooq:jooq-codegen'
     implementation "org.mapstruct:mapstruct:$mapstructVersion"
+    implementation 'org.liquibase:liquibase-core'
     annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
     runtimeOnly 'org.postgresql:postgresql'
 
@@ -21,17 +39,22 @@ dependencies {
     runtimeOnly "io.jsonwebtoken:jjwt-impl:$jwtVersion"
     runtimeOnly "io.jsonwebtoken:jjwt-jackson:$jwtVersion"
 
+    jooqGenerator "org.jooq:jooq-meta-extensions-liquibase:$jooqMetaExtensionsLiquibase"
     jooqGenerator 'org.postgresql:postgresql'
 
     liquibaseRuntime 'org.liquibase:liquibase-core'
+    liquibaseRuntime 'org.postgresql:postgresql'
     liquibaseRuntime "org.liquibase:liquibase-groovy-dsl:$liquibaseDslGroovyVersion"
     liquibaseRuntime "info.picocli:picocli:$picocliVersion"
-    liquibaseRuntime 'org.postgresql:postgresql'
 
     implementation project(':ww-api')
     implementation project(':ww-db')
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:postgresql'
 }
 
 jooq {
@@ -40,19 +63,24 @@ jooq {
             generateSchemaSourceOnCompilation = true
 
             generationTool {
+                logging = 'WARN'
                 jdbc {
-                    driver = 'org.postgresql.Driver'
-                    url = "$dbUrl"
-                    user = "$dbUsername"
-                    password = "$dbPassword"
+                    driver = "org.postgresql.Driver"
+                    url = postgres.jdbcUrl
+                    user = postgres.username
+                    password = postgres.password
                 }
+
                 generator {
+                    name = "org.jooq.codegen.DefaultGenerator"
+
                     database {
-                        name = 'org.jooq.meta.postgres.PostgresDatabase'
-                        inputSchema = 'public'
-                        excludes = 'databasechangelog|databasechangeloglock'
-                        outputSchema = 'public'
+                        name = "org.jooq.meta.postgres.PostgresDatabase"
+                        inputSchema = "public"
+                        excludes = "databasechangelog|databasechangeloglock"
+                        outputSchema = "public"
                     }
+
                     generate {
                         deprecated = false
                         records = true
@@ -60,11 +88,15 @@ jooq {
                         fluentSetters = true
                         javaTimeTypes = true
                     }
+
                     target {
-                        packageName = 'com.technokratos'
-                        directory = 'build/generated-src/jooq/main'
+                        packageName = "com.technokratos"
+                        directory = "build/generated-src/jooq/main"
                     }
-                    strategy.name = 'org.jooq.codegen.DefaultGeneratorStrategy'
+
+                    strategy {
+                        name = "org.jooq.codegen.DefaultGeneratorStrategy"
+                    }
                 }
             }
         }
@@ -77,9 +109,9 @@ liquibase {
             arguments = [
                     logLevel     : "info",
                     changelogFile: "ww-db/src/main/resources/db/changelog/user-service/changelog-master.xml",
-                    url          : "$dbUrl",
-                    username     : "$dbUsername",
-                    password     : "$dbPassword",
+                    url          : postgres.jdbcUrl,
+                    username     : postgres.username,
+                    password     : postgres.password,
                     driver       : "org.postgresql.Driver"
             ]
         }
@@ -87,8 +119,35 @@ liquibase {
     runList = "main"
 }
 
-tasks.named('generateJooq') {
-    dependsOn 'update'
+sourceSets {
+    test {
+        resources {
+            srcDirs += [
+                    project(":ww-db").sourceSets.main.resources
+            ]
+        }
+    }
+}
+
+tasks.named("generateJooq") {
+    dependsOn "update"
+}
+
+tasks.register('containerStop') {
+    doLast {
+        if (postgres.isRunning()) {
+            postgres.stop()
+            println 'STOPPING DATABASE CONTAINER'
+        }
+    }
+}
+
+gradle.taskGraph.whenReady { taskGraph ->
+    taskGraph.allTasks.last().doLast {
+        tasks.named('containerStop').get().actions.each { action ->
+            action.execute(tasks.named('containerStop').get())
+        }
+    }
 }
 
 test {
