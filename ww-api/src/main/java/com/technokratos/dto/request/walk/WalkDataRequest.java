@@ -2,6 +2,8 @@ package com.technokratos.dto.request.walk;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.time.LocalDateTime;
+
 public record WalkDataRequest(
 
         @Schema(description = "Longitude", example = "-77.0364")
@@ -14,6 +16,9 @@ public record WalkDataRequest(
         Integer steps,
 
         @Schema(description = "Information about meters passed since last timestamp", example = "213")
-        Integer meters
+        Integer meters,
+
+        @Schema(description = "Time when data were posted", example = "2023-10-05 14:30:00")
+        LocalDateTime time
 ) {
 }

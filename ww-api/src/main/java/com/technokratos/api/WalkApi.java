@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -86,7 +87,7 @@ public interface WalkApi {
                     required = true,
                     content = @Content(schema = @Schema(implementation = WalkRequest.class))
             )
-            @RequestBody
+            @RequestBody @Valid
             WalkRequest walkRequest
     );
 
@@ -178,13 +179,13 @@ public interface WalkApi {
     )
     @PutMapping("/{walkId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void updateWalk(
+    ResponseEntity<Void> updateWalk(
             @Parameter(
                     description = "The body of the walk request that user sends to the server",
                     required = true,
                     content = @Content(schema = @Schema(implementation = WalkRequest.class))
             )
-            @RequestBody WalkRequest walkRequest,
+            @RequestBody @Valid WalkRequest walkRequest,
             @Parameter(
                     description = "UUID of the walk to update",
                     example = "550e8400-e29b-41d4-a716-446655440000",
@@ -199,7 +200,7 @@ public interface WalkApi {
      *
      * */
 
-    @Operation(
+    /*@Operation(
             summary = "Recording location data",
             description = "Record location data from the user to the server",
             tags = {"Walk recording"},
@@ -235,5 +236,5 @@ public interface WalkApi {
                     )
             )
             @RequestBody List<WalkDataRequest> walkDataRequests
-    );
+    );*/
 }
