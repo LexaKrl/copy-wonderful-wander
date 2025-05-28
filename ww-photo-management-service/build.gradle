@@ -4,7 +4,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'org.liquibase:liquibase-core'
     runtimeOnly 'org.postgresql:postgresql'
-    implementation "io.minio:minio:${minioVersion}"
 
     implementation project(':ww-core')
     implementation project(':ww-api')
