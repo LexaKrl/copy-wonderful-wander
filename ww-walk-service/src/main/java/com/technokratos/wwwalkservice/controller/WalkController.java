@@ -10,6 +10,7 @@ import com.technokratos.wwwalkservice.service.service_interface.WalkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,8 +22,6 @@ import java.util.UUID;
 public class WalkController implements WalkApi {
 
     private final WalkService walkService;
-    private final RecordLocationService recordLocationService;
-    private final WalkMapper walkMapper;
 
     @Override
     public ResponseEntity<Page<WalkResponse>> getWalks(Pageable pageable) {
@@ -30,27 +29,25 @@ public class WalkController implements WalkApi {
     }
 
     @Override
-    public void createWalk(WalkRequest walkRequest) {
+    public ResponseEntity<Void> createWalk(WalkRequest walkRequest) {
         walkService.saveWalk(walkRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @Override
     public ResponseEntity<WalkResponse> getWalk(UUID walkId) {
-        return ResponseEntity.ok(walkMapper.toResponse(walkService.findById(walkId)));
+        return ResponseEntity.ok(walkService.findById(walkId));
     }
 
     @Override
-    public void deleteWalk(UUID walkId) {
+    public ResponseEntity<Void> deleteWalk(UUID walkId) {
         walkService.deleteById(walkId);
+        return ResponseEntity.noContent().build();
     }
 
     @Override
-    public void updateWalk(WalkRequest walkRequest, UUID walkId) {
+    public ResponseEntity<Void> updateWalk(WalkRequest walkRequest, UUID walkId) {
         walkService.updateById(walkId, walkRequest);
-    }
-
-    @Override
-    public void recordData(String walkId, List<WalkDataRequest> walkDataRequests) {
-
+        return ResponseEntity.noContent().build();
     }
 }

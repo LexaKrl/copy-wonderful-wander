@@ -1,6 +1,5 @@
 package com.technokratos.api;
 
-import com.technokratos.dto.request.walk.WalkDataRequest;
 import com.technokratos.dto.request.walk.WalkRequest;
 import com.technokratos.dto.response.walk.WalkResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @Tag(name = "Walk", description = "The Walk API")
@@ -81,7 +79,7 @@ public interface WalkApi {
     )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    void createWalk(
+    ResponseEntity<Void> createWalk(
             @Parameter(
                     description = "Data for creation walk",
                     required = true,
@@ -145,7 +143,7 @@ public interface WalkApi {
     )
     @DeleteMapping("/{walkId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void deleteWalk(
+    ResponseEntity<Void> deleteWalk(
             @Parameter(
                     description = "UUID of the walk to delete",
                     example = "550e8400-e29b-41d4-a716-446655440000",
@@ -193,48 +191,4 @@ public interface WalkApi {
             )
             @PathVariable UUID walkId
     );
-
-
-    /*
-     *   Record data using method
-     *
-     * */
-
-    /*@Operation(
-            summary = "Recording location data",
-            description = "Record location data from the user to the server",
-            tags = {"Walk recording"},
-            responses = {
-                    @ApiResponse(
-                            responseCode = "202",
-                            description = "Location updated"
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Walk not found"
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Invalid data"
-                    )
-            }
-    )
-    @PostMapping("/{walkId}/record")
-    void recordData(
-            @Parameter(
-                    description = "UUID of the walk which data is recording",
-                    example = "550e8400-e29b-41d4-a716-446655440000",
-                    required = true
-            )
-            @PathVariable String walkId,
-            @Parameter(
-                    description = "The location data",
-                    required = true,
-                    content = @Content(
-                            mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = WalkDataRequest.class))
-                    )
-            )
-            @RequestBody List<WalkDataRequest> walkDataRequests
-    );*/
 }

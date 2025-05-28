@@ -8,6 +8,7 @@ import com.technokratos.wwwalkservice.exception.WalkNotFoundException;
 import com.technokratos.wwwalkservice.mapper.WalkMapper;
 import com.technokratos.wwwalkservice.repository.WalkRepository;
 import com.technokratos.wwwalkservice.service.service_interface.WalkService;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,8 +29,8 @@ public class BaseWalkService implements WalkService {
     }
 
     @Override
-    public Walk findById(UUID id) {
-        return walkRepository.findById(id).orElseThrow(() -> new WalkNotFoundException(id));
+    public WalkResponse findById(UUID id) {
+        return walkRepository.findById(id).map(walkMapper::toResponse).orElseThrow(() -> new WalkNotFoundException(id));
     }
 
     @Override
@@ -44,9 +45,9 @@ public class BaseWalkService implements WalkService {
 
     @Override
     public void updateById(UUID id, WalkRequest walkRequest) {
-        Walk walk = walkMapper.toEntity(walkRequest);
-        walk.setWalkId(id);
-        walkRepository.save(walk);
+        Walk existingWalk = walkRepository.findById(id).orElseThrow(() -> new WalkNotFoundException(id));
+        walkMapper.updateFromRequest(existingWalk, walkRequest);
+        walkRepository.save(existingWalk);
     }
 
 }
