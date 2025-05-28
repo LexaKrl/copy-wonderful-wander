@@ -1,4 +1,5 @@
 rootProject.name = 'wonderful-wander'
+include 'ww-core'
 include 'ww-api'
 include 'ww-db'
 include 'ww-user-service'
