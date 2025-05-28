@@ -38,9 +38,12 @@ kafka:
     user-avatar-saved-topic: user.avatar.saved
 
 minio:
+  enabled: true
   url:
   accessKey:
   secretKey:
+  bucket: ww-photos
+  presigned-url-expiration: 600 # В секундах
 
 logging:
   level:

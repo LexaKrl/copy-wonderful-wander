@@ -36,7 +36,8 @@ subprojects {
         implementation 'org.springframework.boot:spring-boot-starter-validation'
         implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${openApiVersion}"
         implementation "org.springframework.kafka:spring-kafka"
-        implementation "io.minio:minio:${minioVersion}"
+
+        implementation 'com.technokratos:ww-starter-minio:1.0.0'
 
         compileOnly "org.projectlombok:lombok:${lombokVersion}"
         testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
