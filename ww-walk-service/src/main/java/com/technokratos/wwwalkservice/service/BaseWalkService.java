@@ -8,12 +8,12 @@ import com.technokratos.wwwalkservice.exception.WalkNotFoundException;
 import com.technokratos.wwwalkservice.mapper.WalkMapper;
 import com.technokratos.wwwalkservice.repository.WalkRepository;
 import com.technokratos.wwwalkservice.service.service_interface.WalkService;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -48,6 +48,19 @@ public class BaseWalkService implements WalkService {
         Walk existingWalk = walkRepository.findById(id).orElseThrow(() -> new WalkNotFoundException(id));
         walkMapper.updateFromRequest(existingWalk, walkRequest);
         walkRepository.save(existingWalk);
+    }
+
+    @Override
+    public void addParticipant(UUID walkId, List<UUID> participantsIds) {
+        Walk existingWalk = walkRepository.findById(walkId).orElseThrow(() -> new WalkNotFoundException(walkId));
+        existingWalk.getWalkParticipants().addAll(participantsIds);
+        walkRepository.save(existingWalk);
+    }
+
+    @Override
+    public void removeParticipant(UUID walkId, List<UUID> participantsIds) {
+        Walk existingWalk = walkRepository.findById(walkId).orElseThrow(() -> new WalkNotFoundException(walkId));
+        participantsIds.forEach(existingWalk.getWalkParticipants()::remove);
     }
 
 }

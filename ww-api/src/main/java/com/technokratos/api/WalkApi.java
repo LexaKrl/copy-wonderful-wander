@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Tag(name = "Walk", description = "The Walk API")
@@ -107,8 +109,12 @@ public interface WalkApi {
                             )
                     ),
                     @ApiResponse(
-                            responseCode = "400",
+                            responseCode = "404",
                             description = "Walk not found"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid data"
                     )
             }
     )
@@ -184,6 +190,92 @@ public interface WalkApi {
                     content = @Content(schema = @Schema(implementation = WalkRequest.class))
             )
             @RequestBody @Valid WalkRequest walkRequest,
+            @Parameter(
+                    description = "UUID of the walk to update",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
+            )
+            @PathVariable UUID walkId
+    );
+
+    /*
+    *   Add walk participant
+    * */
+
+    @Operation(
+            summary = "Add walk participants to the walk",
+            description = "Add new participants to the walk using their Ids'",
+            tags = {"walks"},
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Walk successfully updated"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid input data"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Walk not found"
+                    )
+            }
+    )
+    @PostMapping("/{walkId}/participant")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    ResponseEntity<Void> addParticipant(
+            @Parameter(
+                    description = "UUID of the participant user want to add",
+                    required = true,
+                    examples = @ExampleObject(
+                            name = "participants",
+                            value = "[\"550e8400-e29b-41d4-a716-446655440000\", \"f47ac10b-58cc-4372-a567-0e02b2c3d479\"]"
+                    )
+            )
+            @RequestParam List<UUID> participantsIds,
+            @Parameter(
+                    description = "UUID of the walk to update",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
+            )
+            @PathVariable UUID walkId
+    );
+
+    /*
+    *   Remove participant of the walk
+    * */
+
+    @Operation(
+            summary = "Add walk participants to the walk",
+            description = "Add new participants to the walk using their Ids'",
+            tags = {"walks"},
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Walk successfully updated"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid input data"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Walk not found"
+                    )
+            }
+    )
+    @DeleteMapping("/{walkId}/participant")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    ResponseEntity<Void> removeParticipant(
+            @Parameter(
+                    description = "UUID of the participant user want to add",
+                    required = true,
+                    examples = @ExampleObject(
+                            name = "participants",
+                            value = "[\"550e8400-e29b-41d4-a716-446655440000\", \"f47ac10b-58cc-4372-a567-0e02b2c3d479\"]"
+                    )
+            )
+            @RequestParam List<UUID> participantsIds,
             @Parameter(
                     description = "UUID of the walk to update",
                     example = "550e8400-e29b-41d4-a716-446655440000",

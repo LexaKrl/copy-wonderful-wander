@@ -50,4 +50,16 @@ public class WalkController implements WalkApi {
         walkService.updateById(walkId, walkRequest);
         return ResponseEntity.noContent().build();
     }
+
+    @Override
+    public ResponseEntity<Void> addParticipant(List<UUID> participantsIds, UUID walkId) {
+        walkService.addParticipant(walkId, participantsIds);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> removeParticipant(List<UUID> participantsIds, UUID walkId) {
+        walkService.removeParticipant(walkId, participantsIds);
+        return ResponseEntity.noContent().build();
+    }
 }
