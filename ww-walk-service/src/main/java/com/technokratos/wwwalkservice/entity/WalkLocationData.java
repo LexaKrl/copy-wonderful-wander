@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class LocationData {
+public class WalkLocationData {
 
     @Id
     private String id;
@@ -24,10 +24,4 @@ public class LocationData {
     private String walkId;
 
     private List<WalkPoint> points;
-
-    private LocalDateTime startTime;
-
-    private LocalDateTime endTime;
-
-    private WalkStatus walkStatus;
 }

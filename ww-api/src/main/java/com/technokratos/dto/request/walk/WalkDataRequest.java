@@ -5,7 +5,6 @@ import jakarta.validation.constraints.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 public record WalkDataRequest(
 
@@ -34,21 +33,21 @@ public record WalkDataRequest(
         Integer meters,
 
         @Schema(
-                description = "UUIDs of photos uploaded by user. When client uploads a photo he receives a photo UUID",
+                description = "String UUID.jpeg(example) of photos uploaded by user. When client uploads a photo he receives a photo UUID",
                 example = """
                         "a1e5f6d4-e2f3-4a8b-eb5c-1e2f3a4b5c6d",
                         "ad4d3a54-e5f6-47ab-9c0d-1b5c3a4b3a4d",
                         "a1bb5cd4-e5f6-4c8b-9c0d-13a43a4b5c6d"
                         """
         )
-        @NotNull(message = "Photo UUIDs list cannot be null")
+        @NotNull(message = "Photo String list cannot be null")
         @Size(max = 10, message = "Maximum 10 photos per request allowed")
         List<
                 @NotBlank(message = "Participant UUID cannot be blank")
-                @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
-                        message = "Invalid UUID format")
-                UUID
-        > uuidsPhotos,
+                @Pattern(regexp = "^(?i)[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\\.(jpe?g|png|gif|bmp|webp)$",
+                        message = "Invalid String UUID.ext format")
+                String
+        > photos,
 
         @Schema(description = "Time when data were posted", example = "2023-10-05 14:30:00")
         @NotNull(message = "Timestamp cannot be null")
