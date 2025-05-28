@@ -58,7 +58,21 @@ public interface WalkRecordingApi {
     @Operation(
             summary = "Streaming data when it is received from main user",
             description = "Stream data to all subscribers",
-            tags = {"Walk recording"}
+            tags = {"Walk recording"},
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Successfully subscribed"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid data"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Walk not found"
+                    )
+            }
     )
     @PostMapping("/{walkId}/stream/data")
     ResponseEntity<Void> streamData(
@@ -67,7 +81,7 @@ public interface WalkRecordingApi {
                     example = "550e8400-e29b-41d4-a716-446655440000",
                     required = true
             )
-            @PathVariable UUID walkId,
+            @PathVariable @Valid UUID walkId,
             @Parameter(
                     description = "Walk data to stream to subscribers",
                     required = true,

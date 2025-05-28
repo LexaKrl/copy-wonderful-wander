@@ -14,11 +14,21 @@ public interface WalkMapper {
     WalkResponse toResponse(Walk walk);
 
     @Mapping(target = "walkId", ignore = true)
+    @Mapping(target = "totalSteps", ignore = true)
+    @Mapping(target = "totalMeters", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "finishedAt", ignore = true)
+    @Mapping(target = "walkStatus", ignore = true)
+    @Mapping(target = "photos", ignore = true)
     Walk toEntity(WalkRequest walkRequest);
 
     @Mapping(target = "walkId", ignore = true)
     @Mapping(target = "userId", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "totalSteps", ignore = true)
+    @Mapping(target = "totalMeters", ignore = true)
+    @Mapping(target = "finishedAt", ignore = true)
     @Mapping(target = "walkStatus", ignore = true)
+    @Mapping(target = "photos", ignore = true)
     void updateFromRequest(@MappingTarget Walk existingWalk, WalkRequest walkRequest);
 }

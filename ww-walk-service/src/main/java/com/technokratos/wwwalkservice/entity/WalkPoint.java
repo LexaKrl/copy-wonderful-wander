@@ -7,14 +7,13 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class WalkPoint {
-
+    // TODO consider add GeoPoint
     private Double longitude;
 
     private Double latitude;
@@ -23,7 +22,7 @@ public class WalkPoint {
 
     private Integer meters;
 
-    private List<UUID> uuidsPhotos;
+    private List<String> photos;
 
     private LocalDateTime time;
 }

@@ -1,14 +1,9 @@
 package com.technokratos.dto.response.walk;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 public record WalkDataResponse(
         @Schema(description = "Longitude", example = "-77.0364")

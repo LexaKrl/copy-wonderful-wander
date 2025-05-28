@@ -2,7 +2,6 @@ package com.technokratos.wwwalkservice.controller;
 
 import com.technokratos.api.WalkRecordingApi;
 import com.technokratos.dto.request.walk.WalkDataRequest;
-import com.technokratos.wwwalkservice.service.BaseRecordLocationService;
 import com.technokratos.wwwalkservice.service.service_interface.RecordLocationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
