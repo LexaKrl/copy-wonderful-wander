@@ -1,7 +1,9 @@
 package com.technokratos.service;
 
+import com.technokratos.config.properties.KafkaTopicProperties;
 import com.technokratos.dto.FileUploadRequest;
 import com.technokratos.entity.FileMetadata;
+import com.technokratos.event.AvatarSavedEvent;
 import com.technokratos.exception.PhotoUploadException;
 import com.technokratos.repository.PhotoRepository;
 import com.technokratos.util.s3.FileNameBuilder;
@@ -10,6 +12,7 @@ import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
@@ -22,21 +25,30 @@ import java.util.UUID;
 public class PhotoService {
     private final MinioClient minioClient;
     private final PhotoRepository photoRepository;
+    private final KafkaTopicProperties kafkaProperties;
+    private final KafkaTemplate<String, AvatarSavedEvent> kafkaTemplate;
 
-    public void saveAvatar(FileUploadRequest fileUploadRequest) {
-        save(fileUploadRequest, MinioConstant.BucketName.PHOTOS, MinioConstant.FileType.AVATARS);
+    public String saveAvatar(FileUploadRequest fileUploadRequest) {
+        String avatarFilename = save(fileUploadRequest, MinioConstant.BucketName.PHOTOS, MinioConstant.FileType.AVATARS);
+        kafkaTemplate.send(
+                kafkaProperties.getUserAvatarSavedTopic(),
+                AvatarSavedEvent.builder()
+                        .ownerId(fileUploadRequest.userId())
+                        .avatarFilename(avatarFilename)
+                        .build()
+        );
+        return avatarFilename;
     }
 
-    public UUID savePost(FileUploadRequest fileUploadRequest) {
+    public String savePost(FileUploadRequest fileUploadRequest) {
         return save(fileUploadRequest, MinioConstant.BucketName.PHOTOS, MinioConstant.FileType.POSTS);
     }
 
-    public UUID saveWalk(FileUploadRequest fileUploadRequest) {
+    public String saveWalk(FileUploadRequest fileUploadRequest) {
         return save(fileUploadRequest, MinioConstant.BucketName.PHOTOS, MinioConstant.FileType.WALKS);
     }
 
-
-    private UUID save(FileUploadRequest fileUploadRequest, String bucketName, String fileType) {
+    private String save(FileUploadRequest fileUploadRequest, String bucketName, String fileType) {
         UUID fileId = UUID.randomUUID();
         String fileName = FileNameBuilder.buildFileName(fileId, fileUploadRequest.filename(), fileType);
 
@@ -56,7 +68,7 @@ public class PhotoService {
             throw new PhotoUploadException(e.getMessage());
         }
 
-        return photoRepository.save(FileMetadata.builder()
+        photoRepository.save(FileMetadata.builder()
                 .fileId(fileId)
                 .ownerId(fileUploadRequest.userId())
                 .filename(fileUploadRequest.filename())
@@ -64,6 +76,8 @@ public class PhotoService {
                 .size(convertBytesToMegabytes(fileUploadRequest.size()))
                 .uploadDateTime(LocalDateTime.now())
                 .build());
+
+        return fileName;
     }
 
     private double convertBytesToMegabytes(long size) {

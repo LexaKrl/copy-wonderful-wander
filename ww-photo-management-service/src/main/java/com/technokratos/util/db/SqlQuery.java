@@ -10,7 +10,6 @@ public class SqlQuery {
                 """
                         INSERT INTO file_stored_metadata (file_id, owner_id, filename, extension, size, upload_date)
                         VALUES (:%s, :%s, :%s, :%s::file_extension, :%s, :%s)
-                        RETURNING file_id
                         """
                         .formatted(
                                 SqlParameters.Photo.FILE_ID,

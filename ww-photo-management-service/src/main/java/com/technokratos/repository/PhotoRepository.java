@@ -9,14 +9,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
-import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
 public class PhotoRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    public UUID save(FileMetadata fileMetadata) {
+    public void save(FileMetadata fileMetadata) {
         final MapSqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue(SqlParameters.Photo.FILE_ID, fileMetadata.getFileId())
                 .addValue(SqlParameters.Photo.OWNER_ID, fileMetadata.getOwnerId())
@@ -25,10 +24,9 @@ public class PhotoRepository {
                 .addValue(SqlParameters.Photo.SIZE, fileMetadata.getSize())
                 .addValue(SqlParameters.Photo.UPLOAD_DATE, Timestamp.valueOf(fileMetadata.getUploadDateTime()));
 
-        return jdbcTemplate.queryForObject(
+        jdbcTemplate.update(
                 SqlQuery.Photo.SAVE,
-                parameters,
-                UUID.class
+                parameters
         );
     }
 }
