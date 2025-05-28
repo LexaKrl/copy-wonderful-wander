@@ -8,7 +8,10 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
   data:
     mongodb:
-      uri: mongodb://localhost:27017/walk-service-db
+      uri: mongodb://localhost:27017/ww-walk-service
+      auto-index-creation: true
+  liquibase:
+    change-log: "../../../"
