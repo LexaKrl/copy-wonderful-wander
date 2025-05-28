@@ -10,11 +10,6 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class DatabaseConfig {
     @Bean
-    public MinioProperties minioProperties() {
-        return new MinioProperties();
-    }
-
-    @Bean
     public MinioClient minioClient(MinioProperties minioProperties) {
         return MinioClient.builder()
                 .endpoint(minioProperties.getUrl())
