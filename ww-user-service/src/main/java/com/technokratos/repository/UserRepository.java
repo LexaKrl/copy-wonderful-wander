@@ -187,4 +187,12 @@ public class UserRepository {
                 .fetchOptional()
                 .map(record -> record.into(Account.class));
     }
+
+    public void saveFilenameByUserId(UUID userId, String filename) {
+        dsl
+                .update(Tables.ACCOUNT)
+                .set(Tables.ACCOUNT.AVATAR_FILENAME, filename)
+                .where(Tables.ACCOUNT.USER_ID.eq(userId))
+                .execute();
+    }
 }

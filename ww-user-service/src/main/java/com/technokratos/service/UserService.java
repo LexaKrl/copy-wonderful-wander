@@ -89,6 +89,10 @@ public class UserService {
         userRepository.delete(userId);
     }
 
+    public void saveAvatarFilename(UUID userId, String filename) {
+        userRepository.saveFilenameByUserId(userId, filename);
+    }
+
     private boolean checkUserNotExists(UUID userId) {
         return !userRepository.existsById(userId);
     }
