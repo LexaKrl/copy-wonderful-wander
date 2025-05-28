@@ -1,0 +1,60 @@
+package com.technokratos.config;
+
+import com.technokratos.config.properties.KafkaProducerProperties;
+import com.technokratos.config.properties.KafkaTopicProperties;
+import com.technokratos.event.AvatarSavedEvent;
+import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.config.TopicBuilder;
+import org.springframework.kafka.core.DefaultKafkaProducerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.kafka.support.serializer.JsonSerializer;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Configuration
+public class KafkaConfig {
+    @Bean
+    public Map<String, Object> producerConfigs(KafkaProducerProperties kafkaProducerProperties) {
+        Map<String, Object> config = new HashMap<>();
+
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProducerProperties.getBootstrapServers());
+        config.put(ProducerConfig.ACKS_CONFIG, kafkaProducerProperties.getAcks());
+        config.put(ProducerConfig.RETRIES_CONFIG, kafkaProducerProperties.getRetries());
+        config.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, kafkaProducerProperties.getProps("delivery.timeout.ms"));
+        config.put(ProducerConfig.LINGER_MS_CONFIG, kafkaProducerProperties.getProps("linger.ms"));
+        config.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, kafkaProducerProperties.getProps("request.timeout.ms"));
+        config.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, kafkaProducerProperties.getProps("enable.idempotence"));
+        config.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, kafkaProducerProperties.getProps("max.in.flight.requests.per.connection"));
+        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+
+        return config;
+    }
+
+    @Bean
+    public ProducerFactory<String, AvatarSavedEvent> avatarSavedEventProducerFactory(Map<String, Object> producerConfigs) {
+        return new DefaultKafkaProducerFactory<>(producerConfigs);
+    }
+
+    @Bean
+    public KafkaTemplate<String, AvatarSavedEvent> avatarSavedEventKafkaTemplate(
+            ProducerFactory<String, AvatarSavedEvent> avatarSavedEventProducerFactory) {
+        return new KafkaTemplate<>(avatarSavedEventProducerFactory);
+    }
+
+    @Bean
+    public NewTopic avatarCreatedEventTopic(KafkaTopicProperties kafkaProperties) {
+        return TopicBuilder
+                .name(kafkaProperties.getUserAvatarSavedTopic())
+                .partitions(3)
+                .replicas(3)
+                .configs(Map.of("min.insync.replicas", "2"))
+                .build();
+    }
+}

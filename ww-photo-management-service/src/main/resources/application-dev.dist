@@ -1,0 +1,50 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 30MB
+  datasource:
+    username:
+    password:
+    url:
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    change-log: classpath:/db/changelog/photo-management-service/changelog-master.xml
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092, localhost:9094, localhost:9096
+      acks: all # Требуем подтверждения от всех синхронизированных брокеров с лидером партиции
+      retries: 10 # Максимальное количество retry
+      properties:
+        delivery:
+          timeout:
+            ms: 20000 # Максимальное время от отправки до получения ack - 20 секунд
+        linger:
+          ms: 0 # Работаем без батч-режима, каждое сообщение отдаем по одному
+        request:
+          timeout:
+            ms: 10000 # Максимальное время ожидания ответа от брокера - 10 секунд
+        enable:
+          idempotence: true
+        max:
+          in:
+            flight:
+              requests:
+                per:
+                  connection: 5
+
+kafka:
+  topics:
+    user-avatar-saved-topic: user.avatar.saved
+
+minio:
+  url:
+  accessKey:
+  secretKey:
+
+logging:
+  level:
+    org.springframework: info
+
+server:
+  port: 8081
