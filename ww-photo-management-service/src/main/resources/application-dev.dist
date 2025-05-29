@@ -16,22 +16,11 @@ spring:
       acks: all # Требуем подтверждения от всех синхронизированных брокеров с лидером партиции
       retries: 10 # Максимальное количество retry
       properties:
-        delivery:
-          timeout:
-            ms: 20000 # Максимальное время от отправки до получения ack - 20 секунд
-        linger:
-          ms: 0 # Работаем без батч-режима, каждое сообщение отдаем по одному
-        request:
-          timeout:
-            ms: 10000 # Максимальное время ожидания ответа от брокера - 10 секунд
-        enable:
-          idempotence: true
-        max:
-          in:
-            flight:
-              requests:
-                per:
-                  connection: 5
+        delivery-timeout-ms: 20000 # Максимальное время от отправки до получения ack - 20 секунд
+        linger-ms: 0 # Работаем без батч-режима, каждое сообщение отдаем по одному
+        request-timeout-ms: 10000 # Максимальное время ожидания ответа от брокера - 10 секунд
+        enable-idempotence: true # Идемпотентность продюсера
+        max-in-flight-requests-per-connection: 5 # Максимальное количество запросов без ответа
 
 kafka:
   topics:
@@ -43,7 +32,7 @@ minio:
   accessKey:
   secretKey:
   bucket: ww-photos
-  presigned-url-expiration: 600 # В секундах
+  presigned-url-expiration: 600
 
 logging:
   level:

@@ -18,10 +18,7 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       group-id: avatar-saved-events
       properties:
-        spring:
-          json:
-            trusted:
-              packages: com.technokratos.event # Доверенные пакеты, где лежат наши event
+        spring-json-trusted-packages: com.technokratos.event # Доверенные пакеты, где лежат наши event
 
 minio:
   enabled:

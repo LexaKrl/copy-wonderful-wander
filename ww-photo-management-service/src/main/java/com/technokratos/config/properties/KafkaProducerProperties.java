@@ -4,19 +4,21 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Data
 @Component
 @ConfigurationProperties(prefix = "spring.kafka.producer")
 public class KafkaProducerProperties {
     private String bootstrapServers;
     private String acks;
-    private String retries;
-    private Map<String, String> properties = new HashMap<>();
+    private Integer retries;
+    private Properties properties;
 
-    public String getProps(String key) {
-        return properties.get(key);
+    @Data
+    public static class Properties {
+        private Integer deliveryTimeoutMs;
+        private Integer lingerMs;
+        private Integer requestTimeoutMs;
+        private Boolean enableIdempotence;
+        private Integer maxInFlightRequestsPerConnection;
     }
 }
