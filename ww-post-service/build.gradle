@@ -9,7 +9,7 @@ dependencies {
 //	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
 	implementation 'org.springframework.data:spring-data-commons'
-//	implementation 'org.springframework.boot:spring-boot-starter-datamongodb'
+	implementation("org.springframework.boot:spring-boot-starter-data-mongodb:3.4.1")
 	implementation "org.mapstruct:mapstruct:$mapstructVersion"
 	annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
 	runtimeOnly 'org.postgresql:postgresql'
@@ -31,21 +31,21 @@ dependencies {
 
 }
 
-liquibase {
-	activities {
-		main {
-			arguments = [
-					logLevel     : "info",
-					changelogFile: "ww-db/src/main/resources/db/changelog/user-service/changelog-master.xml",
-					url          : "$dbUrl",
-					username     : "$dbUsername",
-					password     : "$dbPassword",
-					driver       : "org.postgresql.Driver"
-			]
-		}
-	}
-	runList = "main"
-}
+//liquibase {
+//	activities {
+//		main {
+//			arguments = [
+//					logLevel     : "info",
+//					changelogFile: "ww-db/src/main/resources/db/changelog/user-service/changelog-master.xml",
+//					url          : "$dbUrl",
+//					username     : "$dbUsername",
+//					password     : "$dbPassword",
+//					driver       : "org.postgresql.Driver"
+//			]
+//		}
+//	}
+//	runList = "main"
+//}
 
 test {
 	useJUnitPlatform()
