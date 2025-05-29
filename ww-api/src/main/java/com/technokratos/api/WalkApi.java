@@ -1,6 +1,5 @@
 package com.technokratos.api;
 
-import com.technokratos.dto.request.walk.WalkDataRequest;
 import com.technokratos.dto.request.walk.WalkRequest;
 import com.technokratos.dto.response.walk.WalkResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -17,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @Tag(name = "Walk", description = "The Walk API")
@@ -54,7 +53,7 @@ public interface WalkApi {
                     description = "Pageable type with size and sort type",
                     required = true
             )
-            @PageableDefault(size = 20, sort = "date")
+            @PageableDefault(size = 20, sort = "createdAt")
             Pageable pageable
     );
 
@@ -80,13 +79,13 @@ public interface WalkApi {
     )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    void createWalk(
+    ResponseEntity<Void> createWalk(
             @Parameter(
                     description = "Data for creation walk",
                     required = true,
                     content = @Content(schema = @Schema(implementation = WalkRequest.class))
             )
-            @RequestBody
+            @RequestBody @Valid
             WalkRequest walkRequest
     );
 
@@ -108,8 +107,12 @@ public interface WalkApi {
                             )
                     ),
                     @ApiResponse(
-                            responseCode = "400",
+                            responseCode = "404",
                             description = "Walk not found"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid data"
                     )
             }
     )
@@ -144,7 +147,7 @@ public interface WalkApi {
     )
     @DeleteMapping("/{walkId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void deleteWalk(
+    ResponseEntity<Void> deleteWalk(
             @Parameter(
                     description = "UUID of the walk to delete",
                     example = "550e8400-e29b-41d4-a716-446655440000",
@@ -178,13 +181,13 @@ public interface WalkApi {
     )
     @PutMapping("/{walkId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void updateWalk(
+    ResponseEntity<Void> updateWalk(
             @Parameter(
                     description = "The body of the walk request that user sends to the server",
                     required = true,
                     content = @Content(schema = @Schema(implementation = WalkRequest.class))
             )
-            @RequestBody WalkRequest walkRequest,
+            @RequestBody @Valid WalkRequest walkRequest,
             @Parameter(
                     description = "UUID of the walk to update",
                     example = "550e8400-e29b-41d4-a716-446655440000",
@@ -193,47 +196,83 @@ public interface WalkApi {
             @PathVariable UUID walkId
     );
 
-
     /*
-     *   Record data using method
-     *
-     * */
+    *   Add walk participant
+    * */
 
     @Operation(
-            summary = "Recording location data",
-            description = "Record location data from the user to the server",
-            tags = {"Walk recording"},
+            summary = "Add walk participant to the walk",
+            description = "Add new participant to the walk using his Id",
+            tags = {"walks"},
             responses = {
                     @ApiResponse(
-                            responseCode = "202",
-                            description = "Location updated"
+                            responseCode = "204",
+                            description = "Walk successfully updated"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid input data"
                     ),
                     @ApiResponse(
                             responseCode = "404",
                             description = "Walk not found"
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Invalid data"
                     )
             }
     )
-    @PostMapping("/{walkId}/record")
-    void recordData(
+    @PostMapping("/{walkId}/participant")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    ResponseEntity<Void> addParticipant(
             @Parameter(
-                    description = "UUID of the walk which data is recording",
+                    description = "UUID of the participant user want to add",
                     example = "550e8400-e29b-41d4-a716-446655440000",
                     required = true
             )
-            @PathVariable String walkId,
+            @RequestParam UUID participantsId,
             @Parameter(
-                    description = "The location data",
-                    required = true,
-                    content = @Content(
-                            mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = WalkDataRequest.class))
-                    )
+                    description = "UUID of the walk to update",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
             )
-            @RequestBody List<WalkDataRequest> walkDataRequests
+            @PathVariable UUID walkId
+    );
+
+    /*
+    *   Remove participant of the walk
+    * */
+
+    @Operation(
+            summary = "Add walk participant to the walk",
+            description = "Add new participant to the walk using his Id",
+            tags = {"walks"},
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Walk successfully updated"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid input data"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Walk not found"
+                    )
+            }
+    )
+    @DeleteMapping("/{walkId}/participant")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    ResponseEntity<Void> removeParticipant(
+            @Parameter(
+                    description = "UUID of the participant user want to add",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
+            )
+            @RequestParam UUID participantsId,
+            @Parameter(
+                    description = "UUID of the walk to update",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
+            )
+            @PathVariable UUID walkId
     );
 }

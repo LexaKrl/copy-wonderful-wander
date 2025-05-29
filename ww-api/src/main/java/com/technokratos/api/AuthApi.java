@@ -26,13 +26,16 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public interface AuthApi {
 
     @PostMapping("/register")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Регистрация пользователя",
             description = "Пользователь регистрируется с данными из тела запроса"
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Пользователь успешно зарегестрирован"),
             @ApiResponse(responseCode = "400", description = "Некорректные данные для регистрации",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = BaseExceptionMessage.class))),
+            @ApiResponse(responseCode = "409", description = "Конфликтующие данные",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
@@ -71,7 +74,7 @@ public interface AuthApi {
     AuthResponse refreshToken(@RequestBody @Validated RefreshTokenRequest refreshTokenRequest);
 
     @PostMapping("/change-pass")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Обновление пароля",
             description = "Обновляем пароль пользователя"
     )

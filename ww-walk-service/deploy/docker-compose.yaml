@@ -1,0 +1,27 @@
+services:
+  ww-walk-postgres:
+    image: postgis/postgis
+    restart: always
+    environment:
+      - POSTGRES_DB=gis
+      - POSTGRES_USER=gis
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+    volumes:
+      - walk-service-postgis_data
+
+  mongo:
+    image: mongo:5.2.1
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+    ports:
+      - "27017:27017"
+    volumes:
+      - walk-service-mongo_data:/data/db
+
+volumes:
+  walk-service-mongo_data:
+  walk-service-postgis_data:

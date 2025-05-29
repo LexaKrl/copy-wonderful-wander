@@ -7,8 +7,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.UUID;
 
@@ -40,48 +42,14 @@ public interface WalkRecordingApi {
             }
     )
     @GetMapping("/{walkId}/stream/subscribe")
-    ResponseEntity<Void> subscribe(
+    SseEmitter subscribe(
             @Parameter(
                     description = "UUID of the walk",
                     example = "550e8400-e29b-41d4-a716-446655440000",
                     required = true
             )
-            @PathVariable String walkId
+            @PathVariable UUID walkId
     );
-
-    /*
-    *   Unsubscribe from streaming
-    * */
-
-    @Operation(
-            summary = "Unsubscribe on streaming location data",
-            description = "Unsubscribe from receiving data from server",
-            tags = {"Walk recording"},
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Successfully unsubscribed"
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Walk not found"
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Invalid data"
-                    )
-            }
-    )
-    @GetMapping("/{walkId}/stream/unsubscribe")
-    ResponseEntity<Void> unsubscribe(
-            @Parameter(
-                    description = "UUID of the walk",
-                    example = "550e8400-e29b-41d4-a716-446655440000",
-                    required = true
-            )
-            @PathVariable String walkId
-    );
-
 
     /*
     *   Stream data
@@ -90,15 +58,30 @@ public interface WalkRecordingApi {
     @Operation(
             summary = "Streaming data when it is received from main user",
             description = "Stream data to all subscribers",
-            tags = {"Walk recording"}
+            tags = {"Walk recording"},
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Successfully subscribed"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid data"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Walk not found"
+                    )
+            }
     )
-    void streamData(
+    @PostMapping("/{walkId}/stream/data")
+    ResponseEntity<Void> streamData(
             @Parameter(
                     description = "UUID of the walk",
                     example = "550e8400-e29b-41d4-a716-446655440000",
                     required = true
             )
-            UUID walkId,
+            @PathVariable @Valid UUID walkId,
             @Parameter(
                     description = "Walk data to stream to subscribers",
                     required = true,
@@ -107,6 +90,6 @@ public interface WalkRecordingApi {
                             schema = @Schema(implementation = WalkDataRequest.class)
                     )
             )
-            WalkDataRequest walkDataRequest
+            @RequestBody @Valid WalkDataRequest walkDataRequest
     );
 }
