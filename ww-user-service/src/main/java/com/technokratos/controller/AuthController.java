@@ -1,36 +1,48 @@
 package com.technokratos.controller;
 
+import com.technokratos.api.AuthApi;
+import com.technokratos.dto.request.security.PasswordChangeRequest;
+import com.technokratos.dto.request.security.RefreshTokenRequest;
 import com.technokratos.dto.request.security.UserLoginRequest;
 import com.technokratos.dto.request.security.UserRegistrationRequest;
-import com.technokratos.dto.response.security.UserLoginResponse;
-import com.technokratos.dto.response.user.UserResponse;
+import com.technokratos.dto.response.security.AuthResponse;
+import com.technokratos.security.BaseUserContextHolder;
 import com.technokratos.service.auth.AuthUserService;
+import com.technokratos.service.auth.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @Slf4j
-public class AuthController {
+public class AuthController implements AuthApi {
 
     private final AuthUserService userService;
+    private final RefreshTokenService refreshTokenService;
+    private final AuthUserService authUserService;
+    private final BaseUserContextHolder baseUserContextHolder;
 
-    @PostMapping("/register")
-    public UserLoginResponse register(@RequestBody UserRegistrationRequest userDto) {
+    @Override
+    public AuthResponse register(UserRegistrationRequest userDto) {
         return userService.register(userDto);
     }
 
-    @PostMapping("/login")
-    public UserLoginResponse login(@RequestBody UserLoginRequest userDto) {
+    @Override
+    public AuthResponse login(UserLoginRequest userDto) {
         return userService.verify(userDto);
     }
 
-    @GetMapping("/users")
-    public List<UserResponse> getUsers() {
-        return userService.getAll();
+    @Override
+    public AuthResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
+        return refreshTokenService.refreshAccessToken(refreshTokenRequest.refreshToken());
+    }
+
+    @Override
+    public void changePassword(PasswordChangeRequest passwordChangeRequest) {
+        UUID userId = baseUserContextHolder.getUserFromSecurityContext().getUserId();
+        authUserService.changePassword(userId, passwordChangeRequest);
     }
 }

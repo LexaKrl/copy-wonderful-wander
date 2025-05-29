@@ -1,11 +1,12 @@
 package com.technokratos.util.mapper;
 
-import com.technokratos.dto.request.security.*;
-import com.technokratos.dto.request.user.UserProfileUpdateRequest;
+import com.technokratos.dto.request.security.UserForJwtTokenRequest;
+import com.technokratos.dto.request.security.UserRegistrationRequest;
 import com.technokratos.dto.response.user.UserCompactResponse;
 import com.technokratos.dto.response.user.UserProfileResponse;
 import com.technokratos.dto.response.user.UserResponse;
 import com.technokratos.model.UserEntity;
+import com.technokratos.model.UserPrincipal;
 import com.technokratos.tables.pojos.Account;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -19,34 +20,25 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserMapper {
 
-    UserResponse toResponse(UserEntity userEntity);
-
-    List<UserResponse> toResponse(List<Account> users);
-
     UserForJwtTokenRequest toJwtUserInfo(UserEntity userEntity);
+
+    UserForJwtTokenRequest toJwtUserInfo(UserResponse user);
+
+    UserForJwtTokenRequest toJwtUserInfo(UserPrincipal userPrincipal);
 
     UserEntity accountToUserEntity(Account account);
 
-    @Mapping(target = "id", ignore = true)
     UserEntity userRegistrationRequestToUserEntity(UserRegistrationRequest userRegistrationRequest);
-
-    @Mapping(target = "id", ignore = true)
-    UserEntity userProfileUpdateRequestToUserEntity(UserProfileUpdateRequest userProfileUpdateRequest);
-
-    @Mapping(target = "id", ignore = true)
-    UserEntity adminUserUpdateRequestToUserEntity(AdminUserUpdateRequest adminUserUpdateRequest);
-
-    @Mapping(target = "id", ignore = true)
-    UserEntity userLoginRequestToUserEntity(UserLoginRequest userLoginRequest);
-
-    @Mapping(target = "id", ignore = true)
-    UserEntity passwordChangeRequestToUserEntity(PasswordChangeRequest passwordChangeReq);
 
     UserResponse toUserResponse(Account account);
 
-    UserProfileResponse toUserProfileResponse(Account account);
+    @Mapping(target = "isFollowedByUser")
+    @Mapping(target = "isFollowingByUser")
+    @Mapping(target = "isFriends")
+    UserProfileResponse toUserProfileResponse(Account account,
+                                              boolean isFollowedByUser,
+                                              boolean isFollowingByUser,
+                                              boolean isFriends);
 
-    UserCompactResponse toUserCompactResponse(Account account);
-
-    List<UserCompactResponse> toUserCompactResponse(List<Account> accounts);
+    List<UserCompactResponse> toUserCompactResponse(List<Account> followersByUserId);
 }

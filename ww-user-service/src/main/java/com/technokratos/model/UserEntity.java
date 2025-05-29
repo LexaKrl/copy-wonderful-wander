@@ -1,10 +1,7 @@
 package com.technokratos.model;
 
 import com.technokratos.enums.security.UserRole;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -12,12 +9,14 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class UserEntity {
-    private UUID id;
+    private UUID userId;
     private String username;
     private String password;
+    private String email;
     private String firstname;
     private String lastname;
-    private String email;
+    private String bio;
     private UserRole role;
 }

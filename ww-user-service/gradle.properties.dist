@@ -1,8 +1,15 @@
-# Example configuration file for sensitive data
-dbUrl=jdbc:postgresql://localhost:5432/your-database
-dbName=your-db-name
-dbUsername=your-username
-dbPassword=your-password
-
+######## Postgres Credentials ########
+dbUrl=
+dbName=
+dbUsername=s
+dbPassword=
+######## Plugin Versions ########
+jooqPluginVersion=10.0
+liquibasePluginVersion=2.2.0
+######## Dependency Versions ########
+jwtVersion=0.12.6
+liquibaseDslGroovyVersion=2.1.1
+picocliVersion=4.7.5
 mapstructVersion=1.5.5.Final
 testcontainersVersion=1.19.0
+jooqMetaExtensionsLiquibase=3.20.3
