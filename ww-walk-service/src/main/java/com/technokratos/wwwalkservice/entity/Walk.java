@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 /*import jakarta.validation.constraints.Size;*/
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -51,7 +53,6 @@ public class Walk {
     @ElementCollection
     @CollectionTable(name = "walk_participants", joinColumns = @JoinColumn(name = "walk_id"))
     @Column(name = "participant_id")
-    /*TODO @Size(max = 20, message = "Maximum 20 participants allowed")*/
     private Set<UUID> walkParticipants;
 
     @ElementCollection
@@ -59,6 +60,12 @@ public class Walk {
     @Column(name = "photo")
     private Set<String> photos;
 
-    // TODO consider add start point
+    @Column(name = "startPoint", columnDefinition = "geometry(Point, 4326)")
+    private Point startPoint;
+
+    @Column(name = "route", columnDefinition = "geometry(LineString, 4326)")
+    private LineString route;
+
+    // TODO consider add Category
 }
 

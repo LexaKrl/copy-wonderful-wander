@@ -1,7 +1,8 @@
-package com.technokratos.wwwalkservice.exceptionHandler;
+package com.technokratos.wwwalkservice.controller.exceptionHandler;
 
 import com.mongodb.MongoException;
 import com.technokratos.wwwalkservice.exception.WalkNotFoundException;
+import com.technokratos.wwwalkservice.exception.WalkParticipantOverflowException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -31,10 +32,10 @@ public class WalkControllerExceptionHandler {
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("Database service unavailable with message: %s".formatted(ex.getMessage()));
     }
 
-  /*  @ExceptionHandler(WalkSaveRepositoryException.class)
-    public ResponseEntity<String> handleWalkSaveRepositoryException(WalkSaveRepositoryException ex) {
-        return ResponseEntity.status(ex.getHttpStatus()).body(ex.getMessage());
-    }*/
+    @ExceptionHandler(WalkParticipantOverflowException.class)
+    public ResponseEntity<String> handleWalkParticipantOverflowException(WalkParticipantOverflowException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleUnexpectedException(Exception ex) {

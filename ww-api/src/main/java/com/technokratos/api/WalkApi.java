@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @Tag(name = "Walk", description = "The Walk API")
@@ -203,8 +201,8 @@ public interface WalkApi {
     * */
 
     @Operation(
-            summary = "Add walk participants to the walk",
-            description = "Add new participants to the walk using their Ids'",
+            summary = "Add walk participant to the walk",
+            description = "Add new participant to the walk using his Id",
             tags = {"walks"},
             responses = {
                     @ApiResponse(
@@ -226,13 +224,10 @@ public interface WalkApi {
     ResponseEntity<Void> addParticipant(
             @Parameter(
                     description = "UUID of the participant user want to add",
-                    required = true,
-                    examples = @ExampleObject(
-                            name = "participants",
-                            value = "[\"550e8400-e29b-41d4-a716-446655440000\", \"f47ac10b-58cc-4372-a567-0e02b2c3d479\"]"
-                    )
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
             )
-            @RequestParam List<UUID> participantsIds,
+            @RequestParam UUID participantsId,
             @Parameter(
                     description = "UUID of the walk to update",
                     example = "550e8400-e29b-41d4-a716-446655440000",
@@ -246,8 +241,8 @@ public interface WalkApi {
     * */
 
     @Operation(
-            summary = "Add walk participants to the walk",
-            description = "Add new participants to the walk using their Ids'",
+            summary = "Add walk participant to the walk",
+            description = "Add new participant to the walk using his Id",
             tags = {"walks"},
             responses = {
                     @ApiResponse(
@@ -269,13 +264,10 @@ public interface WalkApi {
     ResponseEntity<Void> removeParticipant(
             @Parameter(
                     description = "UUID of the participant user want to add",
-                    required = true,
-                    examples = @ExampleObject(
-                            name = "participants",
-                            value = "[\"550e8400-e29b-41d4-a716-446655440000\", \"f47ac10b-58cc-4372-a567-0e02b2c3d479\"]"
-                    )
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
             )
-            @RequestParam List<UUID> participantsIds,
+            @RequestParam UUID participantsId,
             @Parameter(
                     description = "UUID of the walk to update",
                     example = "550e8400-e29b-41d4-a716-446655440000",

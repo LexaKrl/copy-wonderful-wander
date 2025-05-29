@@ -5,6 +5,7 @@ import com.technokratos.dto.request.walk.WalkRequest;
 import com.technokratos.dto.response.walk.WalkResponse;
 import com.technokratos.wwwalkservice.entity.Walk;
 import com.technokratos.wwwalkservice.exception.WalkNotFoundException;
+import com.technokratos.wwwalkservice.exception.WalkParticipantOverflowException;
 import com.technokratos.wwwalkservice.mapper.WalkMapper;
 import com.technokratos.wwwalkservice.repository.WalkRepository;
 import com.technokratos.wwwalkservice.service.service_interface.WalkService;
@@ -51,16 +52,28 @@ public class BaseWalkService implements WalkService {
     }
 
     @Override
-    public void addParticipant(UUID walkId, List<UUID> participantsIds) {
+    public void addParticipant(UUID walkId, UUID participantsId) {
         Walk existingWalk = walkRepository.findById(walkId).orElseThrow(() -> new WalkNotFoundException(walkId));
-        existingWalk.getWalkParticipants().addAll(participantsIds);
+        existingWalk.getWalkParticipants().add(participantsId);
+        if ((long) existingWalk.getWalkParticipants().size() > 20 ) {throw new WalkParticipantOverflowException(walkId);}
         walkRepository.save(existingWalk);
     }
 
     @Override
-    public void removeParticipant(UUID walkId, List<UUID> participantsIds) {
+    public void removeParticipant(UUID walkId, UUID participantsId) {
         Walk existingWalk = walkRepository.findById(walkId).orElseThrow(() -> new WalkNotFoundException(walkId));
-        participantsIds.forEach(existingWalk.getWalkParticipants()::remove);
+        existingWalk.getWalkParticipants().remove(participantsId);
+        walkRepository.save(existingWalk);
+    }
+
+    @Override
+    public boolean isOwner(UUID walkId, UUID supposedOwnerId) {
+        return findById(walkId).ownerId().equals(supposedOwnerId);
+    }
+
+    @Override
+    public boolean isParticipant(UUID walkId, UUID supposedParticipantId) {
+        return findById(walkId).walkParticipants().contains(supposedParticipantId);
     }
 
 }

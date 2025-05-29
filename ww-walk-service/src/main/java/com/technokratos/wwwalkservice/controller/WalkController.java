@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -37,26 +36,38 @@ public class WalkController implements WalkApi {
     }
 
     @Override
+    /*
+    @PreAuthorize("baseWalkService.isOwner(walkId, ownerID)")
+    */
     public ResponseEntity<Void> deleteWalk(UUID walkId) {
         walkService.deleteById(walkId);
         return ResponseEntity.noContent().build();
     }
 
     @Override
+    /*
+    @PreAuthorize("baseWalkService.isOwner(walkId, ownerID)")
+    */
     public ResponseEntity<Void> updateWalk(WalkRequest walkRequest, UUID walkId) {
         walkService.updateById(walkId, walkRequest);
         return ResponseEntity.noContent().build();
     }
 
     @Override
-    public ResponseEntity<Void> addParticipant(List<UUID> participantsIds, UUID walkId) {
-        walkService.addParticipant(walkId, participantsIds);
+    /*
+    @PreAuthorize("baseWalkService.isOwner(walkId, ownerId)")
+    */
+    public ResponseEntity<Void> addParticipant(UUID participantId, UUID walkId) {
+        walkService.addParticipant(walkId, participantId);
         return ResponseEntity.noContent().build();
     }
 
     @Override
-    public ResponseEntity<Void> removeParticipant(List<UUID> participantsIds, UUID walkId) {
-        walkService.removeParticipant(walkId, participantsIds);
+    /*
+    @PreAuthorize("baseWalkService.isOwner(walkId, ownerID)")
+    */
+    public ResponseEntity<Void> removeParticipant(UUID participantId, UUID walkId) {
+        walkService.removeParticipant(walkId, participantId);
         return ResponseEntity.noContent().build();
     }
 }

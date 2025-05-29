@@ -25,7 +25,13 @@ public interface WalkService {
     @Transactional
     void updateById(UUID id, WalkRequest walkRequest);
 
-    void addParticipant(UUID walkId, List<UUID> participantsIds);
+    @Transactional
+    void addParticipant(UUID walkId, UUID participantsIds);
 
-    void removeParticipant(UUID walkId, List<UUID> participantsIds);
+    @Transactional
+    void removeParticipant(UUID walkId, UUID participantsIds);
+
+    boolean isOwner(UUID walkId, UUID supposedOwnerId);
+
+    boolean isParticipant(UUID walkId, UUID supposedParticipantId);
 }
