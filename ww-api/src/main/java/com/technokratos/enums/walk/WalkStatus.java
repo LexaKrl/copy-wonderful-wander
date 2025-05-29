@@ -1,4 +1,4 @@
-package com.technokratos.wwwalkservice.entity.enumuration;
+package com.technokratos.enums.walk;
 
 public enum WalkStatus {
     NOT_STARTED,

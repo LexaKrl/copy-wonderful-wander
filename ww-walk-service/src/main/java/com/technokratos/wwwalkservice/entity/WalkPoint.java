@@ -13,7 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class WalkPoint {
-    // TODO consider add GeoPoint
     private Double longitude;
 
     private Double latitude;

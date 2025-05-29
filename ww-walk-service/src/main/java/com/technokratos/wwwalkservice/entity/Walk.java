@@ -1,7 +1,7 @@
 package com.technokratos.wwwalkservice.entity;
 
 
-import com.technokratos.wwwalkservice.entity.enumuration.WalkStatus;
+import com.technokratos.enums.walk.WalkStatus;
 import jakarta.persistence.*;
 /*import jakarta.validation.constraints.Size;*/
 import lombok.*;
