@@ -2,6 +2,7 @@ package com.technokratos.controller.handler;
 
 import com.technokratos.dto.exception.BaseExceptionMessage;
 import com.technokratos.dto.exception.ValidationExceptionMessage;
+import com.technokratos.exception.BadRequestServiceException;
 import com.technokratos.exception.ServiceException;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.validation.ConstraintViolationException;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     /**
-     * Перехватывает и обрабатывает исключения уровня сервиса ({@link ServiceException}).
+     * Перехватывает и обрабатывает исключения уровня сервиса ({@link ServiceException})
      * Формирует ответ с заданным HTTP-статусом и сообщением ошибки.
      *
      * @param exception выброшенное {@link ServiceException}
@@ -37,6 +38,23 @@ public class GlobalExceptionHandler {
                         .message(exception.getMessage())
                         .build()
                 );
+    }
+
+    /**
+     * Перехватывает и обрабатывает исключение BadRequest уровня сервиса ({@link BadRequestServiceException}).
+     * На случай того, если ошибка 400 выбрасывается не на уровне валидаторов, а в бизнес логике
+     *
+     * @param exception выброшенное {@link BadRequestServiceException}
+     * @return ResponseEntity с объектом {@link ValidationExceptionMessage}, содержащим информацию об ошибке
+     */
+    @ExceptionHandler(BadRequestServiceException.class)
+    public final ResponseEntity<ValidationExceptionMessage> handleBadRequestServiceException(BadRequestServiceException exception) {
+        return ResponseEntity.status(exception.getHttpStatus())
+                .body(ValidationExceptionMessage.builder()
+                        .status(HttpStatus.BAD_REQUEST.value())
+                        .error(exception.getClass().getSimpleName())
+                        .message(exception.getMessage())
+                        .build());
     }
 
     /**
@@ -61,6 +79,7 @@ public class GlobalExceptionHandler {
         return ValidationExceptionMessage.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error(exception.getClass().getSimpleName())
+                .message(ValidationExceptionMessage.class.getSimpleName())
                 .violations(violations)
                 .build();
     }
@@ -70,12 +89,12 @@ public class GlobalExceptionHandler {
      * Обрабатывает исключение {@link HttpMessageNotReadableException}.
      *
      * @param exception исключение, связанное с невозможностью прочитать входящий запрос
-     * @return объект {@link BaseExceptionMessage} с информацией об ошибке
+     * @return объект {@link ValidationExceptionMessage} с информацией об ошибке
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public final BaseExceptionMessage handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
-        return BaseExceptionMessage.builder()
+    public final ValidationExceptionMessage handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
+        return ValidationExceptionMessage.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error(exception.getClass().getSimpleName())
                 .message(exception.getMessage())
@@ -104,6 +123,7 @@ public class GlobalExceptionHandler {
         return ValidationExceptionMessage.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error(exception.getClass().getSimpleName())
+                .message(ValidationExceptionMessage.class.getSimpleName())
                 .violations(violations)
                 .build();
     }
@@ -114,12 +134,12 @@ public class GlobalExceptionHandler {
      * {@link MethodArgumentTypeMismatchException}.
      *
      * @param exception исключение, вызванное несоответствием типа аргумента
-     * @return объект {@link BaseExceptionMessage} с описанием ошибки
+     * @return объект {@link ValidationExceptionMessage} с описанием ошибки
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public final BaseExceptionMessage handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException exception) {
-        return BaseExceptionMessage.builder()
+    public final ValidationExceptionMessage handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException exception) {
+        return ValidationExceptionMessage.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error(exception.getClass().getSimpleName())
                 .message(exception.getMessage())
