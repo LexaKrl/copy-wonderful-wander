@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: "DDL/init-walk-service-db.sql"
+      relativeToChangelogFile: true

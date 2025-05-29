@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: ww-walk-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/agona_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/ww-walk-service
+      auto-index-creation: true
+  liquibase:
+    change-log: "../../../"
