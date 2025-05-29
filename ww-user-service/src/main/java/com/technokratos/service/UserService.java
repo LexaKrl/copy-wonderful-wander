@@ -12,22 +12,28 @@ import com.technokratos.repository.UserRepository;
 import com.technokratos.tables.pojos.Account;
 import com.technokratos.util.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final MinioService minioService;
 
     public UserResponse getUserById(UUID userId) {
+        Account account = userRepository.findById(userId).orElseThrow(() -> new UserByIdNotFoundException(userId));
+        String avatarUrl = minioService.getPresignedUrl(account.getAvatarFilename());
         return userMapper.toUserResponse(userRepository
-                .findById(userId)
-                .orElseThrow(() -> new UserByIdNotFoundException(userId)));
+                        .findById(userId)
+                        .orElseThrow(() -> new UserByIdNotFoundException(userId)),
+                avatarUrl);
     }
 
     public UserResponse getUserByUsername(String username) {
@@ -72,10 +78,11 @@ public class UserService {
             throw new ConflictServiceException("You can't get profile information as its owner, use a different method");
         Account account = userRepository.findById(targetUserId)
                 .orElseThrow(() -> new UserByIdNotFoundException(targetUserId));
+        String avatarUrl = minioService.getPresignedUrl(account.getAvatarFilename());
         boolean isFollowed = checkOnFollow(userId, targetUserId);
         boolean isFollowing = checkOnFollow(targetUserId, userId);
         boolean isFriends = isFollowed && isFollowing;
-        return userMapper.toUserProfileResponse(account, isFollowed, isFollowing, isFriends);
+        return userMapper.toUserProfileResponse(account, isFollowed, isFollowing, isFriends, avatarUrl);
     }
 
     public UserResponse updateUser(UUID userId, UserRequest userRequest) {
@@ -87,6 +94,10 @@ public class UserService {
     public void deleteUser(UUID userId) {
         if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(userId);
         userRepository.delete(userId);
+    }
+
+    public void saveAvatarFilename(UUID userId, String filename) {
+        userRepository.saveFilenameByUserId(userId, filename);
     }
 
     private boolean checkUserNotExists(UUID userId) {

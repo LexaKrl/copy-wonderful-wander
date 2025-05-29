@@ -30,15 +30,21 @@ public interface UserMapper {
 
     UserEntity userRegistrationRequestToUserEntity(UserRegistrationRequest userRegistrationRequest);
 
+    @Mapping(target = "avatarUrl")
+    UserResponse toUserResponse(Account account,
+                                String avatarUrl);
+
     UserResponse toUserResponse(Account account);
 
     @Mapping(target = "isFollowedByUser")
     @Mapping(target = "isFollowingByUser")
     @Mapping(target = "isFriends")
+    @Mapping(target = "avatarUrl")
     UserProfileResponse toUserProfileResponse(Account account,
                                               boolean isFollowedByUser,
                                               boolean isFollowingByUser,
-                                              boolean isFriends);
+                                              boolean isFriends,
+                                              String avatarUrl);
 
     List<UserCompactResponse> toUserCompactResponse(List<Account> followersByUserId);
 }

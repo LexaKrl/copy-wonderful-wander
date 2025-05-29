@@ -11,13 +11,30 @@ spring:
   jackson:
     deserialization:
       fail-on-unknown-properties: true
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092, localhost:9094, localhost:9096
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      group-id: avatar-saved-events
+      properties:
+        spring-json-trusted-packages: com.technokratos.event # Доверенные пакеты, где лежат наши event
+
+minio:
+  enabled:
+  url:
+  accessKey:
+  secretKey:
+  bucket: ww-photos
+  presigned-url-expiration: 600 # В секундах
 
 logging:
   level:
     org.springframework: INFO
     org.jooq: WARN
+
 jwt:
-  access-token-duration: 3_600_000    # 1000 * 60 * 60 (1 час)
-  refresh-token-duration: 86_400_00   # 1000 * 60 * 60 * 24 (1 день)
-  time-token-end-soon: 900_000        # 1000 * 60 * 15 (15 минут)
-  secret-key:
+  access-token-duration: 3_600_000
+  refresh-token-duration: 86_400_00
+  time-token-end-soon: 900_000
+  secret-key: f2vEOtCG2vyUn9hiNqWCYNvHQ4rno/V6HhAbdmAMSZ8=

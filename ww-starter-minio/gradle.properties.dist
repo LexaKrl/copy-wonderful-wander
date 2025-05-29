@@ -1,0 +1,5 @@
+######## Plugin Versions ########
+springBootVersion=3.4.4
+dependencyManagementVersion=1.1.7
+lombokVersion=1.18.38
+minioVersion=8.5.17

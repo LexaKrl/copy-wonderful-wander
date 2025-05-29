@@ -11,7 +11,7 @@ CREATE TABLE account
     password         VARCHAR             NOT NULL,
     bio              VARCHAR(255),
     role             VARCHAR(20)      DEFAULT 'ROLE_USER',
-    avatar_url       VARCHAR(2048),
+    avatar_filename  VARCHAR(2048),
     created_at       TIMESTAMP        DEFAULT NOW(),
     updated_at       TIMESTAMP,
     followers_count  INT              DEFAULT 0,
