@@ -26,6 +26,8 @@ public class BaseWalkService implements WalkService {
     private final WalkMapper walkMapper;
     private final UserWalkVisibilityRepository userWalkVisibilityRepository;
 
+    private static final int MAX_PARTICIPANT_AMOUNT = 20;
+
     @Override
     public Page<WalkResponse> findAll(Pageable pageable) {
         return walkRepository.findAll(pageable).map(walkMapper::toResponse);
@@ -49,8 +51,9 @@ public class BaseWalkService implements WalkService {
         Walk walk = walkMapper.toEntity(walkRequest);
         UUID userId = getCurrentUserId();
         walk.setOwnerId(userId);
+        if (walkRequest.walkParticipants().size() > MAX_PARTICIPANT_AMOUNT) {throw new WalkParticipantOverflowException("too much users in the walk");}
         if (walkRequest.walkParticipants().stream() /* check if user exists in user_walk_visibility table */
-                .allMatch(userWalkVisibilityRepository::existsById)) {throw new WalkSaveUserException(userId);}
+                .allMatch(userWalkVisibilityRepository::existsById)) {throw new WalkSaveUserException(userId, "At least one user doesn't exist");}
         walkRepository.save(walk);
     }
 
@@ -58,9 +61,10 @@ public class BaseWalkService implements WalkService {
     public void updateById(UUID walkId, WalkRequest walkRequest) {
         Walk existingWalk = walkRepository.findById(walkId).orElseThrow(() -> new WalkNotFoundException(walkId));
         if (!existingWalk.getOwnerId().equals(getCurrentUserId())) {throw new WalkAccessDeniedException(walkId);}
-        if (!existingWalk.getWalkStatus().equals(WalkStatus.STARTED)) {throw new WalkUpdateException(walkId);}
+        if (!existingWalk.getWalkStatus().equals(WalkStatus.STARTED)) {throw new WalkUpdateException(walkId, "Walk already started");}
+        if (walkRequest.walkParticipants().size() > MAX_PARTICIPANT_AMOUNT) {throw new WalkParticipantOverflowException(walkId);}
         if (walkRequest.walkParticipants().stream() /* check if user exists in user_walk_visibility table */
-                .allMatch(userWalkVisibilityRepository::existsById)) {throw new WalkUpdateException(walkId);}
+                .allMatch(userWalkVisibilityRepository::existsById)) {throw new WalkUpdateException(walkId, "At least one user doesn't exist");}
         walkMapper.updateFromRequest(existingWalk, walkRequest);
         walkRepository.save(existingWalk);
     }
@@ -70,7 +74,7 @@ public class BaseWalkService implements WalkService {
         Walk existingWalk = walkRepository.findById(walkId).orElseThrow(() -> new WalkNotFoundException(walkId));
         if (!existingWalk.getOwnerId().equals(getCurrentUserId())) {throw new WalkAccessDeniedException(walkId);}
         if (userWalkVisibilityRepository.existsById(participantId)) {throw new WalkUpdateException(walkId);}
-        if (existingWalk.getWalkParticipants().size() + 1 > 20) {throw new WalkParticipantOverflowException(walkId);}
+        if (existingWalk.getWalkParticipants().size() + 1 > MAX_PARTICIPANT_AMOUNT) {throw new WalkParticipantOverflowException(walkId);}
         existingWalk.getWalkParticipants().add(participantId);
         walkRepository.save(existingWalk);
     }
