@@ -8,6 +8,7 @@ import com.technokratos.exception.ConflictServiceException;
 import com.technokratos.exception.FollowConflictException;
 import com.technokratos.exception.UserByIdNotFoundException;
 import com.technokratos.exception.UserByUsernameNotFoundException;
+import com.technokratos.producer.UserEventProducer;
 import com.technokratos.repository.UserRepository;
 import com.technokratos.tables.pojos.Account;
 import com.technokratos.util.mapper.UserMapper;
@@ -26,6 +27,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final MinioService minioService;
+    private final UserEventProducer userEventProducer;
 
     public UserResponse getUserById(UUID userId) {
         Account account = userRepository.findById(userId).orElseThrow(() -> new UserByIdNotFoundException(userId));
@@ -86,14 +88,17 @@ public class UserService {
     }
 
     public UserResponse updateUser(UUID userId, UserRequest userRequest) {
-        return userMapper.toUserResponse(userRepository
+        Account user = userRepository
                 .update(userId, userRequest)
-                .orElseThrow(() -> new UserByIdNotFoundException(userId)));
+                .orElseThrow(() -> new UserByIdNotFoundException(userId));
+        userEventProducer.sendUserUpdatedEvent(userMapper.toUserUpdatedEvent(user));
+        return userMapper.toUserResponse(user);
     }
 
     public void deleteUser(UUID userId) {
         if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(userId);
         userRepository.delete(userId);
+        userEventProducer.sendUserDeletedEvent(userMapper.toUserDeletedEvent(userId));
     }
 
     public void saveAvatarFilename(UUID userId, String filename) {

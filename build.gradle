@@ -37,7 +37,7 @@ subprojects {
         implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${openApiVersion}"
         implementation "org.springframework.kafka:spring-kafka"
 
-        implementation 'com.technokratos:ww-starter-minio:1.0.0'
+        implementation "com.technokratos:ww-starter-minio:${starterMinioVersion}"
 
         compileOnly "org.projectlombok:lombok:${lombokVersion}"
         testCompileOnly "org.projectlombok:lombok:${lombokVersion}"

@@ -1,86 +1,63 @@
 package com.technokratos.service;
 
-import com.technokratos.config.properties.KafkaTopicProperties;
-import com.technokratos.dto.FileUploadRequest;
-import com.technokratos.entity.FileMetadata;
-import com.technokratos.event.AvatarSavedEvent;
-import com.technokratos.exception.PhotoUploadException;
+import com.technokratos.dto.PhotoOfWalkUploadRequest;
+import com.technokratos.dto.PhotoUploadRequest;
+import com.technokratos.dto.response.photo.PhotoFilenameResponse;
+import com.technokratos.producer.PhotoSavedProducer;
 import com.technokratos.repository.PhotoRepository;
+import com.technokratos.util.FileHelper;
+import com.technokratos.util.mapper.FileMetadataMapper;
 import com.technokratos.util.s3.FileNameBuilder;
 import com.technokratos.util.s3.MinioConstant;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class PhotoService {
-    private final MinioClient minioClient;
+    private final FileStorageService fileStorageService;
     private final PhotoRepository photoRepository;
-    private final KafkaTopicProperties kafkaProperties;
-    private final KafkaTemplate<String, AvatarSavedEvent> kafkaTemplate;
+    private final PhotoSavedProducer photoSavedProducer;
+    private final FileMetadataMapper fileMetadataMapper;
 
-    public String saveAvatar(FileUploadRequest fileUploadRequest) {
-        String avatarFilename = save(fileUploadRequest, MinioConstant.BucketName.PHOTOS, MinioConstant.FileType.AVATARS);
-        kafkaTemplate.send(
-                kafkaProperties.getUserAvatarSavedTopic(),
-                AvatarSavedEvent.builder()
-                        .ownerId(fileUploadRequest.userId())
-                        .avatarFilename(avatarFilename)
-                        .build()
-        );
-        return avatarFilename;
+    public void saveAvatar(PhotoUploadRequest photoUploadRequest) {
+        String avatarFilename = save(photoUploadRequest, MinioConstant.FileType.AVATARS);
+
+        photoSavedProducer.sendAvatarSavedEvent(photoUploadRequest.ownerId(), avatarFilename);
     }
 
-    public String savePost(FileUploadRequest fileUploadRequest) {
-        return save(fileUploadRequest, MinioConstant.BucketName.PHOTOS, MinioConstant.FileType.POSTS);
+    public PhotoFilenameResponse savePhotoOfPost(PhotoUploadRequest photoUploadRequest) {
+        return new PhotoFilenameResponse(save(photoUploadRequest, MinioConstant.FileType.POSTS));
     }
 
-    public String saveWalk(FileUploadRequest fileUploadRequest) {
-        return save(fileUploadRequest, MinioConstant.BucketName.PHOTOS, MinioConstant.FileType.WALKS);
+    public void savePhotoOfWalk(PhotoOfWalkUploadRequest photoOfWalkUploadRequest) {
+        String photoOfWalkFilename = save(photoOfWalkUploadRequest.photoUploadRequest(), MinioConstant.FileType.WALKS);
+
+        photoSavedProducer.sendPhotoOfWalkSavedEvent(
+                photoOfWalkUploadRequest.walkId(),
+                photoOfWalkUploadRequest.photoUploadRequest().ownerId(),
+                photoOfWalkFilename);
     }
 
-    private String save(FileUploadRequest fileUploadRequest, String bucketName, String fileType) {
-        UUID fileId = UUID.randomUUID();
-        String fileName = FileNameBuilder.buildFileName(fileId, fileUploadRequest.filename(), fileType);
+    public String save(PhotoUploadRequest photoUploadRequest, String fileType) {
+        String filename = fileStorageService.savePhotoToS3(photoUploadRequest, fileType);
 
-        try (InputStream inputStream = fileUploadRequest.inputStream()) {
-            minioClient.putObject(
-                    PutObjectArgs.builder()
-                            .bucket(bucketName)
-                            .stream(
-                                    inputStream,
-                                    fileUploadRequest.size(),
-                                    -1)
-                            .contentType(fileUploadRequest.contentType())
-                            .object(fileName)
-                            .build());
-        } catch (Exception e) {
-            log.warn("Image processing error", e);
-            throw new PhotoUploadException(e.getMessage());
-        }
+        saveFileMetadata(photoUploadRequest, fileType);
 
-        photoRepository.save(FileMetadata.builder()
-                .fileId(fileId)
-                .ownerId(fileUploadRequest.userId())
-                .filename(fileUploadRequest.filename())
-                .extension(FileNameBuilder.getFileExtension(fileUploadRequest.filename()))
-                .size(convertBytesToMegabytes(fileUploadRequest.size()))
-                .uploadDateTime(LocalDateTime.now())
-                .build());
-
-        return fileName;
+        return filename;
     }
 
-    private double convertBytesToMegabytes(long size) {
-        return Math.round(((double) size / (1024 * 1024)) * 10) / 10.0;
+    public void saveFileMetadata(PhotoUploadRequest photoUploadRequest, String fileType) {
+        System.out.println(fileType);
+        photoRepository.save(fileMetadataMapper.toEntity(
+                photoUploadRequest,
+                FileNameBuilder.getFileExtension(photoUploadRequest.filename()),
+                fileType,
+                FileHelper.convertBytesToMegabytes(photoUploadRequest.size()),
+                LocalDateTime.now()));
     }
 }

@@ -43,7 +43,7 @@ CREATE TABLE refresh_token
     expiry_date      TIMESTAMP           NOT NULL,
     ----------------------------------------------------------
     CONSTRAINT refresh_token_id_pk PRIMARY KEY (refresh_token_id),
-    CONSTRAINT refresh_token_user_id_fk FOREIGN KEY (user_id) REFERENCES account (user_id) ON DELETE SET NULL
+    CONSTRAINT refresh_token_user_id_fk FOREIGN KEY (user_id) REFERENCES account (user_id) ON DELETE CASCADE
 );
 
 CREATE OR REPLACE FUNCTION update_user_stats()

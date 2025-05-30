@@ -16,5 +16,5 @@ picocliVersion=4.7.5
 mapstructVersion=1.5.5.Final
 testcontainersVersion=1.19.0
 jooqMetaExtensionsLiquibase=3.20.3
-minioVersion=8.5.17
 tikaVersion=3.1.0
+starterMinioVersion=1.0.0

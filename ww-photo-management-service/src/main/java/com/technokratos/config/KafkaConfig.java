@@ -1,8 +1,7 @@
 package com.technokratos.config;
 
 import com.technokratos.config.properties.KafkaProducerProperties;
-import com.technokratos.config.properties.KafkaTopicProperties;
-import com.technokratos.event.AvatarSavedEvent;
+import com.technokratos.util.KafkaTopics;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -19,6 +18,7 @@ import java.util.Map;
 
 @Configuration
 public class KafkaConfig {
+
     @Bean
     public Map<String, Object> producerConfigs(KafkaProducerProperties kafkaProducerProperties) {
         Map<String, Object> config = new HashMap<>();
@@ -38,20 +38,30 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ProducerFactory<String, AvatarSavedEvent> avatarSavedEventProducerFactory(Map<String, Object> producerConfigs) {
+    public ProducerFactory<String, Object> kafkaProducerFactory(Map<String, Object> producerConfigs) {
         return new DefaultKafkaProducerFactory<>(producerConfigs);
     }
 
     @Bean
-    public KafkaTemplate<String, AvatarSavedEvent> avatarSavedEventKafkaTemplate(
-            ProducerFactory<String, AvatarSavedEvent> avatarSavedEventProducerFactory) {
-        return new KafkaTemplate<>(avatarSavedEventProducerFactory);
+    public KafkaTemplate<String, Object> kafkaTemplate(
+            ProducerFactory<String, Object> kafkaProducerFactory) {
+        return new KafkaTemplate<>(kafkaProducerFactory);
     }
 
     @Bean
-    public NewTopic avatarCreatedEventTopic(KafkaTopicProperties kafkaProperties) {
+    public NewTopic avatarCreatedEventTopic() {
         return TopicBuilder
-                .name(kafkaProperties.getUserAvatarSavedTopic())
+                .name(KafkaTopics.USER_AVATAR_SAVED_TOPIC)
+                .partitions(3)
+                .replicas(3)
+                .configs(Map.of("min.insync.replicas", "2"))
+                .build();
+    }
+
+    @Bean
+    public NewTopic photoOfWalkCreatedEventTopic() {
+        return TopicBuilder
+                .name(KafkaTopics.PHOTO_OF_WALK_SAVED_TOPIC)
                 .partitions(3)
                 .replicas(3)
                 .configs(Map.of("min.insync.replicas", "2"))

@@ -22,10 +22,6 @@ spring:
         enable-idempotence: true # Идемпотентность продюсера
         max-in-flight-requests-per-connection: 5 # Максимальное количество запросов без ответа
 
-kafka:
-  topics:
-    user-avatar-saved-topic: user.avatar.saved
-
 minio:
   enabled: true
   url:
