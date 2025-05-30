@@ -1,11 +1,11 @@
 package com.technokratos.service;
 
-import com.technokratos.config.properties.KafkaTopicProperties;
 import com.technokratos.dto.FileUploadRequest;
 import com.technokratos.entity.FileMetadata;
 import com.technokratos.event.AvatarSavedEvent;
 import com.technokratos.exception.PhotoUploadException;
 import com.technokratos.repository.PhotoRepository;
+import com.technokratos.util.KafkaTopics;
 import com.technokratos.util.s3.FileNameBuilder;
 import com.technokratos.util.s3.MinioConstant;
 import io.minio.MinioClient;
@@ -25,13 +25,12 @@ import java.util.UUID;
 public class PhotoService {
     private final MinioClient minioClient;
     private final PhotoRepository photoRepository;
-    private final KafkaTopicProperties kafkaProperties;
     private final KafkaTemplate<String, AvatarSavedEvent> kafkaTemplate;
 
     public String saveAvatar(FileUploadRequest fileUploadRequest) {
         String avatarFilename = save(fileUploadRequest, MinioConstant.BucketName.PHOTOS, MinioConstant.FileType.AVATARS);
         kafkaTemplate.send(
-                kafkaProperties.getUserAvatarSavedTopic(),
+                KafkaTopics.USER_AVATAR_SAVED_TOPIC,
                 AvatarSavedEvent.builder()
                         .ownerId(fileUploadRequest.userId())
                         .avatarFilename(avatarFilename)

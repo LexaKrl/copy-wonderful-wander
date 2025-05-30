@@ -1,8 +1,8 @@
 package com.technokratos.config;
 
 import com.technokratos.config.properties.KafkaProducerProperties;
-import com.technokratos.config.properties.KafkaTopicProperties;
 import com.technokratos.event.AvatarSavedEvent;
+import com.technokratos.util.KafkaTopics;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -19,6 +19,7 @@ import java.util.Map;
 
 @Configuration
 public class KafkaConfig {
+
     @Bean
     public Map<String, Object> producerConfigs(KafkaProducerProperties kafkaProducerProperties) {
         Map<String, Object> config = new HashMap<>();
@@ -49,9 +50,9 @@ public class KafkaConfig {
     }
 
     @Bean
-    public NewTopic avatarCreatedEventTopic(KafkaTopicProperties kafkaProperties) {
+    public NewTopic avatarCreatedEventTopic() {
         return TopicBuilder
-                .name(kafkaProperties.getUserAvatarSavedTopic())
+                .name(KafkaTopics.USER_AVATAR_SAVED_TOPIC)
                 .partitions(3)
                 .replicas(3)
                 .configs(Map.of("min.insync.replicas", "2"))
