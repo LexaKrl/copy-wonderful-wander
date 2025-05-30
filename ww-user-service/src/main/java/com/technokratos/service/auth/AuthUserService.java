@@ -8,9 +8,11 @@ import com.technokratos.dto.response.security.AuthResponse;
 import com.technokratos.enums.security.UserRole;
 import com.technokratos.exception.PasswordNotMatchException;
 import com.technokratos.exception.UserByIdNotFoundException;
+import com.technokratos.exception.UserByUsernameNotFoundException;
 import com.technokratos.exception.UsernameNotUniqueException;
 import com.technokratos.model.UserEntity;
 import com.technokratos.model.UserPrincipal;
+import com.technokratos.producer.UserEventProducer;
 import com.technokratos.repository.UserRepository;
 import com.technokratos.tables.pojos.Account;
 import com.technokratos.util.mapper.UserMapper;
@@ -35,7 +37,7 @@ public class AuthUserService {
     private final JwtProvider jwtProvider;
     private final UserMapper userMapper;
     private final MyUserDetailsService userDetailsService;
-
+    private final UserEventProducer userEventProducer;
 
     public AuthResponse register(UserRegistrationRequest userDto) {
         log.info("user service register doing");
@@ -55,6 +57,9 @@ public class AuthUserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         userRepository.save(user);
+        Account newUser = userRepository.findByUsername(userDto.username())
+                .orElseThrow(() -> new UserByUsernameNotFoundException(userDto.username()));
+        userEventProducer.sendUserCreatedEvent(userMapper.toUserCreatedEvent(newUser));
 
         UserForJwtTokenRequest userInfo = userMapper.toJwtUserInfo(user);
         return jwtProvider.generateTokens(userInfo);
@@ -81,7 +86,7 @@ public class AuthUserService {
         Account account = userRepository.findById(userId)
                 .orElseThrow(() -> new UserByIdNotFoundException(userId));
 
-        if (!passwordEncoder.matches(oldPassword, account.getPassword())){
+        if (!passwordEncoder.matches(oldPassword, account.getPassword())) {
             throw new PasswordNotMatchException("The old password doesn't match");
         }
 

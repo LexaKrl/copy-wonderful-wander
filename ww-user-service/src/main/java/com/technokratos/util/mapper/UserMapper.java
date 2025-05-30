@@ -5,6 +5,9 @@ import com.technokratos.dto.request.security.UserRegistrationRequest;
 import com.technokratos.dto.response.user.UserCompactResponse;
 import com.technokratos.dto.response.user.UserProfileResponse;
 import com.technokratos.dto.response.user.UserResponse;
+import com.technokratos.event.UserCreatedEvent;
+import com.technokratos.event.UserDeletedEvent;
+import com.technokratos.event.UserUpdatedEvent;
 import com.technokratos.model.UserEntity;
 import com.technokratos.model.UserPrincipal;
 import com.technokratos.tables.pojos.Account;
@@ -14,6 +17,7 @@ import org.mapstruct.MappingConstants;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 
 
 @Component
@@ -47,4 +51,10 @@ public interface UserMapper {
                                               String avatarUrl);
 
     List<UserCompactResponse> toUserCompactResponse(List<Account> followersByUserId);
+
+    UserCreatedEvent toUserCreatedEvent(Account account);
+
+    UserUpdatedEvent toUserUpdatedEvent(Account account);
+
+    UserDeletedEvent toUserDeletedEvent(UUID userId);
 }
