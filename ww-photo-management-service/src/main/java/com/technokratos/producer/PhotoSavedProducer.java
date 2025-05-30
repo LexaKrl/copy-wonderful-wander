@@ -5,11 +5,11 @@ import com.technokratos.event.PhotoOfWalkSavedEvent;
 import com.technokratos.util.KafkaTopics;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class PhotoSavedProducer {
     private final KafkaTemplate<String, Object> kafkaTemplate;

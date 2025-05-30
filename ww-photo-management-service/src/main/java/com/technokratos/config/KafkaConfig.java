@@ -43,7 +43,7 @@ public class KafkaConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, Object> avatarSavedEventKafkaTemplate(
+    public KafkaTemplate<String, Object> kafkaTemplate(
             ProducerFactory<String, Object> kafkaProducerFactory) {
         return new KafkaTemplate<>(kafkaProducerFactory);
     }
