@@ -3,10 +3,12 @@ package com.technokratos.wwwalkservice.service;
 
 import com.technokratos.dto.request.walk.WalkRequest;
 import com.technokratos.dto.response.walk.WalkResponse;
+import com.technokratos.enums.walk.WalkStatus;
+import com.technokratos.wwwalkservice.entity.UserWalkVisibility;
 import com.technokratos.wwwalkservice.entity.Walk;
-import com.technokratos.wwwalkservice.exception.WalkNotFoundException;
-import com.technokratos.wwwalkservice.exception.WalkParticipantOverflowException;
+import com.technokratos.wwwalkservice.exception.*;
 import com.technokratos.wwwalkservice.mapper.WalkMapper;
+import com.technokratos.wwwalkservice.repository.UserWalkVisibilityRepository;
 import com.technokratos.wwwalkservice.repository.WalkRepository;
 import com.technokratos.wwwalkservice.service.service_interface.WalkService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -23,6 +24,7 @@ public class BaseWalkService implements WalkService {
 
     private final WalkRepository walkRepository;
     private final WalkMapper walkMapper;
+    private final UserWalkVisibilityRepository userWalkVisibilityRepository;
 
     @Override
     public Page<WalkResponse> findAll(Pageable pageable) {
@@ -36,44 +38,71 @@ public class BaseWalkService implements WalkService {
 
     @Override
     public void deleteById(UUID id) {
+        Walk existingWalk = walkRepository.findById(id).orElseThrow(() -> new WalkNotFoundException(id));
+        if (!existingWalk.getOwnerId().equals(getCurrentUserId())) {throw new WalkAccessDeniedException(id);}
+        if (existingWalk.getWalkStatus().equals(WalkStatus.STARTED)) {throw new WalkDeletionException(id);}
         walkRepository.deleteById(id);
     }
 
     @Override
     public void saveWalk(WalkRequest walkRequest) {
-        walkRepository.save(walkMapper.toEntity(walkRequest));
+        Walk walk = walkMapper.toEntity(walkRequest);
+        UUID userId = getCurrentUserId();
+        walk.setOwnerId(userId);
+        if (walkRequest.walkParticipants().stream() /* check if user exists in user_walk_visibility table */
+                .allMatch(userWalkVisibilityRepository::existsById)) {throw new WalkSaveUserException(userId);}
+        walkRepository.save(walk);
     }
 
     @Override
-    public void updateById(UUID id, WalkRequest walkRequest) {
-        Walk existingWalk = walkRepository.findById(id).orElseThrow(() -> new WalkNotFoundException(id));
+    public void updateById(UUID walkId, WalkRequest walkRequest) {
+        Walk existingWalk = walkRepository.findById(walkId).orElseThrow(() -> new WalkNotFoundException(walkId));
+        if (!existingWalk.getOwnerId().equals(getCurrentUserId())) {throw new WalkAccessDeniedException(walkId);}
+        if (!existingWalk.getWalkStatus().equals(WalkStatus.STARTED)) {throw new WalkUpdateException(walkId);}
+        if (walkRequest.walkParticipants().stream() /* check if user exists in user_walk_visibility table */
+                .allMatch(userWalkVisibilityRepository::existsById)) {throw new WalkUpdateException(walkId);}
         walkMapper.updateFromRequest(existingWalk, walkRequest);
         walkRepository.save(existingWalk);
     }
 
     @Override
-    public void addParticipant(UUID walkId, UUID participantsId) {
+    public void addParticipant(UUID walkId, UUID participantId) {
         Walk existingWalk = walkRepository.findById(walkId).orElseThrow(() -> new WalkNotFoundException(walkId));
-        existingWalk.getWalkParticipants().add(participantsId);
-        if ((long) existingWalk.getWalkParticipants().size() > 20 ) {throw new WalkParticipantOverflowException(walkId);}
+        if (!existingWalk.getOwnerId().equals(getCurrentUserId())) {throw new WalkAccessDeniedException(walkId);}
+        if (userWalkVisibilityRepository.existsById(participantId)) {throw new WalkUpdateException(walkId);}
+        if (existingWalk.getWalkParticipants().size() + 1 > 20) {throw new WalkParticipantOverflowException(walkId);}
+        existingWalk.getWalkParticipants().add(participantId);
         walkRepository.save(existingWalk);
     }
 
     @Override
-    public void removeParticipant(UUID walkId, UUID participantsId) {
+    public void removeParticipant(UUID walkId, UUID participantId) {
         Walk existingWalk = walkRepository.findById(walkId).orElseThrow(() -> new WalkNotFoundException(walkId));
-        existingWalk.getWalkParticipants().remove(participantsId);
+        if (!existingWalk.getOwnerId().equals(getCurrentUserId())) {throw new WalkAccessDeniedException(walkId);}
+        existingWalk.getWalkParticipants().remove(participantId);
         walkRepository.save(existingWalk);
     }
 
     @Override
-    public boolean isOwner(UUID walkId, UUID supposedOwnerId) {
-        return findById(walkId).ownerId().equals(supposedOwnerId);
+    public boolean isOwner(UUID walkId) {
+        return findById(walkId).ownerId().equals(getCurrentUserId());
     }
 
     @Override
-    public boolean isParticipant(UUID walkId, UUID supposedParticipantId) {
-        return findById(walkId).walkParticipants().contains(supposedParticipantId);
+    public boolean isParticipant(UUID walkId) {
+        return findById(walkId).walkParticipants().contains(getCurrentUserId());
+    }
+
+    public void saveWalkVisibility(UserWalkVisibility userWalkVisibility) {
+        userWalkVisibilityRepository.save(userWalkVisibility);
+    }
+
+    /*
+     *   TODO add getCurrentUserId() from security starter
+     * */
+
+    private UUID getCurrentUserId() {
+        return UUID.randomUUID();
     }
 
 }

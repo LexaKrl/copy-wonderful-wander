@@ -26,12 +26,12 @@ public interface WalkService {
     void updateById(UUID id, WalkRequest walkRequest);
 
     @Transactional
-    void addParticipant(UUID walkId, UUID participantsIds);
+    void addParticipant(UUID walkId, UUID participantId);
 
     @Transactional
-    void removeParticipant(UUID walkId, UUID participantsIds);
+    void removeParticipant(UUID walkId, UUID participantId);
 
-    boolean isOwner(UUID walkId, UUID supposedOwnerId);
+    boolean isOwner(UUID walkId);
 
-    boolean isParticipant(UUID walkId, UUID supposedParticipantId);
+    boolean isParticipant(UUID walkId);
 }

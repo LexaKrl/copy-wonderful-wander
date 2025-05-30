@@ -1,15 +1,18 @@
 package com.technokratos.wwwalkservice.entity;
 
 
+import com.technokratos.enums.user.WalkVisibility;
 import com.technokratos.enums.walk.WalkStatus;
 import jakarta.persistence.*;
 /*import jakarta.validation.constraints.Size;*/
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -31,12 +34,15 @@ public class Walk {
     private String name;
 
     @Column(name = "description")
+    @ColumnDefault("")
     private String description;
 
     @Column(name = "steps")
+    @ColumnDefault("0")
     private Integer totalSteps;
 
     @Column(name = "meters")
+    @ColumnDefault("0")
     private Integer totalMeters;
 
     @Column(name = "created_at", nullable = false)
@@ -48,6 +54,7 @@ public class Walk {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "walk_status")
+    @ColumnDefault("NOT_STARTED")
     private WalkStatus walkStatus;
 
     @ElementCollection
@@ -65,7 +72,5 @@ public class Walk {
 
     @Column(name = "route", columnDefinition = "geometry(LineString, 4326)")
     private LineString route;
-
-    // TODO consider add Category
 }
 
