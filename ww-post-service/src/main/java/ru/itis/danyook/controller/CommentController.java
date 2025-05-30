@@ -3,6 +3,7 @@ package ru.itis.danyook.controller;
 import com.technokratos.api.CommentApi;
 import com.technokratos.dto.request.post.CommentRequest;
 import com.technokratos.dto.response.post.RootCommentResponse;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -11,8 +12,9 @@ import java.util.UUID;
 
 @RestController
 public class CommentController implements CommentApi {
+
     @Override
-    public List<RootCommentResponse> getCommentsByPostId(UUID postId) {
+    public List<RootCommentResponse> getCommentsByPostId(UUID postId, Pageable pageable) {
         return List.of();
     }
 
