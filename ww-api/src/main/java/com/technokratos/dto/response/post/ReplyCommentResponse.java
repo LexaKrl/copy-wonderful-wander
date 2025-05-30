@@ -1,5 +1,6 @@
 package com.technokratos.dto.response.post;
 
+import com.technokratos.dto.response.user.UserCompactResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
@@ -10,11 +11,8 @@ public record ReplyCommentResponse(
         UUID commentId,
         @Schema(description = "Текст комментария", example = "@ivanich_777 согласен, крутая фотка!")
         String text,
-        @Schema(description = "Username пользователя, которому принадлежит комментарий", example = "ivanich_777")
-        String username,
-        @Schema(description = "Ссылка на аватар пользователя, которому принадлежит комментарий",
-                example = "https://example.com/avatar.jpg ")
-        String avatarUrl,
+        @Schema(description = "Основные данные пользователя")
+        UserCompactResponse user,
         @Schema(description = "Username пользователя, которому ответили данным комментарие", example = "ivanich_777")
         String parentCommentUsername,
         @Schema(description = "Дата добавления комментария", example = "2014-04-08 12:30")
