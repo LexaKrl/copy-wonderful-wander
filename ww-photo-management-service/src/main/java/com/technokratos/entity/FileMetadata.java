@@ -15,6 +15,7 @@ public class FileMetadata {
     private UUID ownerId;
     private String filename;
     private String extension;
+    private String fileType;
     private Double size;
     private LocalDateTime uploadDateTime;
 }

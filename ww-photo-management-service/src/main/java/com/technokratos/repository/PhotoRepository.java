@@ -21,6 +21,7 @@ public class PhotoRepository {
                 .addValue(SqlParameters.Photo.OWNER_ID, fileMetadata.getOwnerId())
                 .addValue(SqlParameters.Photo.FILENAME, fileMetadata.getFilename())
                 .addValue(SqlParameters.Photo.EXTENSION, fileMetadata.getExtension())
+                .addValue(SqlParameters.Photo.FILE_TYPE, fileMetadata.getFileType())
                 .addValue(SqlParameters.Photo.SIZE, fileMetadata.getSize())
                 .addValue(SqlParameters.Photo.UPLOAD_DATE, Timestamp.valueOf(fileMetadata.getUploadDateTime()));
 
