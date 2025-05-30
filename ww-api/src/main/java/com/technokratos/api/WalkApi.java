@@ -263,7 +263,7 @@ public interface WalkApi {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     ResponseEntity<Void> removeParticipant(
             @Parameter(
-                    description = "UUID of the participant user want to add",
+                    description = "UUID of the participant user want to remove",
                     example = "550e8400-e29b-41d4-a716-446655440000",
                     required = true
             )

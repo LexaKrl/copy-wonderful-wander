@@ -2,8 +2,6 @@ package com.technokratos.dto.response.walk;
 
 import com.technokratos.enums.walk.WalkStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
@@ -46,11 +44,11 @@ public record WalkResponse(
         List<UUID> walkParticipants,
 
         @Schema(
-                description = "String UUID.jpeg(example) of photos uploaded by user. When client uploads a photo he receives a photo UUID",
+                description = "Links of photos uploaded by user",
                 example = """
-                        "a1e5f6d4-e2f3-4a8b-eb5c-1e2f3a4b5c6d.jpeg",
-                        "ad4d3a54-e5f6-47ab-9c0d-1b5c3a4b3a4d.jpeg",
-                        "a1bb5cd4-e5f6-4c8b-9c0d-13a43a4b5c6d.jpeg"
+                        "http://example.com/123",
+                        "http://example.com/456",
+                        "http://example.com/789"
                         """
         )
         List<String> photos,
