@@ -21,7 +21,5 @@ public class WalkPoint {
 
     private Integer meters;
 
-    private List<String> photos;
-
     private LocalDateTime time;
 }

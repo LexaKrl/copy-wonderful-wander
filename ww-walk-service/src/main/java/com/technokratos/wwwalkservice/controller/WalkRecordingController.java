@@ -5,12 +5,10 @@ import com.technokratos.dto.request.walk.WalkDataRequest;
 import com.technokratos.wwwalkservice.service.service_interface.RecordLocationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.UUID;
-
 
 @RestController
 @RequiredArgsConstructor
@@ -24,7 +22,14 @@ public class WalkRecordingController implements WalkRecordingApi {
     }
 
     @Override
+    public ResponseEntity<Void> finishWalk(UUID walkId) {
+        locationService.finishWalk(walkId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
     public ResponseEntity<Void> streamData(UUID walkId, WalkDataRequest walkDataRequest) {
-        return locationService.streamData(walkId, walkDataRequest);
+        locationService.streamData(walkId, walkDataRequest);
+        return ResponseEntity.noContent().build();
     }
 }

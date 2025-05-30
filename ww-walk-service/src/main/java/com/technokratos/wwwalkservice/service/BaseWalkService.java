@@ -109,4 +109,13 @@ public class BaseWalkService implements WalkService {
         return UUID.randomUUID();
     }
 
+    public void finishWalk(UUID walkId) {
+        Walk existingWalk = walkRepository.findById(walkId).orElseThrow(() -> new WalkNotFoundException(walkId));
+        if (!existingWalk.getOwnerId().equals(getCurrentUserId())) {throw new WalkAccessDeniedException(walkId);}
+        existingWalk.setWalkStatus(WalkStatus.FINISHED);
+
+        /*
+        *   TODO implement walk finishing
+        * */
+    }
 }
