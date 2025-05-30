@@ -3,6 +3,7 @@ package com.technokratos.controllers;
 import com.technokratos.api.PhotoApi;
 import com.technokratos.dto.PhotoOfWalkUploadRequest;
 import com.technokratos.dto.PhotoUploadRequest;
+import com.technokratos.dto.response.photo.PhotoFilenameResponse;
 import com.technokratos.exception.FileUploadException;
 import com.technokratos.service.PhotoService;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +38,7 @@ public class PhotoController implements PhotoApi {
     }
 
     @Override
-    public String uploadPhotoOfPost(MultipartFile photo) {
+    public PhotoFilenameResponse uploadPhotoOfPost(MultipartFile photo) {
         UUID userId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
         try {
             return photoService.savePhotoOfPost(

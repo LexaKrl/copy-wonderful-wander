@@ -2,6 +2,7 @@ package com.technokratos.service;
 
 import com.technokratos.dto.PhotoOfWalkUploadRequest;
 import com.technokratos.dto.PhotoUploadRequest;
+import com.technokratos.dto.response.photo.PhotoFilenameResponse;
 import com.technokratos.producer.PhotoSavedProducer;
 import com.technokratos.repository.PhotoRepository;
 import com.technokratos.util.FileHelper;
@@ -29,8 +30,8 @@ public class PhotoService {
         photoSavedProducer.sendAvatarSavedEvent(photoUploadRequest.ownerId(), avatarFilename);
     }
 
-    public String savePhotoOfPost(PhotoUploadRequest photoUploadRequest) {
-        return save(photoUploadRequest, MinioConstant.FileType.POSTS);
+    public PhotoFilenameResponse savePhotoOfPost(PhotoUploadRequest photoUploadRequest) {
+        return new PhotoFilenameResponse(save(photoUploadRequest, MinioConstant.FileType.POSTS));
     }
 
     public void savePhotoOfWalk(PhotoOfWalkUploadRequest photoOfWalkUploadRequest) {
