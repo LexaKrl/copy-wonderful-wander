@@ -11,5 +11,5 @@ public class LikeEntity {
     private UUID likeId;
     @Indexed
     private UUID postId;
-    private EmbeddedUserEntity user;
+    private EmbeddedUser user;
 }

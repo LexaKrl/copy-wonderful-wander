@@ -5,14 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.UUID;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmbeddedUserEntity {
-    private UUID userId;
-    private String username;
-    private String avatarUrl;
+public class EmbeddedCategory {
+    private Long categoryId;
+    private String name;
 }

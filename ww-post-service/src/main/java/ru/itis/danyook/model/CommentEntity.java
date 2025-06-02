@@ -13,7 +13,7 @@ public class CommentEntity {
     private UUID commentId;
     @Indexed
     private UUID postId;
-    private EmbeddedUserEntity user;
+    private EmbeddedUser user;
     private String text;
 
 }

@@ -13,6 +13,6 @@ public record PostRequest(
         String imageId,
         @Schema(description = "Уникальный идентификатор категории", example = "234523423",
                 requiredMode = Schema.RequiredMode.REQUIRED)
-        long categoryId
+        Long categoryId
 ) {
 }

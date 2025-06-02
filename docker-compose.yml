@@ -27,6 +27,25 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     networks:
       - kafka-network
+
+  mongodb:
+    image: mongo:6.0
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=social_db
+    volumes:
+      - mongodb-data:/data/db
+    networks:
+      - social-network
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+  mongodb-data:
+
 networks:
   kafka-network:
+    driver: bridge
+  social-network:
     driver: bridge

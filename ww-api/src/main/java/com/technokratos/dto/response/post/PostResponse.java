@@ -23,10 +23,4 @@ public record PostResponse(
         @Schema(description = "Общее количество комментариев у поста", example = "52")
         long commentsCount
 ) {
-        record CategoryResponse(
-                @Schema(description = "Уникальный идентификатор категории", example = "234523423")
-                long id,
-                @Schema(description = "Название категории", example = "Путешенствия")
-                String name
-        ) {}
 }
