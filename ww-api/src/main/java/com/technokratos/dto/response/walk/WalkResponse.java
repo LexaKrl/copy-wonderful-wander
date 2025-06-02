@@ -3,15 +3,17 @@ package com.technokratos.dto.response.walk;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 public record WalkResponse(
+
         @Schema(description = "Unique walk ID", example = "550e8400-e29b-41d4-a716-446655440000")
-        UUID id,
+        UUID walkId,
 
         @Schema(description = "Unique user ID", example = "550e8400-e29b-41d4-a716-446655440000")
-        UUID userId,
+        UUID ownerId,
 
         @Schema(description = "Walk name", example = "Wonderful wander")
         String name,
@@ -21,7 +23,7 @@ public record WalkResponse(
         String description,
 
         @Schema(
-                description = "Username or UUID list of participants of the walk",
+                description = "UUID list of participants of the walk",
                 example = """
                         [
                             "a1e5f6d4-e2f3-4a8b-eb5c-1e2f3a4b5c6d",
@@ -32,6 +34,19 @@ public record WalkResponse(
                         ]
                         """
         )
-        List<String> uuids
+        List<UUID> walkParticipants,
+
+        @Schema(
+                description = "String UUID.jpeg(example) of photos uploaded by user. When client uploads a photo he receives a photo UUID",
+                example = """
+                        "a1e5f6d4-e2f3-4a8b-eb5c-1e2f3a4b5c6d",
+                        "ad4d3a54-e5f6-47ab-9c0d-1b5c3a4b3a4d",
+                        "a1bb5cd4-e5f6-4c8b-9c0d-13a43a4b5c6d"
+                        """
+        )
+        List<String> photos,
+
+        @Schema(description = "Time walk was created", example = "2023-10-05 14:30:00")
+        LocalDateTime createdAt
 ) {
 }

@@ -1,24 +1,28 @@
 package com.technokratos.dto.request.walk;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.util.List;
 import java.util.UUID;
 
 public record WalkRequest(
-        @Schema(description = "Unique user ID", example = "550e8400-e29b-41d4-a716-446655440000")
-        UUID userId,
 
         @Schema(description = "Walk name", example = "Wonderful wander")
+        @Size(min = 3, max = 100, message = "Walk name must be between 3 and 100 characters")
+        @Pattern(regexp = "^[a-zA-Z0-9\\s\\-.,'()]+$", message = "Walk name contains invalid characters")
         String name,
 
-        @Size(max = 255)
         @Schema(description = "Walk description", example = "Daily morning walk in the park")
+        @Size(max = 255)
+        @Pattern(regexp = "^[a-zA-Z0-9\\s\\-.,'()!?]*$", message = "Description contains invalid characters")
         String description,
 
         @Schema(
-                description = "Username or UUID list of participants of the walk",
+                description = "UUID list of participants of the walk",
                 example = """
                         [
                             "a1e5f6d4-e2f3-4a8b-eb5c-1e2f3a4b5c6d",
@@ -29,6 +33,13 @@ public record WalkRequest(
                         ]
                         """
         )
-        List<String> uuids
+        @NotNull(message = "Participants list cannot be null")
+        @Size(min = 0, max = 20, message = "There must be between 0 and 20 participants")
+        List<
+                @NotBlank(message = "Participant UUID cannot be blank")
+                @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                        message = "Invalid UUID format")
+                UUID
+        > walkParticipants
 ) {
 }

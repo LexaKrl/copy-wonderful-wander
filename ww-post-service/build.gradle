@@ -31,22 +31,8 @@ dependencies {
 
 }
 
-//liquibase {
-//	activities {
-//		main {
-//			arguments = [
-//					logLevel     : "info",
-//					changelogFile: "ww-db/src/main/resources/db/changelog/user-service/changelog-master.xml",
-//					url          : "$dbUrl",
-//					username     : "$dbUsername",
-//					password     : "$dbPassword",
-//					driver       : "org.postgresql.Driver"
-//			]
-//		}
-//	}
-//	runList = "main"
-//}
-
+=======
+>>>>>>> ww-post-service/build.gradle
 test {
 	useJUnitPlatform()
 }

@@ -47,6 +47,7 @@ dependencies {
     liquibaseRuntime "org.liquibase:liquibase-groovy-dsl:$liquibaseDslGroovyVersion"
     liquibaseRuntime "info.picocli:picocli:$picocliVersion"
 
+    implementation project(':ww-core')
     implementation project(':ww-api')
     implementation project(':ww-db')
 

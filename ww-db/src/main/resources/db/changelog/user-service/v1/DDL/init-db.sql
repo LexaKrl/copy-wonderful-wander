@@ -11,7 +11,7 @@ CREATE TABLE account
     password         VARCHAR             NOT NULL,
     bio              VARCHAR(255),
     role             VARCHAR(20)      DEFAULT 'ROLE_USER',
-    avatar_url       VARCHAR(2048),
+    avatar_filename  VARCHAR(2048),
     created_at       TIMESTAMP        DEFAULT NOW(),
     updated_at       TIMESTAMP,
     followers_count  INT              DEFAULT 0,
@@ -43,7 +43,7 @@ CREATE TABLE refresh_token
     expiry_date      TIMESTAMP           NOT NULL,
     ----------------------------------------------------------
     CONSTRAINT refresh_token_id_pk PRIMARY KEY (refresh_token_id),
-    CONSTRAINT refresh_token_user_id_fk FOREIGN KEY (user_id) REFERENCES account (user_id) ON DELETE SET NULL
+    CONSTRAINT refresh_token_user_id_fk FOREIGN KEY (user_id) REFERENCES account (user_id) ON DELETE CASCADE
 );
 
 CREATE OR REPLACE FUNCTION update_user_stats()
