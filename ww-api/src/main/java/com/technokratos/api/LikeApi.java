@@ -2,8 +2,8 @@ package com.technokratos.api;
 
 import com.technokratos.dto.exception.BaseExceptionMessage;
 import com.technokratos.dto.exception.ValidationExceptionMessage;
-import com.technokratos.dto.response.post.UserLikeResponse;
 import com.technokratos.dto.response.post.PostResponse;
+import com.technokratos.dto.response.user.UserCompactResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -33,7 +34,7 @@ public interface LikeApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Лайки поста успешно получены",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = UserLikeResponse.class))),
+                            schema = @Schema(implementation = UserCompactResponse.class))),
             @ApiResponse(responseCode = "400", description = "Невалидный uuid поста",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ValidationExceptionMessage.class))),
@@ -44,9 +45,10 @@ public interface LikeApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    List<UserLikeResponse> getLikesByPostId(
+    List<UserCompactResponse> getLikesByPostId(
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID postId);
+            @PathVariable UUID postId,
+            Pageable pageable);
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

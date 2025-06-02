@@ -1,5 +1,6 @@
 package com.technokratos.dto.response.post;
 
+import com.technokratos.dto.response.user.UserCompactResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.UUID;
@@ -13,14 +14,10 @@ public record PostResponse(
         @Schema(description = "Ссылка на фото поста, по которой можно получить фото из облачного хранилища",
                 example = "https://example.com/photo.jpg")
         String imageUrl,
-        @Schema(description = "Уникальный идентификатор категории", example = "234523423")
-        long categoryId,
-        @Schema(description = "Username пользователя, которому принадлежит пост",
-                example = "ivanich_777")
-        String username,
-        @Schema(description = "Ссылка на аватар пользователя, которому принадлежит пост",
-                example = "https://example.com/avatar.jpg ")
-        String avatarUrl,
+        @Schema(description = "Основные данные категории")
+        CategoryResponse category,
+        @Schema(description = "Основные данные пользователя")
+        UserCompactResponse user,
         @Schema(description = "Общее количество лайков у поста", example = "124")
         long likesCount,
         @Schema(description = "Общее количество комментариев у поста", example = "52")

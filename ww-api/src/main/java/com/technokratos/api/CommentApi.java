@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -46,7 +47,8 @@ public interface CommentApi {
     })
     List<RootCommentResponse> getCommentsByPostId(
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID postId);
+            @PathVariable UUID postId,
+            Pageable pageable);
 
     @GetMapping("/{commentId}")
     @ResponseStatus(HttpStatus.OK)
