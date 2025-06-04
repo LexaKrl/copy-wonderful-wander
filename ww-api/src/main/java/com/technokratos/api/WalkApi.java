@@ -48,7 +48,7 @@ public interface WalkApi {
             }
     )
     @GetMapping
-    ResponseEntity<Page<WalkResponse>> getWalks(
+    Page<WalkResponse> getWalks(
             @Parameter(
                     description = "Pageable type with size and sort type",
                     required = true
@@ -79,7 +79,7 @@ public interface WalkApi {
     )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    ResponseEntity<Void> createWalk(
+    void createWalk(
             @Parameter(
                     description = "Data for creation walk",
                     required = true,
@@ -117,7 +117,7 @@ public interface WalkApi {
             }
     )
     @GetMapping("/{walkId}")
-    ResponseEntity<WalkResponse> getWalk(
+    WalkResponse getWalk(
             @Parameter(
                     description = "UUID of the walk",
                     example = "550e8400-e29b-41d4-a716-446655440000",
@@ -147,7 +147,7 @@ public interface WalkApi {
     )
     @DeleteMapping("/{walkId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    ResponseEntity<Void> deleteWalk(
+    void deleteWalk(
             @Parameter(
                     description = "UUID of the walk to delete",
                     example = "550e8400-e29b-41d4-a716-446655440000",
@@ -181,7 +181,7 @@ public interface WalkApi {
     )
     @PutMapping("/{walkId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    ResponseEntity<Void> updateWalk(
+    void updateWalk(
             @Parameter(
                     description = "The body of the walk request that user sends to the server",
                     required = true,
@@ -221,7 +221,7 @@ public interface WalkApi {
     )
     @PostMapping("/{walkId}/participant")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    ResponseEntity<Void> addParticipant(
+    void addParticipant(
             @Parameter(
                     description = "UUID of the participant user want to add",
                     example = "550e8400-e29b-41d4-a716-446655440000",
@@ -261,7 +261,7 @@ public interface WalkApi {
     )
     @DeleteMapping("/{walkId}/participant")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    ResponseEntity<Void> removeParticipant(
+    void removeParticipant(
             @Parameter(
                     description = "UUID of the participant user want to remove",
                     example = "550e8400-e29b-41d4-a716-446655440000",
