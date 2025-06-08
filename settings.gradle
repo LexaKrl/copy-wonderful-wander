@@ -2,12 +2,11 @@ rootProject.name = 'wonderful-wander'
 include 'ww-core'
 include 'ww-api'
 include 'ww-db'
-<<<<<<< settings.gradle
 include 'ww-user-service'
 include 'ww-post-service'
-=======
+
 include 'ww-user-service'
 include 'ww-photo-management-service'
 include 'ww-post-service'
-include 'ww-walk-service'
->>>>>>> settings.gradle
+//include 'ww-walk-service'
+include 'ww-starter-minio'

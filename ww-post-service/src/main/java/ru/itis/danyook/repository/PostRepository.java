@@ -11,5 +11,5 @@ import java.util.UUID;
 
 @Repository
 public interface PostRepository extends MongoRepository<PostEntity, UUID> {
-    List<PostEntity> findByUser_UserId(UUID userId, Pageable pageable);
+    List<PostEntity> findByUser_UserId(UUID userId, Pageable pageable);//todo возможно поменять на просто поиск по юзер ид
 }
