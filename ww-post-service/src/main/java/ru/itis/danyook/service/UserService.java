@@ -19,8 +19,8 @@ public class UserService {
     public CachedUserEntity getUserById(UUID userId) {
         return cachedUserRepository.findById(userId)
                 .orElseGet(() -> {
-                    String username = "jwtContext.getUsername()";//todo
-                    String avatarUrl = "minioClient.getAvatarUrl(userId)";//todo
+                    String username = "danyo_ok";//todo
+                    String avatarUrl = "//test";//todo
                     return cachedUserRepository.save(new CachedUserEntity(
                             userId,
                             username,
@@ -33,11 +33,11 @@ public class UserService {
     }
 
     public PhotoVisibility getMyPhotoVisibility(UUID userId) {
-        return cachedUserRepository.findMyPhotoVisibilityByUserId(userId);
+        return getUserById(userId).getMyPhotoVisibility();
     }
 
     public PhotoVisibility getSavedPhotoVisibility(UUID userId) {
-        return cachedUserRepository.findSavedPhotoVisibilityByUserId(userId);
+        return getUserById(userId).getSavedPhotoVisibility();
     }
 
     public Set<UUID> getUserFriend(UUID userId) {

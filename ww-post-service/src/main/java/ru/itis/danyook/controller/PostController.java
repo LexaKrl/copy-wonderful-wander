@@ -75,6 +75,6 @@ public class PostController implements PostApi {
     }
 
     private UUID getCurrentUserId() {
-        return UUID.fromString("");
+        return UUID.fromString("077a25a8-1fda-4ced-82f6-24b03b326c1c");
     }
 }

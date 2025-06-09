@@ -83,10 +83,12 @@ public class PostService {
 
         EmbeddedUser user = userMapper.toEmbeddedUserEntity(cachedUser);
         PostEntity post = postMapper.toPostEntity(createPostRequest);
+        post.setPostId(UUID.randomUUID());
         post.setUser(user);
 
         CategoryEntity category = categoryRepository.findById(createPostRequest.categoryId())
-                .orElseThrow(() -> new CategoryByIdNotFoundException(post.getCategoryId()));
+                .orElseThrow(() -> new CategoryByIdNotFoundException(createPostRequest.categoryId()));
+
         post.setCategory(postMapper.toEmbeddedCategoryEntity(category));
 
         postRepository.save(post);
