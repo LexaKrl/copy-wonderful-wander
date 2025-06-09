@@ -1,4 +1,9 @@
+server:
+  port: 0
+
 spring:
+  application:
+    name: photo-management-service
   servlet:
     multipart:
       max-file-size: 25MB
@@ -10,6 +15,16 @@ spring:
     driver-class-name: org.postgresql.Driver
   liquibase:
     change-log: classpath:/db/changelog/photo-management-service/changelog-master.xml
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        prefer-ip-address: true
+        instance-id: ${spring.application.name}:${random.value}
+        service-name: ${spring.application.name}
+        register: true
+        register-health-check: true
   kafka:
     producer:
       bootstrap-servers: localhost:9092, localhost:9094, localhost:9096
@@ -24,7 +39,7 @@ spring:
 
 minio:
   enabled: true
-  url:
+  url: http://localhost:9000
   accessKey:
   secretKey:
   bucket: ww-photos
@@ -34,5 +49,3 @@ logging:
   level:
     org.springframework: info
 
-server:
-  port: 8081

@@ -24,13 +24,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SpringSecurityConfig {
 
     public final static String[] PUBLIC_URLS = {
-                "/api/auth/register",
-                "/api/auth/login",
-                "/api/auth/refresh-token",
-                "/swagger-ui/**",
-                "/v3/api-docs/**",
-                "/swagger-ui.html",
-                "/error"
+            "/api/auth/register",
+            "/api/auth/login",
+            "/api/auth/refresh-token",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/swagger-ui.html",
+            "/actuator/**",
+            "/error"
     };
 
     private final UserDetailsService userDetailsService;
