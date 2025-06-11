@@ -29,13 +29,13 @@ public class SpringSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(AbstractHttpConfigurer::disable) // Отключение CSRF
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .anyRequest().permitAll()) // Разрешить все запросы
-                .securityMatcher("/**") // Применить ко всем эндпоинтам
-                .httpBasic(AbstractHttpConfigurer::disable) // Отключить HTTP Basic
-                .formLogin(AbstractHttpConfigurer::disable) // Отключить форму логина
-                .logout(AbstractHttpConfigurer::disable) // Отключить выход из системы
+                        .anyRequest()
+                        .permitAll())
+                .httpBasic(Customizer.withDefaults())
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }
 
