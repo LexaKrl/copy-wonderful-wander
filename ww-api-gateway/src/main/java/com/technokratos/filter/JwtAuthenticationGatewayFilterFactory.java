@@ -55,8 +55,12 @@ public class JwtAuthenticationGatewayFilterFactory extends AbstractGatewayFilter
             UserRole userRole = null;
 
             if (routeValidator.isSecured(request)) {
-                authHeader = request.getHeaders().getOrDefault(AUTHORIZATION_HEADER_NAME, List.of()).getFirst();
-                if (authHeader == null || authHeader.isEmpty()) {
+                authHeader = request.getHeaders().getOrEmpty(AUTHORIZATION_HEADER_NAME)
+                        .stream()
+                        .findFirst()
+                        .orElse(null);
+
+                if (authHeader == null) {
                     try {
                         return onError(exchange, HttpStatus.UNAUTHORIZED, new UnauthorizedException("The authentication header is missing"));
                     } catch (Exception e) {
