@@ -1,15 +1,12 @@
 package com.technokratos.service.auth;
 
 import com.technokratos.dto.request.security.PasswordChangeRequest;
-import com.technokratos.dto.request.security.UserForJwtTokenRequest;
+import com.technokratos.dto.UserInfoForJwt;
 import com.technokratos.dto.request.security.UserLoginRequest;
 import com.technokratos.dto.request.security.UserRegistrationRequest;
 import com.technokratos.dto.response.security.AuthResponse;
 import com.technokratos.enums.security.UserRole;
-import com.technokratos.exception.PasswordNotMatchException;
-import com.technokratos.exception.UserByIdNotFoundException;
-import com.technokratos.exception.UserByUsernameNotFoundException;
-import com.technokratos.exception.UsernameNotUniqueException;
+import com.technokratos.exception.*;
 import com.technokratos.model.UserEntity;
 import com.technokratos.model.UserPrincipal;
 import com.technokratos.producer.UserEventProducer;
@@ -61,7 +58,7 @@ public class AuthUserService {
                 .orElseThrow(() -> new UserByUsernameNotFoundException(userDto.username()));
         userEventProducer.sendUserCreatedEvent(userMapper.toUserCreatedEvent(newUser));
 
-        UserForJwtTokenRequest userInfo = userMapper.toJwtUserInfo(user);
+        UserInfoForJwt userInfo = userMapper.toJwtUserInfo(user);
         return jwtProvider.generateTokens(userInfo);
     }
 
@@ -73,10 +70,11 @@ public class AuthUserService {
                         userDto.password()));
         if (authentication.isAuthenticated()) {
             UserPrincipal user = (UserPrincipal) userDetailsService.loadUserByUsername(userDto.username());
-            UserForJwtTokenRequest userInfo = userMapper.toJwtUserInfo(user);
+            UserInfoForJwt userInfo = userMapper.toJwtUserInfo(user);
+            log.info("auth service verify user data: {}", user);
             return jwtProvider.generateTokens(userInfo);
         }
-        throw new RuntimeException("User is not authenticated");
+        throw new UnauthorizedException("User is not authenticated");
     }
 
     public void changePassword(UUID userId, PasswordChangeRequest passwordChangeRequest) {

@@ -1,0 +1,56 @@
+plugins {
+    id 'idea'
+    id 'java'
+    id 'java-library'
+    id 'maven-publish'
+    id 'org.springframework.boot' version "${springBootVersion}"
+    id 'io.spring.dependency-management' version "${dependencyManagementVersion}"
+}
+
+group = 'com.technokratos'
+version = '1.0.0'
+
+jar.enabled = true
+bootJar.enabled = false
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    api 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    implementation "io.jsonwebtoken:jjwt-api:$jwtVersion"
+    runtimeOnly "io.jsonwebtoken:jjwt-impl:$jwtVersion"
+    runtimeOnly "io.jsonwebtoken:jjwt-jackson:$jwtVersion"
+
+
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'ww-starter-jwt'
+            groupId = 'com.technokratos'
+            version = '1.0.0'
+
+            from(components['java'])
+        }
+    }
+
+    repositories {
+        mavenLocal()
+    }
+}

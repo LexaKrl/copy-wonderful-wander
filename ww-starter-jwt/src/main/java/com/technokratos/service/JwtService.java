@@ -1,7 +1,9 @@
 package com.technokratos.service;
 
 import com.technokratos.config.properties.JwtProperties;
-import com.technokratos.enums.UserRole;
+import com.technokratos.dto.StarterUserInfoForJwt;
+import com.technokratos.dto.enums.StarterUserRole;
+import com.technokratos.exception.InvalidJwtException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -9,18 +11,48 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 
-@Slf4j
-@Service
 @RequiredArgsConstructor
+@Slf4j
 public class JwtService {
+
     private final JwtProperties jwtProperties;
+
+    public String generateAccessToken(StarterUserInfoForJwt userInfo) {
+        log.info("Access token generating for user: {}", userInfo);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userInfo.userId());
+        claims.put("userRole", userInfo.role());
+
+        return Jwts.builder()
+                .claims()
+                .add(claims)
+                .subject(userInfo.username())
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + jwtProperties.getAccessTokenDuration()))
+                .and()
+                .signWith(getKey())
+                .compact();
+    }
+
+    public String generateRefreshToken(String username) {
+        log.info("Refresh token generating");
+        Map<String, Object> claims = new HashMap<>();
+
+        return Jwts.builder()
+                .subject(username)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + jwtProperties.getRefreshTokenDuration()))
+                .signWith(getKey())
+                .compact();
+    }
 
     private SecretKey getKey() {
         byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.getSecretKey());
@@ -42,7 +74,7 @@ public class JwtService {
         return UUID.fromString(userId);
     }
 
-    public UserRole extractUserRole(String token) {
+    public StarterUserRole extractUserRole(String token) {
         Claims claims = extractAllClaims(token);
         String userRole = claims.get("userRole", String.class);
 
@@ -50,7 +82,7 @@ public class JwtService {
             throw new RuntimeException("Role in jwt is null");
         }
 
-        return UserRole.valueOf(userRole);
+        return StarterUserRole.valueOf(userRole);
     }
 
     private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
@@ -67,15 +99,10 @@ public class JwtService {
                     .getPayload();
         } catch (JwtException e) {
             log.warn("Invalid access token");
-            return null;
-//            throw new InvalidJwtException("Invalid access token");
+            throw new InvalidJwtException("Invalid access token");
         }
     }
 
-//    public boolean validateToken(String token, UserDetails userDetails) {
-//        final String username = extractUsername(token);
-//        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-//    }
 
     public boolean isTokenExpiredSoon(String token) {
         Date expiration = extractExpiration(token);
@@ -91,4 +118,5 @@ public class JwtService {
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
+
 }

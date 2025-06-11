@@ -10,4 +10,7 @@ dependencies {
     implementation project(':ww-core')
 
     testImplementation 'io.projectreactor:reactor-test'
+
+    annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
+    implementation "org.mapstruct:mapstruct:$mapstructVersion"
 }

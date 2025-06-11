@@ -1,6 +1,7 @@
 package com.technokratos.util.mapper;
 
-import com.technokratos.dto.request.security.UserForJwtTokenRequest;
+import com.technokratos.dto.StarterUserInfoForJwt;
+import com.technokratos.dto.UserInfoForJwt;
 import com.technokratos.dto.request.security.UserRegistrationRequest;
 import com.technokratos.dto.response.user.UserCompactResponse;
 import com.technokratos.dto.response.user.UserProfileResponse;
@@ -24,13 +25,18 @@ import java.util.UUID;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserMapper {
 
-    UserForJwtTokenRequest toJwtUserInfo(UserEntity userEntity);
+    UserInfoForJwt toJwtUserInfo(UserEntity userEntity);
 
-    UserForJwtTokenRequest toJwtUserInfo(UserResponse user);
+    UserInfoForJwt toJwtUserInfo(UserResponse user);
 
-    UserForJwtTokenRequest toJwtUserInfo(UserPrincipal userPrincipal);
+    UserInfoForJwt toJwtUserInfo(UserPrincipal userPrincipal);
 
     UserEntity accountToUserEntity(Account account);
+
+    StarterUserInfoForJwt toStarterUserInfoJwt(UserInfoForJwt userInfoForJwt);
+
+    StarterUserInfoForJwt toStarterUserInfoJwt(UserResponse user);
+
 
     UserEntity userRegistrationRequestToUserEntity(UserRegistrationRequest userRegistrationRequest);
 
