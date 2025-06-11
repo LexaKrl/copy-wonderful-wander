@@ -1,6 +1,7 @@
 package com.technokratos.service;
 
 import com.technokratos.dto.request.user.UserRequest;
+import com.technokratos.dto.response.PageResponse;
 import com.technokratos.dto.response.user.UserCompactResponse;
 import com.technokratos.dto.response.user.UserProfileResponse;
 import com.technokratos.dto.response.user.UserResponse;
@@ -11,10 +12,10 @@ import com.technokratos.exception.UserByUsernameNotFoundException;
 import com.technokratos.producer.UserEventProducer;
 import com.technokratos.repository.UserRepository;
 import com.technokratos.tables.pojos.Account;
+import com.technokratos.util.Pagination;
 import com.technokratos.util.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,31 +33,82 @@ public class UserService {
     public UserResponse getUserById(UUID userId) {
         Account account = userRepository.findById(userId).orElseThrow(() -> new UserByIdNotFoundException(userId));
         String avatarUrl = minioService.getPresignedUrl(account.getAvatarFilename());
-        return userMapper.toUserResponse(userRepository
-                        .findById(userId)
-                        .orElseThrow(() -> new UserByIdNotFoundException(userId)),
-                avatarUrl);
+        return userMapper.toUserResponse(account, avatarUrl);
     }
 
     public UserResponse getUserByUsername(String username) {
-        return userMapper.toUserResponse(userRepository
-                .findByUsername(username)
-                .orElseThrow(() -> new UserByUsernameNotFoundException(username)));
+        Account account = userRepository.findByUsername(username).orElseThrow(() -> new UserByUsernameNotFoundException(username));
+        String avatarUrl = minioService.getPresignedUrl(account.getAvatarFilename());
+        return userMapper.toUserResponse(account, avatarUrl);
     }
 
-    public List<UserCompactResponse> getFriendsByUserId(UUID userId, Pageable pageable) {
+    public PageResponse<UserCompactResponse> getFriendsByUserId(UUID userId, int page, int limit) {
         if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(userId);
-        return userMapper.toUserCompactResponse(userRepository.getFriendsByUserId(userId, pageable));
+
+        int total = userRepository.getCountFriendsByUserId(userId);
+        int offset = Pagination.offset(total, page, limit);
+
+        List<UserCompactResponse> userCompactResponses = userRepository
+                .getFriendsByUserId(userId, limit, offset)
+                .stream()
+                .map(account -> userMapper.toUserCompactResponse(
+                        account,
+                        minioService.getPresignedUrl(account.getAvatarFilename())
+                ))
+                .toList();
+
+        return PageResponse.<UserCompactResponse>builder()
+                .data(userCompactResponses)
+                .total(total)
+                .limit(limit)
+                .offset(offset)
+                .build();
     }
 
-    public List<UserCompactResponse> getFollowersByUserId(UUID userId, Pageable pageable) {
+    public PageResponse<UserCompactResponse> getFollowersByUserId(UUID userId, int page, int limit) {
         if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(userId);
-        return userMapper.toUserCompactResponse(userRepository.getFollowersByUserId(userId, pageable));
+
+        int total = userRepository.getCountFollowersByUserId(userId);
+        int offset = Pagination.offset(total, page, limit);
+
+        List<UserCompactResponse> userCompactResponses = userRepository
+                .getFollowersByUserId(userId, limit, offset)
+                .stream()
+                .map(account -> userMapper.toUserCompactResponse(
+                        account,
+                        minioService.getPresignedUrl(account.getAvatarFilename())
+                ))
+                .toList();
+
+        return PageResponse.<UserCompactResponse>builder()
+                .data(userCompactResponses)
+                .total(total)
+                .limit(limit)
+                .offset(offset)
+                .build();
     }
 
-    public List<UserCompactResponse> getFollowingByUserId(UUID userId, Pageable pageable) {
+    public PageResponse<UserCompactResponse> getFollowingByUserId(UUID userId, int page, int limit) {
         if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(userId);
-        return userMapper.toUserCompactResponse(userRepository.getFollowingByUserId(userId, pageable));
+
+        int total = userRepository.getCountFollowingByUserId(userId);
+        int offset = Pagination.offset(total, page, limit);
+
+        List<UserCompactResponse> userCompactResponses = userRepository
+                .getFollowingByUserId(userId, limit, offset)
+                .stream()
+                .map(account -> userMapper.toUserCompactResponse(
+                        account,
+                        minioService.getPresignedUrl(account.getAvatarFilename())
+                ))
+                .toList();
+
+        return PageResponse.<UserCompactResponse>builder()
+                .data(userCompactResponses)
+                .total(total)
+                .limit(limit)
+                .offset(offset)
+                .build();
     }
 
     public void follow(UUID userId, UUID targetUserId) {
@@ -91,8 +143,9 @@ public class UserService {
         Account user = userRepository
                 .update(userId, userRequest)
                 .orElseThrow(() -> new UserByIdNotFoundException(userId));
+        String avatarUrl = minioService.getPresignedUrl(user.getAvatarFilename());
         userEventProducer.sendUserUpdatedEvent(userMapper.toUserUpdatedEvent(user));
-        return userMapper.toUserResponse(user);
+        return userMapper.toUserResponse(user, avatarUrl);
     }
 
     public void deleteUser(UUID userId) {

@@ -16,7 +16,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.UUID;
 
 
@@ -38,8 +37,6 @@ public interface UserMapper {
     UserResponse toUserResponse(Account account,
                                 String avatarUrl);
 
-    UserResponse toUserResponse(Account account);
-
     @Mapping(target = "isFollowedByUser")
     @Mapping(target = "isFollowingByUser")
     @Mapping(target = "isFriends")
@@ -50,7 +47,10 @@ public interface UserMapper {
                                               boolean isFriends,
                                               String avatarUrl);
 
-    List<UserCompactResponse> toUserCompactResponse(List<Account> followersByUserId);
+    @Mapping(target = "avatarUrl")
+    UserCompactResponse toUserCompactResponse(
+            Account followersByUserId,
+            String avatarUrl);
 
     UserCreatedEvent toUserCreatedEvent(Account account);
 

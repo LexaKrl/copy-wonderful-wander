@@ -2,16 +2,15 @@ package com.technokratos.controller;
 
 import com.technokratos.api.UserApi;
 import com.technokratos.dto.request.user.UserRequest;
+import com.technokratos.dto.response.PageResponse;
 import com.technokratos.dto.response.user.UserCompactResponse;
 import com.technokratos.dto.response.user.UserProfileResponse;
 import com.technokratos.dto.response.user.UserResponse;
 import com.technokratos.security.BaseUserContextHolder;
 import com.technokratos.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -51,18 +50,18 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public List<UserCompactResponse> getFriendsByUserId(UUID userId, Pageable pageable) {
-        return userService.getFriendsByUserId(userId, pageable);
+    public PageResponse<UserCompactResponse> getFriendsByUserId(UUID userId, Integer page, Integer size) {
+        return userService.getFriendsByUserId(userId, page, size);
     }
 
     @Override
-    public List<UserCompactResponse> getFollowingByUserId(UUID userId, Pageable pageable) {
-        return userService.getFollowingByUserId(userId, pageable);
+    public PageResponse<UserCompactResponse> getFollowingByUserId(UUID userId, Integer page, Integer size) {
+        return userService.getFollowingByUserId(userId, page, size);
     }
 
     @Override
-    public List<UserCompactResponse> getFollowersByUserId(UUID userId, Pageable pageable) {
-        return userService.getFollowersByUserId(userId, pageable);
+    public PageResponse<UserCompactResponse> getFollowersByUserId(UUID userId, Integer page, Integer size) {
+        return userService.getFollowersByUserId(userId, page, size);
     }
 
     private UUID getCurrentUserId() {
