@@ -1,6 +1,6 @@
 package com.technokratos.controller;
 
-import com.technokratos.dto.request.security.UserForJwtTokenRequest;
+import com.technokratos.dto.UserInfoForJwt;
 import com.technokratos.dto.request.user.UserRequest;
 import com.technokratos.dto.response.user.UserCompactResponse;
 import com.technokratos.dto.response.user.UserProfileResponse;
@@ -45,7 +45,7 @@ public class UserControllerIntegrationTest {
     @BeforeEach
     void init() {
         final String jwtToken = jwtService.generateAccessToken(
-                new UserForJwtTokenRequest(
+                new UserInfoForJwt(
                         UUID.fromString("550e8400-e29b-41d4-a716-446655440000"),
                         "john_doe",
                         UserRole.ROLE_USER

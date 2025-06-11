@@ -1,7 +1,7 @@
 package com.technokratos.service.auth;
 
 import com.technokratos.dto.request.security.PasswordChangeRequest;
-import com.technokratos.dto.request.security.UserForJwtTokenRequest;
+import com.technokratos.dto.UserInfoForJwt;
 import com.technokratos.dto.request.security.UserLoginRequest;
 import com.technokratos.dto.request.security.UserRegistrationRequest;
 import com.technokratos.dto.response.security.AuthResponse;
@@ -61,7 +61,7 @@ public class AuthUserService {
                 .orElseThrow(() -> new UserByUsernameNotFoundException(userDto.username()));
         userEventProducer.sendUserCreatedEvent(userMapper.toUserCreatedEvent(newUser));
 
-        UserForJwtTokenRequest userInfo = userMapper.toJwtUserInfo(user);
+        UserInfoForJwt userInfo = userMapper.toJwtUserInfo(user);
         return jwtProvider.generateTokens(userInfo);
     }
 
@@ -73,7 +73,7 @@ public class AuthUserService {
                         userDto.password()));
         if (authentication.isAuthenticated()) {
             UserPrincipal user = (UserPrincipal) userDetailsService.loadUserByUsername(userDto.username());
-            UserForJwtTokenRequest userInfo = userMapper.toJwtUserInfo(user);
+            UserInfoForJwt userInfo = userMapper.toJwtUserInfo(user);
             return jwtProvider.generateTokens(userInfo);
         }
         throw new RuntimeException("User is not authenticated");

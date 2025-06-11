@@ -9,11 +9,18 @@ import java.util.function.Predicate;
 @Component
 public class RouteValidator {
     public static final List<String> openEndpoints = List.of(
+            "/api/auth/register",
             "/api/auth/login",
-            "/api/auth/register"
+            "/api/auth/refresh-token",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/swagger-ui.html",
+            "/actuator/**",
+            "/error"
     );
 
-    public Predicate<ServerHttpRequest> isSecured =
-            request -> openEndpoints.stream()
-                    .noneMatch(uri -> request.getURI().getPath().contains(uri));
+    public boolean isSecured(ServerHttpRequest serverHttpRequest) {
+        return openEndpoints.stream()
+                .noneMatch(uri -> serverHttpRequest.getURI().getPath().contains(uri));
+    }
 }

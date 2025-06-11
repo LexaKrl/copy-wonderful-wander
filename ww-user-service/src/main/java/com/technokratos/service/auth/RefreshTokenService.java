@@ -4,6 +4,7 @@ import com.technokratos.dto.response.security.AuthResponse;
 import com.technokratos.dto.response.user.UserResponse;
 import com.technokratos.exception.InvalidJwtException;
 import com.technokratos.repository.RefreshTokenRepository;
+import com.technokratos.service.JwtService;
 import com.technokratos.service.UserService;
 import com.technokratos.tables.pojos.RefreshToken;
 import com.technokratos.util.DateConverter;
@@ -47,8 +48,7 @@ public class RefreshTokenService {
         UUID userId = storedToken.getUserId();
         String newRefreshToken = storedToken.getToken();
 
-        Instant expiryInstant = dateConverter.localDateTimeToInstant(storedToken.getExpiryDate());
-        if (expiryInstant.isBefore(Instant.now())) {
+        if (jwtService.isTokenExpired(refreshToken)) {
             refreshTokenRepository.deleteByToken(storedToken.getToken());
             throw new InvalidJwtException("Refresh Token was expired");
         }
@@ -60,7 +60,7 @@ public class RefreshTokenService {
         }
 
         UserResponse user = userService.getUserById(userId);
-        String newAccessToken = jwtService.generateAccessToken(userMapper.toJwtUserInfo(user));
+        String newAccessToken = jwtService.generateAccessToken(userMapper.toStarterUserInfoJwt(user));
 
         return new AuthResponse(newAccessToken, newRefreshToken);
     }

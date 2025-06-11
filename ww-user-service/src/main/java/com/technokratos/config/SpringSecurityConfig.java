@@ -1,6 +1,6 @@
 package com.technokratos.config;
 
-import com.technokratos.filter.JwtFilter;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,32 +23,19 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SpringSecurityConfig {
 
-    public final static String[] PUBLIC_URLS = {
-            "/api/auth/register",
-            "/api/auth/login",
-            "/api/auth/refresh-token",
-            "/swagger-ui/**",
-            "/v3/api-docs/**",
-            "/swagger-ui.html",
-            "/actuator/**",
-            "/error"
-    };
-
     private final UserDetailsService userDetailsService;
-    private final JwtFilter jwtFilter;
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable) // Отключение CSRF
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(PUBLIC_URLS)
-                        .permitAll()
-                        .anyRequest().authenticated())
-                .httpBasic(Customizer.withDefaults())
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                        .anyRequest().permitAll()) // Разрешить все запросы
+                .securityMatcher("/**") // Применить ко всем эндпоинтам
+                .httpBasic(AbstractHttpConfigurer::disable) // Отключить HTTP Basic
+                .formLogin(AbstractHttpConfigurer::disable) // Отключить форму логина
+                .logout(AbstractHttpConfigurer::disable) // Отключить выход из системы
                 .build();
     }
 
