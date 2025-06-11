@@ -1,6 +1,7 @@
 package com.technokratos.filter;
 
 import com.technokratos.service.JwtService;
+import com.technokratos.util.HttpHeaders;
 import com.technokratos.validator.RouteValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -37,9 +38,9 @@ public class JwtAuthenticationGatewayFilterFactory extends AbstractGatewayFilter
                 }
 
                 ServerHttpRequest modifiedRequest = request.mutate()
-                        .header("X-Username", jwtService.extractUsername(token))
-                        .header("X-User-Id", String.valueOf(jwtService.extractUserId(token)))
-                        .header("X-User-Role", jwtService.extractUserRole(token).name())
+                        .header(HttpHeaders.USER_ID, String.valueOf(jwtService.extractUserId(token)))
+                        .header(HttpHeaders.USERNAME, jwtService.extractUsername(token))
+                        .header(HttpHeaders.USER_ROLE, jwtService.extractUserRole(token).name())
                         .build();
 
 

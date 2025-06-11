@@ -7,5 +7,7 @@ dependencies {
     runtimeOnly "io.jsonwebtoken:jjwt-impl:$jwtVersion"
     runtimeOnly "io.jsonwebtoken:jjwt-jackson:$jwtVersion"
 
+    implementation project(':ww-core')
+
     testImplementation 'io.projectreactor:reactor-test'
 }
