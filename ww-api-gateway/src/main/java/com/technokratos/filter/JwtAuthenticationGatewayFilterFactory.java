@@ -37,7 +37,6 @@ public class JwtAuthenticationGatewayFilterFactory extends AbstractGatewayFilter
 
     private final JwtService jwtService;
     private final RouteValidator routeValidator;
-    private final AntPathMatcher pathMatcher = new AntPathMatcher();
     private final UserMapper userMapper;
 
     public static final String BEARER_PREFIX = "Bearer ";
