@@ -1,7 +1,6 @@
 package com.technokratos.service;
 
 import com.technokratos.config.properties.JwtProperties;
-import com.technokratos.enums.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -10,6 +9,8 @@ import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import com.technokratos.enums.security.UserRole;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
