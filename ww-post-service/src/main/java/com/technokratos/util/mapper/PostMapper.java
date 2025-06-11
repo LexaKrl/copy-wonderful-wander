@@ -25,7 +25,6 @@ public interface PostMapper {
     @Mapping(target = "postId", ignore = true)
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "userId", ignore = true)
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "likesCount", ignore = true)
     @Mapping(target = "commentsCount", ignore = true)

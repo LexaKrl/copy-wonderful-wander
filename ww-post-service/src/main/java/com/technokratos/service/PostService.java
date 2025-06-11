@@ -4,6 +4,7 @@ import com.technokratos.dto.request.post.PostRequest;
 import com.technokratos.dto.response.post.PostResponse;
 import com.technokratos.enums.user.PhotoVisibility;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.technokratos.exception.CategoryByIdNotFoundException;
@@ -22,6 +23,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PostService {
 
     private final PostRepository postRepository;
@@ -38,9 +40,9 @@ public class PostService {
 
     public List<PostResponse> getSavedPostsByUserId(UUID viewerId, UUID userId, Pageable pageable) {
 
-        PhotoVisibility myPhotoVisibility = userService.getMyPhotoVisibility(userId);
+        PhotoVisibility savedPhotoVisibility = userService.getSavedPhotoVisibility(userId);
 
-        if (!checkPostPrivacy(viewerId, userId, myPhotoVisibility)) {
+        if (!checkPostPrivacy(viewerId, userId, savedPhotoVisibility)) {
             throw new ForbiddenServiceException("You don`t have authority to see this post");
         }//todo проверить
 
@@ -53,13 +55,15 @@ public class PostService {
 
     public List<PostResponse> getPostsByUserId(UUID viewerId, UUID userId, Pageable pageable) {
 
-        PhotoVisibility savedPhotoVisibility = userService.getSavedPhotoVisibility(userId);
-
-        if (!checkPostPrivacy(viewerId, userId, savedPhotoVisibility)) {
+        PhotoVisibility myPhotoVisibility = userService.getMyPhotoVisibility(userId);
+        log.info("service getPostsByUserId data: viewerId: {}, userId: {}, myPhotoVisibility: {}",
+                viewerId, userId, myPhotoVisibility);
+        if (!checkPostPrivacy(viewerId, userId, myPhotoVisibility)) {
             throw new ForbiddenServiceException("You don`t have authority to see this post");
         }//todo проверить
 
         List<PostEntity> posts = postRepository.findByUser_UserId(userId, pageable);
+
         return postMapper.toPostResponse(posts);//todo сделать получение фото из минио по id и отдачу url
     }
 
@@ -67,7 +71,7 @@ public class PostService {
 
         PostEntity post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostByIdNotFoundException(postId));
-        UUID userId = post.getUserId();
+        UUID userId = post.getUser().getUserId();
 
         PhotoVisibility savedPhotoVisibility = userService.getSavedPhotoVisibility(userId);
 
@@ -83,12 +87,13 @@ public class PostService {
 
         EmbeddedUser user = userMapper.toEmbeddedUserEntity(cachedUser);
         PostEntity post = postMapper.toPostEntity(createPostRequest);
-        post.setPostId(UUID.randomUUID());
-        post.setUser(user);
 
         CategoryEntity category = categoryRepository.findById(createPostRequest.categoryId())
                 .orElseThrow(() -> new CategoryByIdNotFoundException(createPostRequest.categoryId()));
 
+        post.setPostId(UUID.randomUUID());
+        post.setUser(user);
+        post.setCreatedAt(LocalDateTime.now());
         post.setCategory(postMapper.toEmbeddedCategoryEntity(category));
 
         postRepository.save(post);
@@ -103,13 +108,11 @@ public class PostService {
             throw new ForbiddenServiceException("You can't edit this post");
         }
 
+        CategoryEntity category = categoryRepository.findById(updatePostRequest.categoryId())
+                .orElseThrow(() -> new CategoryByIdNotFoundException(updatePostRequest.categoryId()));
+
         post.setTitle(updatePostRequest.title());
         post.setImageId(updatePostRequest.imageId());
-        post.setCategoryId(updatePostRequest.categoryId());
-
-
-        CategoryEntity category = categoryRepository.findById(updatePostRequest.categoryId())
-                .orElseThrow(() -> new CategoryByIdNotFoundException(post.getCategoryId()));
         post.setCategory(postMapper.toEmbeddedCategoryEntity(category));
 
         postRepository.save(post);
@@ -144,11 +147,17 @@ public class PostService {
     }
 
     private boolean checkPostPrivacy(UUID viewerId, UUID userId, PhotoVisibility photoVisibility) {
-        return switch (photoVisibility) {
+        if (viewerId.equals(userId)) {
+            return true;
+        }
+
+        boolean check = switch (photoVisibility) {
             case PhotoVisibility.PUBLIC -> true;
             case PhotoVisibility.PRIVATE -> viewerId.equals(userId);
             case PhotoVisibility.FRIENDS_ONLY -> userService.getUserFriend(userId).contains(viewerId);
         };
+        log.info("checkPostPrivacy: {}, photoVisibility: {}", check, photoVisibility);
+        return check;
     }
 }
 

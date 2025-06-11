@@ -19,18 +19,13 @@ public class PostEntity {
     private String title;
     private String imageId;
     @Indexed
-    private Long categoryId;
-    @Indexed
     private EmbeddedCategory category;
     @Indexed
     private LocalDateTime createdAt;
     @Indexed
-    private UUID userId;
-    @Indexed
     private EmbeddedUser user;
     private Long likesCount;
     private Long commentsCount;
-
 }
 
 

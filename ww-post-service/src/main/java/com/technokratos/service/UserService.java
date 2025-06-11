@@ -17,19 +17,22 @@ public class UserService {
     private final CachedUserRepository cachedUserRepository;
 
     public CachedUserEntity getUserById(UUID userId) {
+//        return cachedUserRepository.findById(userId)
+//                .orElseGet(() -> {
+//                    String username = "danyo_ok";//todo
+//                    String avatarUrl = "//test";//todo
+//                    return cachedUserRepository.save(new CachedUserEntity(
+//                            userId,
+//                            username,
+//                            avatarUrl,
+//                            PhotoVisibility.PRIVATE,
+//                            PhotoVisibility.PRIVATE,
+//                            new HashSet<>()));
+//                    //todo посмотреть как получить из user service(наверное написать клиента который будет получать данные из юзер сервиса
+//                });
+
         return cachedUserRepository.findById(userId)
-                .orElseGet(() -> {
-                    String username = "danyo_ok";//todo
-                    String avatarUrl = "//test";//todo
-                    return cachedUserRepository.save(new CachedUserEntity(
-                            userId,
-                            username,
-                            avatarUrl,
-                            PhotoVisibility.PRIVATE,
-                            PhotoVisibility.PRIVATE,
-                            new HashSet<>()));
-                    //todo посмотреть как получить из user service(наверное написать клиента который будет получать данные из юзер сервиса
-                });
+                .orElseThrow(() -> new RuntimeException("User Not found"));
     }
 
     public PhotoVisibility getMyPhotoVisibility(UUID userId) {

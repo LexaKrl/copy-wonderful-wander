@@ -4,6 +4,7 @@ import com.technokratos.api.PostApi;
 import com.technokratos.dto.request.post.PostRequest;
 import com.technokratos.dto.response.post.PostResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RestController;
 import com.technokratos.service.PostService;
@@ -14,6 +15,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class PostController implements PostApi {
 
     private final PostService postService;
@@ -36,6 +38,7 @@ public class PostController implements PostApi {
 
     @Override
     public List<PostResponse> getPostsByUserId(UUID userId, Pageable pageable) {
+        log.info("controller getPostsByUserId, data: {}", userId);
         return postService.getPostsByUserId(getCurrentUserId(), userId, pageable);
     }
 

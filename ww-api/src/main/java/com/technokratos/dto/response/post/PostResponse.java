@@ -3,6 +3,7 @@ package com.technokratos.dto.response.post;
 import com.technokratos.dto.response.user.UserCompactResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record PostResponse(
@@ -21,6 +22,8 @@ public record PostResponse(
         @Schema(description = "Общее количество лайков у поста", example = "124")
         long likesCount,
         @Schema(description = "Общее количество комментариев у поста", example = "52")
-        long commentsCount
+        long commentsCount,
+        @Schema(description = "Время создания поста", example = "2023-10-05 14:30:00")
+        LocalDateTime createdAt
 ) {
 }

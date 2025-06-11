@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Document(collection = "saved_posts")
+@Document(collection = "saved_post")
 @Setter
 public class SavedPostEntity {
     @Id
