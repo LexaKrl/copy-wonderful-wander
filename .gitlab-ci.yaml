@@ -1,0 +1,12 @@
+stages:
+  - build
+
+build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker compose build backend-user-service --no-cache
+  only:
+    - feature/WANDER-23
