@@ -1,6 +1,8 @@
 stages:
   - build
 
+variables:
+  DOCKER_AUTH_CONFIG: '{"auths":{"https://index.docker.io/v1/":{"auth":"${DOCKER_AUTH_STRING}"}}}'
 build:
   stage: build
   image: docker:latest
