@@ -1,0 +1,62 @@
+image: gradle:8.12-jdk21
+
+services:
+  - name: docker:dind
+    alias: docker
+    command: ["--storage-driver=overlay2", "--host=tcp://0.0.0.0:2375"]
+
+variables:
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+  MAVEN_LOCAL_REPO: "/builds/wonderful-wander-team/wonderful-wander/build/m2"
+
+stages:
+  - build
+  - package
+
+# --- Stage: build_starters ---
+build_starters:
+  stage: build
+  script:
+    - mkdir -p $MAVEN_LOCAL_REPO
+    - |
+      echo "Publishing starters to local Maven repo at $MAVEN_LOCAL_REPO"
+      (cd ww-starter-jwt && gradle clean publishToMavenLocal --console=plain -Pmaven.repo.local=$MAVEN_LOCAL_REPO)
+      (cd ww-starter-minio && gradle clean publishToMavenLocal --console=plain -Pmaven.repo.local=$MAVEN_LOCAL_REPO)
+
+  artifacts:
+    paths:
+      - ww-user-service/build/libs/
+    expire_in: 1 day
+
+
+# --- Stage: build_user_service ---
+build_user_service:
+  stage: build
+  script:
+    - mkdir -p $MAVEN_LOCAL_REPO
+    - cp -r build/m2/* $MAVEN_LOCAL_REPO/
+    - gradle :ww-user-service:clean :ww-user-service:assemble --console=plain -Pmaven.repo.local=$MAVEN_LOCAL_REPO
+  dependencies:
+    - build_starters
+  artifacts:
+    paths:
+      - ww-user-service/build/libs/ww-user-service.jar
+      - build/m2/
+
+# --- Stage: build_docker_image ---
+build_docker_image:
+  image: docker:latest
+  services:
+    - docker:dind
+  stage: package
+  script:
+    - cp -r build/m2/* /root/.m2/repository/
+    - cd ww-user-service
+    - cp ../ww-user-service/build/libs/ww-user-service.jar app.jar
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+    - docker build -t "$CI_REGISTRY_IMAGE:latest" .
+    - docker push "$CI_REGISTRY_IMAGE:latest"
+  dependencies:
+    - build_user_service

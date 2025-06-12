@@ -7,4 +7,4 @@ include 'ww-photo-management-service'
 //include 'ww-post-service'
 //include 'ww-walk-service'
 include 'ww-api-gateway'
-//include 'ww-starter-jwt'
+

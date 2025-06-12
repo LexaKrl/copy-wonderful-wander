@@ -16,9 +16,9 @@ jar.enabled = false
 ext['jooq.version'] = jooq.version.get()
 
 final PostgreSQLContainer postgres = new PostgreSQLContainer("postgres:15-alpine")
-        .withDatabaseName(System.getenv("TESTCONTAINERS_DB") ?: "${dbName}")
-        .withUsername(System.getenv("TESTCONTAINERS_USERNAME") ?: "${dbUsername}")
-        .withPassword(System.getenv("TESTCONTAINERS_PASSWORD") ?: "${dbPassword}")
+        .withDatabaseName("${dbName}")
+        .withUsername("${dbUsername}")
+        .withPassword("${dbPassword}")
         .withEnv("TESTCONTAINERS_RYUK_DISABLED", "true")
         .withEnv("default_schema", "public")
 

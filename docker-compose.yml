@@ -82,16 +82,8 @@ services:
     build:
       context: .
       dockerfile: ww-user-service/Dockerfile
-      args:
-        TESTCONTAINERS_DB: wonderful-wander
-        TESTCONTAINERS_USERNAME: admin
-        TESTCONTAINERS_PASSWORD: admin
     env_file:
       - env/.user-service.prod.env
-    environment:
-      - TESTCONTAINERS_DB=wonderful-wander
-      - TESTCONTAINERS_USERNAME=admin
-      - TESTCONTAINERS_PASSWORD=admin
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
