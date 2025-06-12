@@ -1,32 +1,121 @@
-version: '3.5'
 services:
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.4.4
-    container_name: zookeeper
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
+  kafka-1:
+    image: bitnami/kafka
     ports:
-      - "22181:2181"
+      - "9092:9092"
+    environment:
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_KRAFT_CLUSTER_ID=wonderful-wander
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka-1:9091,2@kafka-2:9091
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9090,CONTROLLER://:9091,EXTERNAL://:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-1:9090,EXTERNAL://${HOSTNAME:-localhost}:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+    volumes:
+      - kafka-storage-1:/bitnami/kafka
     networks:
-      - kafka-network
+      - ww-network
 
-  kafka:
-    image: confluentinc/cp-kafka:7.4.4
-    container_name: kafka
-    depends_on:
-      - zookeeper
+  kafka-2:
+    image: bitnami/kafka
     ports:
-      - "29092:29092"
+      - "9094:9094"
     environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      - KAFKA_CFG_NODE_ID=2
+      - KAFKA_KRAFT_CLUSTER_ID=wonderful-wander
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka-1:9091,2@kafka-2:9091
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9090,CONTROLLER://:9091,EXTERNAL://:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-2:9090,EXTERNAL://${HOSTNAME:-localhost}:9094
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+    volumes:
+      - kafka-storage-2:/bitnami/kafka
     networks:
-      - kafka-network
+      - ww-network
+
+  minio:
+    image: minio/minio:latest
+    command: server --console-address ":9001" /data/
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: admin12345
+    volumes:
+      - minio-storage:/data
+    networks:
+      - ww-network
+
+  consul:
+    image: consul:1.15.4
+    hostname: localhost
+    ports:
+      - "8500:8500"
+    networks:
+      - ww-network
+
+  postgres-user-service:
+    image: postgres:15-alpine
+    env_file:
+      - env/.user-service.prod.env
+    volumes:
+      - postgres-user-service:/var/lib/postgresql/data
+    networks:
+      - ww-network
+
+  postgres-photo-management-service:
+    image: postgres:15-alpine
+    env_file:
+      - env/.photo-management-service.prod.env
+    volumes:
+      - postgres-photo-management-service:/var/lib/postgresql/data
+    networks:
+      - ww-network
+
+  backend-user-service:
+    container_name: user-service
+    build:
+      context: .
+      dockerfile: ww-user-service/Dockerfile
+      args:
+        TESTCONTAINERS_DB: wonderful-wander
+        TESTCONTAINERS_USERNAME: admin
+        TESTCONTAINERS_PASSWORD: admin
+    env_file:
+      - env/.user-service.prod.env
+    environment:
+      - TESTCONTAINERS_DB=wonderful-wander
+      - TESTCONTAINERS_USERNAME=admin
+      - TESTCONTAINERS_PASSWORD=admin
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - ww-network
+
+  backend-photo-management-service:
+    container_name: photo-management-service
+    build:
+      context: .
+      dockerfile: ww-photo-management-service/Dockerfile
+    env_file:
+      - env/.photo-management-service.prod.env
+    depends_on:
+      - postgres-photo-management-service
+    networks:
+      - ww-network
+
+volumes:
+  kafka-storage-1:
+  kafka-storage-2:
+  minio-storage:
+  postgres-user-service:
+  postgres-photo-management-service:
+
 networks:
-  kafka-network:
+  ww-network:
     driver: bridge
