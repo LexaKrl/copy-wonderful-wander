@@ -37,18 +37,18 @@ public class PostController implements PostApi {
     }
 
     @Override
-    public List<PostResponse> getPostsByUserId(UUID userId, Pageable pageable) {
+    public List<PostResponse> getPostsByUserId(String userId, Pageable pageable) {
         log.info("controller getPostsByUserId, data: {}", userId);
         return postService.getPostsByUserId(getCurrentUserId(), userId, pageable);
     }
 
     @Override
-    public List<PostResponse> getSavedPostsByUserId(UUID userId, Pageable pageable) {
+    public List<PostResponse> getSavedPostsByUserId(String userId, Pageable pageable) {
         return postService.getSavedPostsByUserId(getCurrentUserId(), userId, pageable);
     }
 
     @Override
-    public PostResponse getPostById(UUID postId) {
+    public PostResponse getPostById(String postId) {
         return postService.getPostById(getCurrentUserId(), postId);
     }
 
@@ -58,26 +58,26 @@ public class PostController implements PostApi {
     }
 
     @Override
-    public PostResponse updatePost(UUID postId, PostRequest updatePostRequest) {
+    public PostResponse updatePost(String postId, PostRequest updatePostRequest) {
         return postService.update(getCurrentUserId(), postId, updatePostRequest);
     }
 
     @Override
-    public void deletePost(UUID postId) {
+    public void deletePost(String postId) {
         postService.delete(getCurrentUserId(), postId);
     }
 
     @Override
-    public void savePost(UUID postId) {
+    public void savePost(String postId) {
         postService.savePost(getCurrentUserId(), postId);
     }
 
     @Override
-    public void deleteSavedPost(UUID postId) {
+    public void deleteSavedPost(String postId) {
         postService.deleteSavedPost(getCurrentUserId(), postId);
     }
 
-    private UUID getCurrentUserId() {
-        return UUID.fromString("077a25a8-1fda-4ced-82f6-24b03b326c1c");
+    private String getCurrentUserId() {
+        return "00000000-0000-0000-0000-000000000001";
     }
 }

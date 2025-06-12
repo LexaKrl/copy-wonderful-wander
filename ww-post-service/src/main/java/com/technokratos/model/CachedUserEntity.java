@@ -16,10 +16,10 @@ import java.util.UUID;
 @AllArgsConstructor
 public class CachedUserEntity {
     @Id
-    private UUID userId;
+    private String userId;
     private String username;
-    private String avatarUrl;
+    private String avatarId;
     private PhotoVisibility myPhotoVisibility;
     private PhotoVisibility savedPhotoVisibility;
-    private Set<UUID> friends;
+    private Set<String> friends;
 }

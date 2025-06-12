@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public record RootCommentResponse(
         @Schema(description = "Уникальный идентификатор комментария UUID", example = "550e8400-e29b-41d4-a716-446655440000")
-        UUID commentId,
+        String commentId,
         @Schema(description = "Текст комментария", example = "Вау, крутая фотка!")
         String text,
         @Schema(description = "Основные данные пользователя")

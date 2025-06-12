@@ -12,13 +12,13 @@ import java.util.UUID;
 @Setter
 public class SavedPostEntity {
     @Id
-    private UUID id;
+    private String savedPostId;
 
     @Indexed
-    private UUID userId;
+    private String userId;
 
     @Indexed
-    private UUID postId;
+    private String postId;
 
     private LocalDateTime savedAt;
 

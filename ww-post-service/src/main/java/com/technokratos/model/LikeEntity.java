@@ -10,8 +10,8 @@ import java.util.UUID;
 public class LikeEntity {
 
     @Id
-    private UUID likeId;
+    private String likeId;
     @Indexed
-    private UUID postId;
+    private String postId;
     private EmbeddedUser user;
 }

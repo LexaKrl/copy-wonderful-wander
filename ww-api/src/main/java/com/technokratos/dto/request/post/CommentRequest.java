@@ -9,6 +9,6 @@ public record CommentRequest(
         String text,
         @Schema(description = "ID комментария на который ответили. Если 'null' - комментарий не является ответом"
                 , example = "550e8400-e29b-41d4-a716-446655440000")
-        UUID parentCommentId
+        String parentCommentId
 ) {
 }

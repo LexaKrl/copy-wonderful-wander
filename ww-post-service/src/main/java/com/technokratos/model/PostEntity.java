@@ -15,7 +15,7 @@ import java.util.UUID;
 public class PostEntity {
 
     @Id
-    private UUID postId;
+    private String postId;
     private String title;
     private String imageId;
     @Indexed

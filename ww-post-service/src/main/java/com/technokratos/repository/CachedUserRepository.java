@@ -6,18 +6,18 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import com.technokratos.model.CachedUserEntity;
 import org.springframework.data.mongodb.repository.Query;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-public interface CachedUserRepository extends MongoRepository<CachedUserEntity, UUID> {
-    PhotoVisibility findMyPhotoVisibilityByUserId(UUID userId);
-    PhotoVisibility findSavedPhotoVisibilityByUserId(UUID userId);
+public interface CachedUserRepository extends MongoRepository<CachedUserEntity, String> {
+    PhotoVisibility findMyPhotoVisibilityByUserId(String userId);
+    PhotoVisibility findSavedPhotoVisibilityByUserId(String userId);
 
-    @Aggregation(pipeline = {
-            "{ $match: { 'userId' : ?0 } }",
-            "{ $project: { _id: 0, friends: 1 } }",
-            "{ $unwind: '$friends' }",
-            "{ $group: { _id: null, friends: { $addToSet: '$friends' } } }"
-    })
-    Set<UUID> findFriendsByUserId(UUID userId);
+    @Query(value = "{ 'userId': ?0 }", fields = "{ 'friends': 1 }")
+    FriendsProjection findFriendsByUserId(String userId);
+
+    interface FriendsProjection {
+        Set<String> getFriends();
+    }
 }

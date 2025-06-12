@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface PostRepository extends MongoRepository<PostEntity, UUID> {
-    List<PostEntity> findByUser_UserId(UUID userId, Pageable pageable);//todo возможно поменять на просто поиск по юзер ид
+public interface PostRepository extends MongoRepository<PostEntity, String> {
+    List<PostEntity> findByUser_UserId(String userId, Pageable pageable);//todo возможно поменять на просто поиск по юзер ид
+
+    List<PostEntity> findAllBy(List<String> postId);
 }

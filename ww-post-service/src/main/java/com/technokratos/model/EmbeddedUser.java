@@ -12,7 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EmbeddedUser {
-    private UUID userId;
+    private String userId;
     private String username;
-    private String avatarUrl;
+    private String avatarId;
 }

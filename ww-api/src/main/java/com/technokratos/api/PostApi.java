@@ -85,7 +85,7 @@ public interface PostApi {
                     })
     List<PostResponse> getPostsByUserId(
             @Parameter(description = "ID пользователя", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID userId,
+            @PathVariable String userId,
             Pageable pageable);
 
     @GetMapping("/users/{userId}/saved")
@@ -104,7 +104,7 @@ public interface PostApi {
             })
     List<PostResponse> getSavedPostsByUserId(
             @Parameter(description = "ID пользователя", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID userId,
+            @PathVariable String userId,
             Pageable pageable);
 
     @GetMapping("/{postId}")
@@ -123,7 +123,7 @@ public interface PostApi {
                     })
     PostResponse getPostById(
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID postId);
+            @PathVariable String postId);
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -165,7 +165,7 @@ public interface PostApi {
                     })
     PostResponse updatePost(
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID postId,
+            @PathVariable String postId,
             @Parameter(description = "Данные для обновления поста", required = true)
             @RequestBody @Validated PostRequest updatePostRequest);
 
@@ -189,7 +189,7 @@ public interface PostApi {
             })
     void deletePost(
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID postId);
+            @PathVariable String postId);
 
     @PostMapping("/saved/{postId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -212,7 +212,7 @@ public interface PostApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
     void savePost(@Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-                  @PathVariable UUID postId);
+                  @PathVariable String postId);
 
     @DeleteMapping("/saved/{postId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -233,5 +233,5 @@ public interface PostApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
     void deleteSavedPost(@Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-                         @PathVariable UUID postId);
+                         @PathVariable String postId);
 }

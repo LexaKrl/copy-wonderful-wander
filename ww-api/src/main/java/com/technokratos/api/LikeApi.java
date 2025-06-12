@@ -47,7 +47,7 @@ public interface LikeApi {
     })
     List<UserCompactResponse> getLikesByPostId(
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID postId,
+            @PathVariable String postId,
             Pageable pageable);
 
     @PostMapping
@@ -72,7 +72,7 @@ public interface LikeApi {
     })
     List<PostResponse> createLike(
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID postId);
+            @PathVariable String postId);
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -91,5 +91,5 @@ public interface LikeApi {
     })
     void deleteLike(
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID postId);
+            @PathVariable String postId);
 }

@@ -47,7 +47,7 @@ public interface CommentApi {
     })
     List<RootCommentResponse> getCommentsByPostId(
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID postId,
+            @PathVariable String postId,
             Pageable pageable);
 
     @GetMapping("/{commentId}")
@@ -69,9 +69,9 @@ public interface CommentApi {
     })
     List<RootCommentResponse> getCommentById(
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID postId,
+            @PathVariable String postId,
             @Parameter(description = "ID комментария", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID commentId);
+            @PathVariable String commentId);
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -92,7 +92,7 @@ public interface CommentApi {
     })
     List<RootCommentResponse> createComment(
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID postId,
+            @PathVariable String postId,
             @Parameter(description = "Данные комментария", required = true)
             @RequestBody @Validated CommentRequest commentRequest);
 
@@ -118,9 +118,9 @@ public interface CommentApi {
     })
     List<RootCommentResponse> updateComment(
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID postId,
+            @PathVariable String postId,
             @Parameter(description = "ID комментария", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID commentId,
+            @PathVariable String commentId,
             @Parameter(description = "Обновленные данные комментария", required = true)
             @RequestBody @Validated CommentRequest commentRequest);
 
@@ -141,7 +141,7 @@ public interface CommentApi {
     })
     void deleteComment(
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID postId,
+            @PathVariable String postId,
             @Parameter(description = "ID комментария", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID commentId);
+            @PathVariable String commentId);
 }

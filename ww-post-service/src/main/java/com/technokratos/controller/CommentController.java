@@ -14,27 +14,27 @@ import java.util.UUID;
 public class CommentController implements CommentApi {
 
     @Override
-    public List<RootCommentResponse> getCommentsByPostId(UUID postId, Pageable pageable) {
+    public List<RootCommentResponse> getCommentsByPostId(String postId, Pageable pageable) {
         return List.of();
     }
 
     @Override
-    public List<RootCommentResponse> getCommentById(UUID postId, UUID commentId) {
+    public List<RootCommentResponse> getCommentById(String postId, String commentId) {
         return List.of();
     }
 
     @Override
-    public List<RootCommentResponse> createComment(UUID postId, CommentRequest commentRequest) {
+    public List<RootCommentResponse> createComment(String postId, CommentRequest commentRequest) {
         return List.of();
     }
 
     @Override
-    public List<RootCommentResponse> updateComment(UUID postId, UUID commentId, CommentRequest commentRequest) {
+    public List<RootCommentResponse> updateComment(String postId, String commentId, CommentRequest commentRequest) {
         return List.of();
     }
 
     @Override
-    public void deleteComment(UUID postId, UUID commentId) {
+    public void deleteComment(String postId, String commentId) {
 
     }
 }

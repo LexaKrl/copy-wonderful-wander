@@ -11,9 +11,9 @@ import java.util.UUID;
 public class CommentEntity {
 
     @Id
-    private UUID commentId;
+    private String commentId;
     @Indexed
-    private UUID postId;
+    private String postId;
     private EmbeddedUser user;
     private String text;
     @Indexed

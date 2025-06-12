@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public record PostResponse(
         @Schema(description = "Уникальный идентификатор поста UUID", example = "550e8400-e29b-41d4-a716-446655440000")
-        UUID postId,
+        String postId,
         @Schema(description = "Подпись к фотографии", example = "Это мы в Дубае))",
                 requiredMode = Schema.RequiredMode.REQUIRED)
         String title,
