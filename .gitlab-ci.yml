@@ -10,3 +10,4 @@ build:
     - docker compose build backend-user-service --no-cache
   only:
     - feature/WANDER-23
+
