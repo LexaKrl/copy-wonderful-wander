@@ -20,33 +20,33 @@ public class UserController implements UserApi {
     private final BaseUserContextHolder userContextHolder;
 
     @Override
-    public UserResponse getCurrentUserProfile() {
-        return userService.getUserById(getCurrentUserId());
+    public UserResponse getCurrentUserProfile(UUID ownerId) {
+        return userService.getUserById(ownerId);
     }
 
     @Override
-    public UserResponse updateCurrentUser(UserRequest userRequest) {
-        return userService.updateUser(getCurrentUserId(), userRequest);
+    public UserResponse updateCurrentUser(UUID ownerId, UserRequest userRequest) {
+        return userService.updateUser(ownerId, userRequest);
     }
 
     @Override
-    public void deleteCurrentUser() {
-        userService.deleteUser(getCurrentUserId());
+    public void deleteCurrentUser(UUID ownerId) {
+        userService.deleteUser(ownerId);
     }
 
     @Override
-    public void follow(UUID targetUserId) {
-        userService.follow(getCurrentUserId(), targetUserId);
+    public void follow(UUID ownerId, UUID targetUserId) {
+        userService.follow(ownerId, targetUserId);
     }
 
     @Override
-    public void unfollow(UUID targetUserId) {
-        userService.unfollow(getCurrentUserId(), targetUserId);
+    public void unfollow(UUID ownerId, UUID targetUserId) {
+        userService.unfollow(ownerId, targetUserId);
     }
 
     @Override
-    public UserProfileResponse getUserProfileById(UUID targetUserId) {
-        return userService.getProfileByUserId(getCurrentUserId(), targetUserId);
+    public UserProfileResponse getUserProfileById(UUID ownerId, UUID targetUserId) {
+        return userService.getProfileByUserId(ownerId, targetUserId);
     }
 
     @Override
@@ -62,9 +62,5 @@ public class UserController implements UserApi {
     @Override
     public PageResponse<UserCompactResponse> getFollowersByUserId(UUID userId, Integer page, Integer size) {
         return userService.getFollowersByUserId(userId, page, size);
-    }
-
-    private UUID getCurrentUserId() {
-        return userContextHolder.getUserFromSecurityContext().getUserId();
     }
 }
