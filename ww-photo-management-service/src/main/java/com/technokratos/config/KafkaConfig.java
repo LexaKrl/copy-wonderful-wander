@@ -4,6 +4,7 @@ import com.technokratos.config.properties.KafkaProducerProperties;
 import com.technokratos.util.KafkaTopics;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.config.TopicConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,9 +53,9 @@ public class KafkaConfig {
     public NewTopic avatarCreatedEventTopic() {
         return TopicBuilder
                 .name(KafkaTopics.USER_AVATAR_SAVED_TOPIC)
-                .partitions(3)
-                .replicas(3)
-                .configs(Map.of("min.insync.replicas", "2"))
+                .partitions(2)
+                .replicas(2)
+                .configs(Map.of(TopicConfig.MIN_IN_SYNC_REPLICAS_CONFIG, "2"))
                 .build();
     }
 
@@ -62,9 +63,9 @@ public class KafkaConfig {
     public NewTopic photoOfWalkCreatedEventTopic() {
         return TopicBuilder
                 .name(KafkaTopics.PHOTO_OF_WALK_SAVED_TOPIC)
-                .partitions(3)
-                .replicas(3)
-                .configs(Map.of("min.insync.replicas", "2"))
+                .partitions(2)
+                .replicas(2)
+                .configs(Map.of(TopicConfig.MIN_IN_SYNC_REPLICAS_CONFIG, "2"))
                 .build();
     }
 }
