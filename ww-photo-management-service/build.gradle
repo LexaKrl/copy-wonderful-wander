@@ -2,8 +2,7 @@ jar.enabled = false
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-    implementation "org.mapstruct:mapstruct:$mapstructVersion"
-    annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
+
     implementation 'org.liquibase:liquibase-core'
     runtimeOnly 'org.postgresql:postgresql'
 

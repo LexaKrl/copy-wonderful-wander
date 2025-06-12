@@ -3,8 +3,8 @@ plugins {
     id 'java'
     id 'java-library'
     id 'maven-publish'
-    id 'org.springframework.boot' version "${springBootVersion}"
-    id 'io.spring.dependency-management' version "${dependencyManagementVersion}"
+    id 'org.springframework.boot' version "$springBootVersion"
+    id 'io.spring.dependency-management' version "$dependencyManagementVersion"
 }
 
 group = 'com.technokratos'
@@ -25,12 +25,13 @@ repositories {
 }
 
 dependencies {
-    api "io.minio:minio:${minioVersion}"
+    api "io.minio:minio:$minioVersion"
     api 'org.springframework.boot:spring-boot-starter'
 
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-    compileOnly "org.projectlombok:lombok:${lombokVersion}"
-    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    compileOnly "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
 }
 
 publishing {

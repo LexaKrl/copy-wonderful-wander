@@ -16,9 +16,9 @@ jar.enabled = false
 ext['jooq.version'] = jooq.version.get()
 
 final PostgreSQLContainer postgres = new PostgreSQLContainer("postgres:15-alpine")
-        .withDatabaseName("$dbName")
-        .withUsername("$dbUsername")
-        .withPassword("$dbPassword")
+        .withDatabaseName(System.getenv("TESTCONTAINERS_DB") ?: "${dbName}")
+        .withUsername(System.getenv("TESTCONTAINERS_USERNAME") ?: "${dbUsername}")
+        .withPassword(System.getenv("TESTCONTAINERS_PASSWORD") ?: "${dbPassword}")
         .withEnv("TESTCONTAINERS_RYUK_DISABLED", "true")
         .withEnv("default_schema", "public")
 
@@ -28,20 +28,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-jooq'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
-    implementation 'org.springframework.data:spring-data-commons'
+
     implementation 'org.jooq:jooq-codegen'
-    implementation "org.mapstruct:mapstruct:$mapstructVersion"
-    implementation 'org.liquibase:liquibase-core'
-    annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
-    runtimeOnly 'org.postgresql:postgresql'
-
-    implementation "io.jsonwebtoken:jjwt-api:$jwtVersion"
-    runtimeOnly "io.jsonwebtoken:jjwt-impl:$jwtVersion"
-    runtimeOnly "io.jsonwebtoken:jjwt-jackson:$jwtVersion"
-
     jooqGenerator "org.jooq:jooq-meta-extensions-liquibase:$jooqMetaExtensionsLiquibase"
+
+    runtimeOnly 'org.postgresql:postgresql'
     jooqGenerator 'org.postgresql:postgresql'
 
+    implementation 'org.liquibase:liquibase-core'
     liquibaseRuntime 'org.liquibase:liquibase-core'
     liquibaseRuntime 'org.postgresql:postgresql'
     liquibaseRuntime "org.liquibase:liquibase-groovy-dsl:$liquibaseDslGroovyVersion"
@@ -109,7 +103,7 @@ liquibase {
         main {
             arguments = [
                     logLevel     : "info",
-                    changelogFile: "ww-db/src/main/resources/db/changelog/user-service/changelog-master.xml",
+                    changelogFile: "ww-db/src/main/resources/db/changelog/user-service/changelog-master-jooq.xml",
                     url          : postgres.jdbcUrl,
                     username     : postgres.username,
                     password     : postgres.password,
