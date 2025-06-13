@@ -26,7 +26,7 @@ public class CommentController implements CommentApi {
 
     @Override
     public CommentHierarchyResponse getCommentById(String postId, String commentId) {
-        return null;
+        return commentService.getCommentById(getCurrentUserId(), postId, commentId);
     }
 
     @Override

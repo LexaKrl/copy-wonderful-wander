@@ -1,5 +1,6 @@
 package com.technokratos.model;
 
+import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Document(collection = "comment")
+@Getter
 public class CommentEntity {
 
     @Id
@@ -19,7 +21,7 @@ public class CommentEntity {
     @Indexed
     private String rootCommentId;
     private String parentCommentUsername;
-    private int repliesCount;
+    private Long repliesCount;
     @Indexed
     private LocalDateTime createdAt;
 }
