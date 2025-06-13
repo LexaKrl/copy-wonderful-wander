@@ -3,9 +3,13 @@ package com.technokratos.service;
 import com.technokratos.dto.request.post.PostRequest;
 import com.technokratos.dto.response.post.PostResponse;
 import com.technokratos.enums.user.PhotoVisibility;
+import com.technokratos.exception.ConflictServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import com.technokratos.exception.CategoryByIdNotFoundException;
 import com.technokratos.exception.ForbiddenServiceException;
@@ -33,6 +37,7 @@ public class PostService {
     private final UserService userService;
     private final PostMapper postMapper;
     private final UserMapper userMapper;
+    private final MongoTemplate mongoTemplate;
 
 
     public List<PostResponse> getRecommendedPosts(String currentUserId, Pageable pageable) {
@@ -41,34 +46,48 @@ public class PostService {
 
     public List<PostResponse> getSavedPostsByUserId(String viewerId, String userId, Pageable pageable) {
 
-        PhotoVisibility savedPhotoVisibility = userService.getSavedPhotoVisibility(userId);
-
-        if (!checkPostPrivacy(viewerId, userId, savedPhotoVisibility)) {
+        if (!checkPostPrivacy(viewerId, userId, userService.getSavedPhotoVisibility(userId))) {
             throw new ForbiddenServiceException("You don`t have authority to see this post");
         }
 
-        List<String> savedPostIds = savedPostRepository.findPostIdByUserId(userId, pageable)
+        Query query = new Query(Criteria.where("userId").is(userId));
+        query.fields().include("postId");
+
+        List<String> savedPostIds = mongoTemplate.find(query, SavedPostEntity.class)
                 .stream()
-                .map(projection ->
-                        projection.getPostId()).collect(Collectors.toList());
+                .map(SavedPostEntity::getPostId).collect(Collectors.toList());
 
-        List<PostEntity> posts = postRepository.findAllById(savedPostIds);
+        log.info("saved post ids: {}", savedPostIds);
 
-        return postMapper.toPostResponse(posts);//todo сделать получение фото из минио по id и отдачу url
+        List<PostResponse> posts = postRepository.findAllById(savedPostIds)
+                .stream()
+                .map(postEntity -> postMapper.toPostResponse(
+                        postEntity,
+                        postEntity.getImageId() + "test.jpg" //todo сделать получение из минио
+                ))
+                .toList();
+
+        return posts;//todo сделать правильную пагинацию
     }
 
     public List<PostResponse> getPostsByUserId(String viewerId, String userId, Pageable pageable) {
 
-        PhotoVisibility myPhotoVisibility = userService.getMyPhotoVisibility(userId);
         log.info("service getPostsByUserId data: viewerId: {}, userId: {}, myPhotoVisibility: {}",
-                viewerId, userId, myPhotoVisibility);
-        if (!checkPostPrivacy(viewerId, userId, myPhotoVisibility)) {
+                viewerId, userId, userService.getMyPhotoVisibility(userId));
+
+        if (!checkPostPrivacy(viewerId, userId, userService.getMyPhotoVisibility(userId))) {
             throw new ForbiddenServiceException("You don`t have authority to see this post");
         }
 
-        List<PostEntity> posts = postRepository.findByUser_UserId(userId, pageable);
+        List<PostResponse> posts = postRepository.findByUser_UserId(userId, pageable)
+                .stream()
+                .map(postEntity -> postMapper.toPostResponse(
+                        postEntity,
+                        postEntity.getImageId() + "test.jpg" //todo сделать получение из минио
+                ))
+                .toList();;
 
-        return postMapper.toPostResponse(posts);//todo сделать получение фото из минио по id и отдачу url
+        return posts;//todo сделать правильную пагинацию
     }
 
     public PostResponse getPostById(String viewerId, String postId) {
@@ -77,13 +96,11 @@ public class PostService {
                 .orElseThrow(() -> new PostByIdNotFoundException(postId));
         String userId = post.getUser().getUserId();
 
-        PhotoVisibility myPhotoVisibility = userService.getMyPhotoVisibility(userId);
-
-        if (!checkPostPrivacy(viewerId, userId, myPhotoVisibility)) {
+        if (!checkPostPrivacy(viewerId, userId, userService.getMyPhotoVisibility(userId))) {
             throw new ForbiddenServiceException("You don`t have authority to see this post");
         }
 
-        return postMapper.toPostResponse(post);//todo сделать получение фото из минио по id и отдачу url
+        return postMapper.toPostResponse(post, post.getImageId() + "test.jpg");//todo сделать получение фото из минио по id и отдачу url
     }
 
     public PostResponse create(String currentUserId, PostRequest createPostRequest) {
@@ -101,7 +118,7 @@ public class PostService {
 
         postRepository.save(post);
 
-        return postMapper.toPostResponse(post);//todo сделать получение фото из минио по id и отдачу url
+        return postMapper.toPostResponse(post, post.getImageId() + "test.jpg");//todo сделать получение фото из минио по id и отдачу url
     }
 
     public PostResponse update(String currentUserId, String postId, PostRequest updatePostRequest) {
@@ -120,7 +137,7 @@ public class PostService {
 
         postRepository.save(post);
 
-        return postMapper.toPostResponse(post);//todo сделать получение фото из минио по id и отдачу url
+        return postMapper.toPostResponse(post, post.getImageId() + "test.jpg");//todo сделать получение фото из минио по id и отдачу url
         }
 
     public void delete(String currentUserId, String postId) {
@@ -134,18 +151,9 @@ public class PostService {
                 });
     }
 
-    public void savePost(String currentUserId, String postId) {
+    public UUID savePost(String currentUserId, String postId) {
 
-
-        PostEntity post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostByIdNotFoundException(postId));
-        String userId = post.getUser().getUserId();
-
-        PhotoVisibility myPhotoVisibility =  userService.getMyPhotoVisibility(userId);
-
-        if (!checkPostPrivacy(currentUserId, userId, myPhotoVisibility)) {
-            throw new ForbiddenServiceException("You don`t have authority to save this post");
-        }
+        checkSavedPost(currentUserId, postId);
 
         SavedPostEntity savedPost = new SavedPostEntity();
 
@@ -156,27 +164,56 @@ public class PostService {
 
         log.info("saved post: {}", savedPost);
 
-        log.info("save post service: {}", savedPostRepository.save(savedPost));
+        savedPostRepository.save(savedPost);
+        return UUID.fromString(postId);
     }
 
     public void deleteSavedPost(String currentUserId, String postId) {
         savedPostRepository.deleteByUserIdAndPostId(currentUserId, postId);
     }
 
-    private boolean checkPostPrivacy(String viewerId, String userId, PhotoVisibility photoVisibility) {
+    public Long getLikesCountByPostId(String postId) {
+        Query query = new Query(Criteria.where("postId").is(postId));
+        query.fields().include("likesCount");
+        PostEntity post = mongoTemplate.findOne(query, PostEntity.class);
+
+        if (post == null) {
+            throw new PostByIdNotFoundException(postId);
+        }
+
+        return post.getLikesCount();
+    }
+
+    public boolean checkPostPrivacy(String viewerId, String userId, PhotoVisibility photoVisibility) {
         if (viewerId.equals(userId)) {
             return true;
         }
 
         boolean check = switch (photoVisibility) {
             case PhotoVisibility.PUBLIC -> true;
-            case PhotoVisibility.PRIVATE -> viewerId.equals(userId);
+            case PhotoVisibility.PRIVATE -> false;
             case PhotoVisibility.FRIENDS_ONLY -> userService.getUserFriend(userId).contains(viewerId);
         };
         log.info("checkPostPrivacy: {}, photoVisibility: {}", check, photoVisibility);
         log.info("view id: {}", viewerId);
         log.info("user id: {}", userId);
         return check;
+    }
+
+    private void checkSavedPost(String currentUserId, String postId) {
+        PostEntity post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostByIdNotFoundException(postId));
+
+        String userId = post.getUser().getUserId();
+
+
+        if (savedPostRepository.existsByUserIdAndPostId(currentUserId, postId)) {
+            throw new ConflictServiceException("This post has already been saved");
+        }
+
+        if (!checkPostPrivacy(currentUserId, userId, userService.getMyPhotoVisibility(userId))) {
+            throw new ForbiddenServiceException("You don`t have authority to save this post");
+        }
     }
 }
 

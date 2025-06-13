@@ -192,12 +192,12 @@ public interface PostApi {
             @PathVariable String postId);
 
     @PostMapping("/saved/{postId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Сохранить пост пост к себе")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Пост успешно сохранен",
+            @ApiResponse(responseCode = "201", description = "Пост успешно сохранен",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = PostResponse.class))),
+                            schema = @Schema(implementation = UUID.class))),
             @ApiResponse(responseCode = "400", description = "Невалидный uuid поста",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ValidationExceptionMessage.class))),
@@ -211,7 +211,7 @@ public interface PostApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    void savePost(@Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
+    UUID savePost(@Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
                   @PathVariable String postId);
 
     @DeleteMapping("/saved/{postId}")

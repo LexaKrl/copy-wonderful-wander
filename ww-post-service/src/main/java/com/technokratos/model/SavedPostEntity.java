@@ -1,5 +1,6 @@
 package com.technokratos.model;
 
+import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -10,6 +11,7 @@ import java.util.UUID;
 
 @Document(collection = "saved_post")
 @Setter
+@Getter
 public class SavedPostEntity {
     @Id
     private String savedPostId;

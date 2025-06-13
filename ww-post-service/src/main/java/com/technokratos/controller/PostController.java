@@ -68,8 +68,8 @@ public class PostController implements PostApi {
     }
 
     @Override
-    public void savePost(String postId) {
-        postService.savePost(getCurrentUserId(), postId);
+    public UUID savePost(String postId) {
+        return postService.savePost(getCurrentUserId(), postId);
     }
 
     @Override

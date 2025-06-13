@@ -14,6 +14,7 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class CachedUserEntity {
     @Id
     private String userId;

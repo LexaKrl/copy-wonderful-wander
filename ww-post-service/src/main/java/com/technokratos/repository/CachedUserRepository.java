@@ -11,13 +11,4 @@ import java.util.Set;
 import java.util.UUID;
 
 public interface CachedUserRepository extends MongoRepository<CachedUserEntity, String> {
-    PhotoVisibility findMyPhotoVisibilityByUserId(String userId);
-    PhotoVisibility findSavedPhotoVisibilityByUserId(String userId);
-
-    @Query(value = "{ 'userId': ?0 }", fields = "{ 'friends': 1 }")
-    FriendsProjection findFriendsByUserId(String userId);
-
-    interface FriendsProjection {
-        Set<String> getFriends();
-    }
 }

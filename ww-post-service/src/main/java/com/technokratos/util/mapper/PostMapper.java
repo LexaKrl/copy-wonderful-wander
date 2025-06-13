@@ -16,11 +16,11 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface PostMapper {
 
-    @Mapping(target = "imageUrl", source = "imageId", qualifiedByName = "mapImageUrl")
-    List<PostResponse> toPostResponse(List<PostEntity> posts);
+//    @Mapping(target = "imageUrl")
+//    List<PostResponse> toPostResponse(List<PostEntity> posts);
 
-    @Mapping(target = "imageUrl", source = "imageId", qualifiedByName = "mapImageUrl")
-    PostResponse toPostResponse(PostEntity posts);
+    @Mapping(target = "imageUrl")
+    PostResponse toPostResponse(PostEntity posts, String imageUrl);
 
     @Mapping(target = "postId", ignore = true)
     @Mapping(target = "category", ignore = true)
@@ -36,9 +36,10 @@ public interface PostMapper {
 
     CategoryResponse toCategoryResponse(EmbeddedCategory embeddedCategory);
 
-    @Named("mapImageUrl")
-    default String mapImageUrl(String imageId) {
-        // Заглушка: формируем URL на основе imageId
-        return "https://example.com/images/"  + imageId;
-    }//todo сделать получение из минио по имени
+
+//    @Named("mapImageUrl")
+//    default String mapImageUrl(String imageId) {
+//        // Заглушка: формируем URL на основе imageId
+//        return "https://example.com/images/"  + imageId;
+//    }//todo сделать получение из минио по имени
 }
