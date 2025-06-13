@@ -1,9 +1,10 @@
 package com.technokratos.repository;
 
+import com.technokratos.model.CommentEntity;
+import com.technokratos.model.LikeEntity;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import com.technokratos.model.CategoryEntity;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CategoryRepository extends MongoRepository<CategoryEntity, Long> {
+public interface CommentRepository extends MongoRepository<CommentEntity, String> {
 }

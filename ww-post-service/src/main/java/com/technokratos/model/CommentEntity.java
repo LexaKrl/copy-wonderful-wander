@@ -17,5 +17,9 @@ public class CommentEntity {
     private EmbeddedUser user;
     private String text;
     @Indexed
+    private String rootCommentId;
+    private String parentCommentUsername;
+    private int repliesCount;
+    @Indexed
     private LocalDateTime createdAt;
 }

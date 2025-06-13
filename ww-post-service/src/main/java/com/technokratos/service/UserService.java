@@ -1,22 +1,15 @@
 package com.technokratos.service;
 
 import com.technokratos.enums.user.PhotoVisibility;
-import com.technokratos.exception.PostByIdNotFoundException;
-import com.technokratos.model.PostEntity;
+import com.technokratos.repository.CachedUserRepositoryCustom;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import com.technokratos.model.CachedUserEntity;
 import com.technokratos.repository.CachedUserRepository;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +17,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final CachedUserRepository cachedUserRepository;
-    private final MongoTemplate mongoTemplate;
+    private final CachedUserRepositoryCustom cachedUserRepositoryCustom;
 
     public CachedUserEntity getUserById(String userId) {
 //        return cachedUserRepository.findById(userId)
@@ -35,10 +28,7 @@ public class UserService {
     }
 
     public PhotoVisibility getMyPhotoVisibility(String userId) {
-        Query query = new Query(Criteria.where("userId").is(userId));
-        query.fields().include("myPhotoVisibility");
-
-        CachedUserEntity user = mongoTemplate.findOne(query, CachedUserEntity.class);
+        CachedUserEntity user = cachedUserRepositoryCustom.getMyPhotoVisibility(userId);
 
         log.info("getMyPhotoVisibility data: {}", user);
 
@@ -50,12 +40,7 @@ public class UserService {
     }
 
     public PhotoVisibility getSavedPhotoVisibility(String userId) {
-//        return getUserById(userId).getSavedPhotoVisibility();
-
-        Query query = new Query(Criteria.where("userId").is(userId));
-        query.fields().include("savedPhotoVisibility");
-
-        CachedUserEntity user = mongoTemplate.findOne(query, CachedUserEntity.class);
+        CachedUserEntity user = cachedUserRepositoryCustom.getSavedPhotoVisibility(userId);
 
         log.info("getSavedPhotoVisibility data: {}", user);
 
@@ -67,10 +52,7 @@ public class UserService {
     }
 
     public Set<String> getUserFriend(String userId) {
-        Query query = new Query(Criteria.where("userId").is(userId));
-        query.fields().include("friends");
-
-        CachedUserEntity user = mongoTemplate.findOne(query, CachedUserEntity.class);
+        CachedUserEntity user = cachedUserRepositoryCustom.getUserFriend(userId);
 
         log.info("get user friends data: {}", user);
 

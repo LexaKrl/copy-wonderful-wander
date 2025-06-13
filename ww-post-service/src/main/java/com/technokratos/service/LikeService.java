@@ -36,9 +36,7 @@ public class LikeService {
 
     public List<UserCompactResponse> getLikesByPostId(String viewerId, String postId) {
 
-        PostEntity post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostByIdNotFoundException(postId));
-        String userId = post.getUser().getUserId();
+        String userId = postService.getUserIdByPostId(postId);
 
         if (!postService.checkPostPrivacy(viewerId, userId, userService.getMyPhotoVisibility(userId))) {
             throw new ForbiddenServiceException("You are not authorized to view the likes of this post");

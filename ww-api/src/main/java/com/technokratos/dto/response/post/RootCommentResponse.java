@@ -16,6 +16,6 @@ public record RootCommentResponse(
         @Schema(description = "Дата добавления комментария", example = "2014-04-08 12:30")
         LocalDateTime createdAt,
         @Schema(description = "Общее количество ответов на комментарий", example = "23")
-        int repliesCount
+        Long repliesCount
 ) {
 }

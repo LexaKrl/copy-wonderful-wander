@@ -4,6 +4,7 @@ import com.technokratos.dto.request.post.PostRequest;
 import com.technokratos.dto.response.post.PostResponse;
 import com.technokratos.enums.user.PhotoVisibility;
 import com.technokratos.exception.ConflictServiceException;
+import com.technokratos.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -15,9 +16,6 @@ import com.technokratos.exception.CategoryByIdNotFoundException;
 import com.technokratos.exception.ForbiddenServiceException;
 import com.technokratos.exception.PostByIdNotFoundException;
 import com.technokratos.model.*;
-import com.technokratos.repository.CategoryRepository;
-import com.technokratos.repository.PostRepository;
-import com.technokratos.repository.SavedPostRepository;
 import com.technokratos.util.mapper.PostMapper;
 import com.technokratos.util.mapper.UserMapper;
 
@@ -37,7 +35,8 @@ public class PostService {
     private final UserService userService;
     private final PostMapper postMapper;
     private final UserMapper userMapper;
-    private final MongoTemplate mongoTemplate;
+    private final PostRepositoryCustom postRepositoryCustom;
+    private final SavedPostRepositoryCustom savedPostRepositoryCustom;
 
 
     public List<PostResponse> getRecommendedPosts(String currentUserId, Pageable pageable) {
@@ -50,12 +49,7 @@ public class PostService {
             throw new ForbiddenServiceException("You don`t have authority to see this post");
         }
 
-        Query query = new Query(Criteria.where("userId").is(userId));
-        query.fields().include("postId");
-
-        List<String> savedPostIds = mongoTemplate.find(query, SavedPostEntity.class)
-                .stream()
-                .map(SavedPostEntity::getPostId).collect(Collectors.toList());
+        List<String> savedPostIds = savedPostRepositoryCustom.getSavedPostIdsByUserId(userId);
 
         log.info("saved post ids: {}", savedPostIds);
 
@@ -173,9 +167,7 @@ public class PostService {
     }
 
     public Long getLikesCountByPostId(String postId) {
-        Query query = new Query(Criteria.where("postId").is(postId));
-        query.fields().include("likesCount");
-        PostEntity post = mongoTemplate.findOne(query, PostEntity.class);
+        PostEntity post = postRepositoryCustom.getLikesCountByPostId(postId);
 
         if (post == null) {
             throw new PostByIdNotFoundException(postId);
@@ -201,11 +193,8 @@ public class PostService {
     }
 
     private void checkSavedPost(String currentUserId, String postId) {
-        PostEntity post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostByIdNotFoundException(postId));
 
-        String userId = post.getUser().getUserId();
-
+        String userId = getUserIdByPostId(postId);
 
         if (savedPostRepository.existsByUserIdAndPostId(currentUserId, postId)) {
             throw new ConflictServiceException("This post has already been saved");
@@ -214,6 +203,16 @@ public class PostService {
         if (!checkPostPrivacy(currentUserId, userId, userService.getMyPhotoVisibility(userId))) {
             throw new ForbiddenServiceException("You don`t have authority to save this post");
         }
+    }
+
+    public String getUserIdByPostId(String postId) {
+        PostEntity post = postRepositoryCustom.getUserIdByPostId(postId);
+
+        if (post == null) {
+            throw new PostByIdNotFoundException(postId);
+        }
+
+        return post.getUser().getUserId();
     }
 }
 
