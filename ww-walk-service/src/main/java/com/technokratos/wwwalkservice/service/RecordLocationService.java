@@ -1,4 +1,4 @@
-package com.technokratos.wwwalkservice.service.service_interface;
+package com.technokratos.wwwalkservice.service;
 
 import com.technokratos.dto.request.walk.WalkDataRequest;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;

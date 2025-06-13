@@ -2,7 +2,7 @@ package com.technokratos.wwwalkservice.handler;
 
 import com.technokratos.event.UserSavedWalkVisibilityEvent;
 import com.technokratos.wwwalkservice.entity.UserWalkVisibility;
-import com.technokratos.wwwalkservice.service.BaseWalkService;
+import com.technokratos.wwwalkservice.service.impl.BaseWalkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

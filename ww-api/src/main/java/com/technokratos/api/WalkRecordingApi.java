@@ -75,7 +75,7 @@ public interface WalkRecordingApi {
             }
     )
     @PostMapping("/{walkId}/stream/finish")
-    ResponseEntity<Void> finishWalk(
+    void finishWalk(
             @Parameter(
                     description = "UUID of the walk",
                     example = "550e8400-e29b-41d4-a716-446655440000",
@@ -108,7 +108,7 @@ public interface WalkRecordingApi {
             }
     )
     @PostMapping("/{walkId}/stream/data")
-    ResponseEntity<Void> streamData(
+    void streamData(
             @Parameter(
                     description = "UUID of the walk",
                     example = "550e8400-e29b-41d4-a716-446655440000",

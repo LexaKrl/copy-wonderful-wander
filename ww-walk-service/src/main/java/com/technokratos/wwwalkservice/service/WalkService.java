@@ -1,4 +1,4 @@
-package com.technokratos.wwwalkservice.service.service_interface;
+package com.technokratos.wwwalkservice.service;
 
 
 import com.technokratos.dto.request.walk.WalkRequest;
@@ -7,12 +7,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface WalkService {
 
     Page<WalkResponse> findAll(Pageable pageable);
+
+    Page<WalkResponse> findAllForUser(Pageable pageable);
 
     WalkResponse findById(UUID id);
 
@@ -34,4 +35,8 @@ public interface WalkService {
     boolean isOwner(UUID walkId);
 
     boolean isParticipant(UUID walkId);
+
+    Page<WalkResponse> findAllWhereUserParticipant(Pageable pageable);
+
+    Page<WalkResponse> findAllUserSubscribedOn(Pageable pageable);
 }

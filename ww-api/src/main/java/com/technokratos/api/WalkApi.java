@@ -14,7 +14,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -49,6 +48,105 @@ public interface WalkApi {
     )
     @GetMapping
     Page<WalkResponse> getWalks(
+            @Parameter(
+                    description = "Pageable type with size and sort type",
+                    required = true
+            )
+            @PageableDefault(size = 20, sort = "createdAt")
+            Pageable pageable
+    );
+
+    /*
+    *   Get all user's walks
+    * */
+
+    @Operation(
+            summary = "Get all walks for defined user",
+            description = "Get sorted page of walks",
+            tags = {"walks"},
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Walks received",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = WalkResponse.class))
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Walks not found"
+                    )
+            }
+    )
+    @GetMapping("/user")
+    Page<WalkResponse> getWalksForUser(
+            @Parameter(
+                    description = "Pageable type with size and sort type",
+                    required = true
+            )
+            @PageableDefault(size = 20, sort = "createdAt")
+            Pageable pageable
+    );
+
+    /*
+    *   Get all walks where user is participant
+    * */
+
+    @Operation(
+            summary = "Get all walks where user participant",
+            description = "Get sorted page of walks",
+            tags = {"walks"},
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Walks received",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = WalkResponse.class))
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Walks not found"
+                    )
+            }
+    )
+    @GetMapping("/user/participant")
+    Page<WalkResponse> getWalksWhereUserParticipant(
+            @Parameter(
+                    description = "Pageable type with size and sort type",
+                    required = true
+            )
+            @PageableDefault(size = 20, sort = "createdAt")
+            Pageable pageable
+    );
+
+    /*
+     *   Get all walks of followed users user subscribed on
+     * */
+
+    @Operation(
+            summary = "Get all walks of followed users user subscribed on",
+            description = "Get sorted page of walks",
+            tags = {"walks"},
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Walks received",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = WalkResponse.class))
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Walks not found"
+                    )
+            }
+    )
+    @GetMapping("/user/subscribed")
+    Page<WalkResponse> getWalksUserSubscribedOn(
             @Parameter(
                     description = "Pageable type with size and sort type",
                     required = true

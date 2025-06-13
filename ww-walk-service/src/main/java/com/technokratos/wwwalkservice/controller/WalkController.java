@@ -17,9 +17,26 @@ public class WalkController implements WalkApi {
 
     private final WalkService walkService;
 
+    /* TODO add requestHeader to all of methods in this controller */
+
     @Override
     public Page<WalkResponse> getWalks(Pageable pageable) {
         return walkService.findAll(pageable);
+    }
+
+    @Override
+    public Page<WalkResponse> getWalksForUser(Pageable pageable) {
+        return walkService.findAllForUser(pageable);
+    }
+
+    @Override
+    public Page<WalkResponse> getWalksWhereUserParticipant(Pageable pageable) {
+        return walkService.findAllWhereUserParticipant(pageable);
+    }
+
+    @Override
+    public Page<WalkResponse> getWalksUserSubscribedOn(Pageable pageable) {
+        return walkService.findAllUserSubscribedOn(pageable);
     }
 
     @Override

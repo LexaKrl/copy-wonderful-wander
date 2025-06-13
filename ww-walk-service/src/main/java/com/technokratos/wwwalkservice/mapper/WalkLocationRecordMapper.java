@@ -10,6 +10,5 @@ public interface WalkLocationRecordMapper {
 
     WalkPoint fromRequest(WalkDataRequest walkDataRequest);
 
-
     WalkDataResponse toResponse(WalkPoint walkPoint);
 }

@@ -15,3 +15,9 @@ spring:
       auto-index-creation: true
   liquibase:
     change-log: "../../../"
+
+walk:
+  record:
+    location:
+      max-sse-timeout: 90_000
+      reconnection-time: 3_000

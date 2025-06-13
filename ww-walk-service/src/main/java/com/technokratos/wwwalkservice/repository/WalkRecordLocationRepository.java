@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface WalkRecordLocationRepository extends MongoRepository<WalkLocationData, UUID> {
     Optional<WalkLocationData> findByWalkId(UUID walkId);
+    void deleteByWalkId(UUID walkId);
 }
