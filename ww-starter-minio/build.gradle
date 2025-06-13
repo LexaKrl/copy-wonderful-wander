@@ -13,6 +13,8 @@ version = '1.0.0'
 jar.enabled = true
 bootJar.enabled = false
 
+jar.archiveFileName = "${project.name}.jar"
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
@@ -25,8 +27,9 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+
     api "io.minio:minio:$minioVersion"
-    api 'org.springframework.boot:spring-boot-starter'
 
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 

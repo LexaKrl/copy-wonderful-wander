@@ -1,6 +1,6 @@
 services:
   - name: docker:dind
-    command: ["--storage-driver=overlay2", "--host=tcp://0.0.0.0:2375"]
+    command: [ "--storage-driver=overlay2", "--host=tcp://0.0.0.0:2375" ]
 
 variables:
   DOCKER_TLS_CERTDIR: ""
@@ -10,26 +10,27 @@ variables:
 stages:
   - build
   - publish-image
+  - deploy
 
-build-master:
-  image: gradle:8.12-jdk21
+build:
   stage: build
+  image: gradle:8.12-jdk21
   script:
-    - (cd ww-starter-jwt && gradle clean publishToMavenLocal --console=plain)
-    - (cd ww-starter-minio && gradle clean publishToMavenLocal --console=plain)
-    - gradle :ww-api-gateway:clean :ww-api-gateway:assemble --console=plain
-    - gradle :ww-user-service:clean :ww-user-service:assemble --console=plain
-    - gradle :ww-photo-management-service:clean :ww-photo-management-service:assemble --console=plain
+    - (cd ww-starter-jwt && gradle :clean :publishToMavenLocal -stacktrace --parallel --console=plain)
+    - (cd ww-starter-minio && gradle :clean :publishToMavenLocal -stacktrace --parallel --console=plain)
+    - gradle clean assemble --stacktrace --parallel --console=plain
   artifacts:
     paths:
       - ww-api-gateway/build/libs/
       - ww-user-service/build/libs/
       - ww-photo-management-service/build/libs/
-      - /root/.m2/repository/com/technokratos
     expire_in: 1 days
+  only:
+    - feature/WANDER-23
 
 publish-image:
   stage: publish-image
+  image: docker
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
@@ -39,3 +40,18 @@ publish-image:
     - docker push "$CI_REGISTRY_IMAGE/ww-api-gateway:latest"
     - docker push "$CI_REGISTRY_IMAGE/ww-user-service:latest"
     - docker push "$CI_REGISTRY_IMAGE/ww-photo-management-service:latest"
+  only:
+    - feature/WANDER-23
+
+deploy:
+  stage: deploy
+  image: docker:19.03.8-dind
+  script:
+    - chmod +x ./deploy.sh
+    - ./deploy.sh
+  environment: master
+  variables:
+    BRANCH: feature/WANDER-23
+    SSH: main
+  only:
+    - feature/WANDER-23

@@ -43,7 +43,6 @@ dependencies {
 
     implementation project(':ww-core')
     implementation project(':ww-api')
-    implementation project(':ww-db')
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'
@@ -115,7 +114,7 @@ liquibase {
 }
 
 sourceSets {
-    test {
+    main {
         resources {
             srcDirs += [
                     project(":ww-db").sourceSets.main.resources

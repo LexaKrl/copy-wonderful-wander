@@ -1,6 +1,11 @@
 spring:
   application:
-    name: user-service
+    name: photo-management-service
+
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 30MB
 
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -9,14 +14,7 @@ spring:
     password: ${POSTGRES_PASSWORD}
 
   liquibase:
-    change-log: classpath:/db/changelog/user-service/changelog-master.xml
-
-  jooq:
-    sql-dialect: postgres
-
-  jackson:
-    deserialization:
-      fail-on-unknown-properties: true
+    change-log: classpath:/db/changelog/photo-management-service/changelog-master.xml
 
   cloud:
     consul:
@@ -31,11 +29,6 @@ spring:
 
   kafka:
     bootstrap-servers: ${KAFKA_HOST_1}:${KAFKA_PORT_1}, ${KAFKA_HOST_2}:${KAFKA_PORT_2}
-    consumer:
-      bootstrap-servers: ${KAFKA_HOST_1}:${KAFKA_PORT_1}, ${KAFKA_HOST_2}:${KAFKA_PORT_2}
-      group-id: avatar-saved-events
-      properties:
-        spring-json-trusted-packages: com.technokratos.event
     producer:
       bootstrap-servers: ${KAFKA_HOST_1}:${KAFKA_PORT_1}, ${KAFKA_HOST_2}:${KAFKA_PORT_2}
       acks: all
@@ -58,12 +51,3 @@ minio:
 logging:
   level:
     org.springframework: INFO
-    org.jooq: WARN
-
-jwt:
-  enabled: true
-  secret-key: ${JWT_SECRET_KEY}
-  access-token-duration: ${JWT_ACCESS_TOKEN_DURATION}
-  refresh-token-duration: ${JWT_REFRESH_TOKEN_DURATION}
-  time-token-end-soon: ${JWT_TIME_TOKEN_END_SOON}
-
