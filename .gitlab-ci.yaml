@@ -1,8 +1,5 @@
-image: gradle:8.12-jdk21
-
 services:
   - name: docker:dind
-    alias: docker
     command: ["--storage-driver=overlay2", "--host=tcp://0.0.0.0:2375"]
 
 variables:
@@ -12,9 +9,10 @@ variables:
 
 stages:
   - build
-  - publish
+  - publish-image
 
-gradle_build:
+build-master:
+  image: gradle:8.12-jdk21
   stage: build
   script:
     - (cd ww-starter-jwt && gradle clean publishToMavenLocal --console=plain)
@@ -27,13 +25,11 @@ gradle_build:
       - ww-api-gateway/build/libs/
       - ww-user-service/build/libs/
       - ww-photo-management-service/build/libs/
-    expire_in: 1 day
+      - /root/.m2/repository/com/technokratos
+    expire_in: 1 days
 
-docker_publish:
-  stage: publish
-  image: docker:25-dind
-  dependencies:
-    - gradle_build
+publish-image:
+  stage: publish-image
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
