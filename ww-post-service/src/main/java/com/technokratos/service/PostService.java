@@ -2,27 +2,27 @@ package com.technokratos.service;
 
 import com.technokratos.dto.request.post.PostRequest;
 import com.technokratos.dto.response.post.PostResponse;
+import com.technokratos.dto.response.user.UserCompactResponse;
 import com.technokratos.enums.user.PhotoVisibility;
+import com.technokratos.exception.CategoryByIdNotFoundException;
 import com.technokratos.exception.ConflictServiceException;
+import com.technokratos.exception.ForbiddenServiceException;
+import com.technokratos.exception.PostByIdNotFoundException;
+import com.technokratos.model.CategoryEntity;
+import com.technokratos.model.EmbeddedUser;
+import com.technokratos.model.PostEntity;
+import com.technokratos.model.SavedPostEntity;
 import com.technokratos.repository.*;
+import com.technokratos.util.mapper.PostMapper;
+import com.technokratos.util.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
-import com.technokratos.exception.CategoryByIdNotFoundException;
-import com.technokratos.exception.ForbiddenServiceException;
-import com.technokratos.exception.PostByIdNotFoundException;
-import com.technokratos.model.*;
-import com.technokratos.util.mapper.PostMapper;
-import com.technokratos.util.mapper.UserMapper;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -57,7 +57,11 @@ public class PostService {
                 .stream()
                 .map(postEntity -> postMapper.toPostResponse(
                         postEntity,
-                        postEntity.getImageId() + "test.jpg" //todo сделать получение из минио
+                        postEntity.getImageId() + "test.jpg", //todo сделать получение из минио
+                        new UserCompactResponse(
+                                UUID.fromString(postEntity.getUser().getUserId()),
+                                postEntity.getUser().getUsername(),
+                                postEntity.getUser().getAvatarId() + "test.jpg") //todo сделать получение из минио
                 ))
                 .toList();
 
@@ -77,7 +81,11 @@ public class PostService {
                 .stream()
                 .map(postEntity -> postMapper.toPostResponse(
                         postEntity,
-                        postEntity.getImageId() + "test.jpg" //todo сделать получение из минио
+                        postEntity.getImageId() + "test.jpg", //todo сделать получение из минио
+                        new UserCompactResponse(
+                                UUID.fromString(postEntity.getUser().getUserId()),
+                                postEntity.getUser().getUsername(),
+                                postEntity.getUser().getAvatarId() + "test.jpg") //todo сделать получение из минио
                 ))
                 .toList();;
 
@@ -94,7 +102,11 @@ public class PostService {
             throw new ForbiddenServiceException("You don`t have authority to see this post");
         }
 
-        return postMapper.toPostResponse(post, post.getImageId() + "test.jpg");//todo сделать получение фото из минио по id и отдачу url
+        return postMapper.toPostResponse(post, post.getImageId() + "test.jpg", //todo сделать получение из минио
+                new UserCompactResponse(
+                        UUID.fromString(post.getUser().getUserId()),
+                        post.getUser().getUsername(),
+                        post.getUser().getAvatarId() + "test.jpg"));//todo сделать получение фото из минио по id и отдачу url
     }
 
     public PostResponse create(String currentUserId, PostRequest createPostRequest) {
@@ -112,7 +124,11 @@ public class PostService {
 
         postRepository.save(post);
 
-        return postMapper.toPostResponse(post, post.getImageId() + "test.jpg");//todo сделать получение фото из минио по id и отдачу url
+        return postMapper.toPostResponse(post, post.getImageId() + "test.jpg", //todo сделать получение из минио
+                new UserCompactResponse(
+                        UUID.fromString(post.getUser().getUserId()),
+                        post.getUser().getUsername(),
+                        post.getUser().getAvatarId() + "test.jpg"));//todo сделать получение фото из минио по id и отдачу url
     }
 
     public PostResponse update(String currentUserId, String postId, PostRequest updatePostRequest) {
@@ -131,7 +147,11 @@ public class PostService {
 
         postRepository.save(post);
 
-        return postMapper.toPostResponse(post, post.getImageId() + "test.jpg");//todo сделать получение фото из минио по id и отдачу url
+        return postMapper.toPostResponse(post, post.getImageId() + "test.jpg", //todo сделать получение из минио
+                new UserCompactResponse(
+                        UUID.fromString(post.getUser().getUserId()),
+                        post.getUser().getUsername(),
+                        post.getUser().getAvatarId() + "test.jpg"));//todo сделать получение фото из минио по id и отдачу url
         }
 
     public void delete(String currentUserId, String postId) {

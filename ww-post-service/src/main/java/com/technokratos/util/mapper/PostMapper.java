@@ -3,6 +3,7 @@ package com.technokratos.util.mapper;
 import com.technokratos.dto.request.post.PostRequest;
 import com.technokratos.dto.response.post.CategoryResponse;
 import com.technokratos.dto.response.post.PostResponse;
+import com.technokratos.dto.response.user.UserCompactResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -11,16 +12,15 @@ import org.springframework.stereotype.Component;
 import com.technokratos.model.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Component
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface PostMapper {
 
-//    @Mapping(target = "imageUrl")
-//    List<PostResponse> toPostResponse(List<PostEntity> posts);
-
     @Mapping(target = "imageUrl")
-    PostResponse toPostResponse(PostEntity posts, String imageUrl);
+    @Mapping(target = "user", source = "user")
+    PostResponse toPostResponse(PostEntity posts, String imageUrl, UserCompactResponse user);
 
     @Mapping(target = "postId", ignore = true)
     @Mapping(target = "category", ignore = true)
@@ -37,9 +37,5 @@ public interface PostMapper {
     CategoryResponse toCategoryResponse(EmbeddedCategory embeddedCategory);
 
 
-//    @Named("mapImageUrl")
-//    default String mapImageUrl(String imageId) {
-//        // Заглушка: формируем URL на основе imageId
-//        return "https://example.com/images/"  + imageId;
-//    }//todo сделать получение из минио по имени
+
 }
