@@ -3,7 +3,7 @@ package com.technokratos.api;
 import com.technokratos.dto.exception.BaseExceptionMessage;
 import com.technokratos.dto.exception.ValidationExceptionMessage;
 import com.technokratos.dto.request.post.CommentRequest;
-import com.technokratos.dto.response.post.RootCommentResponse;
+import com.technokratos.dto.response.comment.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,7 +18,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @Tag(
         name = "Комментарии",
@@ -47,7 +46,7 @@ public interface CommentApi {
     })
     List<RootCommentResponse> getCommentsByPostId(
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID postId,
+            @PathVariable String postId,
             Pageable pageable);
 
     @GetMapping("/{commentId}")
@@ -56,7 +55,7 @@ public interface CommentApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Комментарий успешно получены",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = RootCommentResponse.class))),
+                            schema = @Schema(implementation = CommentHierarchyResponse.class))),
             @ApiResponse(responseCode = "400", description = "Невалидный uuid поста или комментария",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ValidationExceptionMessage.class))),
@@ -67,11 +66,11 @@ public interface CommentApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    List<RootCommentResponse> getCommentById(
+    CommentHierarchyResponse getCommentById(
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID postId,
+            @PathVariable String postId,
             @Parameter(description = "ID комментария", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID commentId);
+            @PathVariable String commentId);
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -79,7 +78,7 @@ public interface CommentApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Пост успешно создан",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = RootCommentResponse.class))),
+                            schema = @Schema(implementation = CommentResponse.class))),
             @ApiResponse(responseCode = "400", description = "Невалидный uuid поста",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ValidationExceptionMessage.class))),
@@ -90,9 +89,9 @@ public interface CommentApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    List<RootCommentResponse> createComment(
+    CommentResponse createComment(
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID postId,
+            @PathVariable String postId,
             @Parameter(description = "Данные комментария", required = true)
             @RequestBody @Validated CommentRequest commentRequest);
 
@@ -102,7 +101,7 @@ public interface CommentApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Комментарий успешно обновлен",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = RootCommentResponse.class))),
+                    schema = @Schema(implementation = CommentResponse.class))),
             @ApiResponse(responseCode = "400", description = "Ошибка валидации данных комментария или невалидный uuid поста или комментария",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ValidationExceptionMessage.class))),
@@ -116,11 +115,11 @@ public interface CommentApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    List<RootCommentResponse> updateComment(
+    CommentResponse updateComment(
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID postId,
+            @PathVariable String postId,
             @Parameter(description = "ID комментария", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID commentId,
+            @PathVariable String commentId,
             @Parameter(description = "Обновленные данные комментария", required = true)
             @RequestBody @Validated CommentRequest commentRequest);
 
@@ -141,7 +140,7 @@ public interface CommentApi {
     })
     void deleteComment(
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID postId,
+            @PathVariable String postId,
             @Parameter(description = "ID комментария", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID commentId);
+            @PathVariable String commentId);
 }

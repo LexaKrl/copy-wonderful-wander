@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-@Service
 @RequiredArgsConstructor
 public class MinioService {
     private final MinioClient minioClient;

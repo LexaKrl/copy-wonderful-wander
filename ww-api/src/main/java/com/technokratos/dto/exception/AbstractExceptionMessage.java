@@ -1,5 +1,6 @@
 package com.technokratos.dto.exception;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 public abstract class AbstractExceptionMessage {
     @Schema(description = "Время возникновения ошибки", example = "2025-04-05T14:30:00")
     @Builder.Default
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp = LocalDateTime.now();
     @Schema(description = "Тип ошибки", example = "MethodArgumentNotValidException")
     private String error;

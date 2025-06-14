@@ -31,8 +31,6 @@ dependencies {
 
 }
 
-=======
->>>>>>> ww-post-service/build.gradle
 test {
 	useJUnitPlatform()
 }

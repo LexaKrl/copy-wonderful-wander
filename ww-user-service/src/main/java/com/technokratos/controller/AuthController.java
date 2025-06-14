@@ -6,6 +6,7 @@ import com.technokratos.dto.request.security.RefreshTokenRequest;
 import com.technokratos.dto.request.security.UserLoginRequest;
 import com.technokratos.dto.request.security.UserRegistrationRequest;
 import com.technokratos.dto.response.security.AuthResponse;
+import com.technokratos.exception.PasswordNotMatchException;
 import com.technokratos.security.BaseUserContextHolder;
 import com.technokratos.service.auth.AuthUserService;
 import com.technokratos.service.auth.RefreshTokenService;
@@ -26,8 +27,13 @@ public class AuthController implements AuthApi {
     private final BaseUserContextHolder baseUserContextHolder;
 
     @Override
-    public AuthResponse register(UserRegistrationRequest userDto) {
-        return userService.register(userDto);
+    public AuthResponse register(UserRegistrationRequest userRegistrationRequest) {
+
+        if (!userRegistrationRequest.password().equals(userRegistrationRequest.duplicatePassword())) {
+            throw new PasswordNotMatchException("Passwords don't match");
+        }
+
+        return userService.register(userRegistrationRequest);
     }
 
     @Override
@@ -42,6 +48,11 @@ public class AuthController implements AuthApi {
 
     @Override
     public void changePassword(PasswordChangeRequest passwordChangeRequest) {
+
+        if (!passwordChangeRequest.newPassword().equals(passwordChangeRequest.newDuplicatePassword())) {
+            throw new PasswordNotMatchException("The duplicated password doesn't match");
+        }
+        
         UUID userId = baseUserContextHolder.getUserFromSecurityContext().getUserId();
         authUserService.changePassword(userId, passwordChangeRequest);
     }
