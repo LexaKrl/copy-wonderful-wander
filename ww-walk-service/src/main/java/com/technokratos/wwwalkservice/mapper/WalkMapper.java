@@ -16,6 +16,7 @@ public interface WalkMapper {
 
     @Mapping(target = "startPointLongitude", expression = "java(getStartPointLongitude(walk.getStartPoint()))")
     @Mapping(target = "startPointLatitude", expression = "java(getStartPointLatitude(walk.getStartPoint()))")
+    /*@Mapping(target = "geoJsonRoute", source = "route")*/ /* TODO define mapper */
     WalkResponse toResponse(Walk walk);
 
     @Mapping(target = "walkId", ignore = true)
@@ -27,6 +28,7 @@ public interface WalkMapper {
     @Mapping(target = "walkStatus", ignore = true)
     @Mapping(target = "photos", ignore = true)
     @Mapping(target = "route", ignore = true)
+    @Mapping(target = "walkParticipants", ignore = true)
     @Mapping(target = "startPoint",
             expression = "java(createPoint(walkRequest.startPointLongitude(), walkRequest.startPointLatitude()))")
     Walk toEntity(WalkRequest walkRequest);
@@ -39,6 +41,7 @@ public interface WalkMapper {
     @Mapping(target = "finishedAt", ignore = true)
     @Mapping(target = "walkStatus", ignore = true)
     @Mapping(target = "photos", ignore = true)
+    @Mapping(target = "walkParticipants", ignore = true)
     @Mapping(target = "startPoint",
             expression = "java(createPoint(walkRequest.startPointLongitude(), walkRequest.startPointLatitude()))")
     void updateFromRequest(@MappingTarget Walk existingWalk, WalkRequest walkRequest);

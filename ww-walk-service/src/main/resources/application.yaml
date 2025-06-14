@@ -16,8 +16,13 @@ spring:
   liquibase:
     change-log: "../../../"
 
+
 walk:
   record:
     location:
       max-sse-timeout: 90_000
       reconnection-time: 3_000
+app:
+  url:
+    base-url: "https://wonderful-wander.ru"
+    walk-acceptation-url: "/api/walks/{walkId}/participant/{participantId}/accept"

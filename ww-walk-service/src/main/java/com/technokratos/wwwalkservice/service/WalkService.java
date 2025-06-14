@@ -5,17 +5,19 @@ import com.technokratos.dto.request.walk.WalkRequest;
 import com.technokratos.dto.response.walk.WalkResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface WalkService {
 
-    Page<WalkResponse> findAll(Pageable pageable);
+    Page<WalkResponse> findAllVisible(UUID userId, List<UUID> subscribers, Pageable pageable);
 
-    Page<WalkResponse> findAllForUser(Pageable pageable);
+    Page<WalkResponse> findAllVisibleForUser(UUID userId, UUID requesterId, List<UUID> subscribers, Pageable pageable);
 
-    WalkResponse findById(UUID id);
+    WalkResponse findById(UUID requesterId, List<UUID> subscribers, UUID walkId);
 
     @Transactional
     void deleteById(UUID id);
@@ -26,7 +28,7 @@ public interface WalkService {
     @Transactional
     void updateById(UUID id, WalkRequest walkRequest);
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     void addParticipant(UUID walkId, UUID participantId);
 
     @Transactional
@@ -36,7 +38,11 @@ public interface WalkService {
 
     boolean isParticipant(UUID walkId);
 
-    Page<WalkResponse> findAllWhereUserParticipant(Pageable pageable);
+    Page<WalkResponse> findAllVisibleWhereUserParticipant(UUID requesterId, List<UUID> subscribers, Pageable pageable);
 
-    Page<WalkResponse> findAllUserSubscribedOn(Pageable pageable);
+    Page<WalkResponse> findAllVisibleUserSubscribedOn(UUID requesterId, List<UUID> subscribers, Pageable pageable);
+
+    @Transactional
+    void acceptInvite(UUID walkId, UUID participantId, UUID acceptationToken);
+
 }

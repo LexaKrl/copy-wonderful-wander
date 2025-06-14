@@ -49,6 +49,12 @@ public interface WalkApi {
     @GetMapping
     Page<WalkResponse> getWalks(
             @Parameter(
+                    description = "UUID of the currentUser",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
+            )
+            UUID requesterId,
+            @Parameter(
                     description = "Pageable type with size and sort type",
                     required = true
             )
@@ -79,8 +85,21 @@ public interface WalkApi {
                     )
             }
     )
-    @GetMapping("/user")
+    @GetMapping("/user/{userId}")
     Page<WalkResponse> getWalksForUser(
+            @Parameter(
+                    description = "UUID of the user",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
+            )
+            @PathVariable
+            UUID userId,
+            @Parameter(
+                    description = "UUID of the currentUser",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
+            )
+            UUID requesterId,
             @Parameter(
                     description = "Pageable type with size and sort type",
                     required = true
@@ -112,8 +131,14 @@ public interface WalkApi {
                     )
             }
     )
-    @GetMapping("/user/participant")
+    @GetMapping("/participant")
     Page<WalkResponse> getWalksWhereUserParticipant(
+            @Parameter(
+                    description = "UUID of the currentUser",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
+            )
+            UUID requesterId,
             @Parameter(
                     description = "Pageable type with size and sort type",
                     required = true
@@ -145,8 +170,14 @@ public interface WalkApi {
                     )
             }
     )
-    @GetMapping("/user/subscribed")
+    @GetMapping("/subscribed")
     Page<WalkResponse> getWalksUserSubscribedOn(
+            @Parameter(
+                    description = "UUID of the currentUser",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
+            )
+            UUID requesterId,
             @Parameter(
                     description = "Pageable type with size and sort type",
                     required = true
@@ -216,6 +247,12 @@ public interface WalkApi {
     )
     @GetMapping("/{walkId}")
     WalkResponse getWalk(
+            @Parameter(
+                    description = "UUID of the currentUser",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
+            )
+            UUID requesterId,
             @Parameter(
                     description = "UUID of the walk",
                     example = "550e8400-e29b-41d4-a716-446655440000",
@@ -373,4 +410,46 @@ public interface WalkApi {
             )
             @PathVariable UUID walkId
     );
+
+    /*
+     *   Accept walk invite
+     *
+     * */
+
+    @Operation(
+            summary = "Accept invite to walk",
+            description = "Accept invite to walk",
+            tags = {"walks"},
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Invite accepted"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Acceptation failed"
+                    )
+            }
+    )
+    @GetMapping("/{walkId}/participant/{participantId}/accept")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void acceptInvite(
+            @Parameter(
+                    description = "UUID acceptationToken",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
+            )
+            UUID acceptationToken,
+            @Parameter(
+                    description = "UUID of the walk",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
+            )
+            @PathVariable UUID walkId,
+            @Parameter(
+                    description = "UUID of the participant",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
+            )
+            @PathVariable UUID participantId);
 }

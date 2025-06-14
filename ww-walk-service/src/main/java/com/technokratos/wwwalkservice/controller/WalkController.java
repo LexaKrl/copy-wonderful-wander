@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -20,28 +21,38 @@ public class WalkController implements WalkApi {
     /* TODO add requestHeader to all of methods in this controller */
 
     @Override
-    public Page<WalkResponse> getWalks(Pageable pageable) {
-        return walkService.findAll(pageable);
+    public Page<WalkResponse> getWalks(UUID requesterId, Pageable pageable) {
+        /* TODO Get list of users */
+        List<UUID> subscribers = List.of();
+        return walkService.findAllVisible(requesterId, subscribers, pageable);
     }
 
     @Override
-    public Page<WalkResponse> getWalksForUser(Pageable pageable) {
-        return walkService.findAllForUser(pageable);
+    public Page<WalkResponse> getWalksForUser(UUID userId, UUID requesterId, Pageable pageable) {
+        /* TODO Get list of users */
+        List<UUID> subscribers = List.of();
+        return walkService.findAllVisibleForUser(requesterId, userId, subscribers, pageable);
     }
 
     @Override
-    public Page<WalkResponse> getWalksWhereUserParticipant(Pageable pageable) {
-        return walkService.findAllWhereUserParticipant(pageable);
+    public Page<WalkResponse> getWalksWhereUserParticipant(UUID requesterId, Pageable pageable) {
+        /* TODO Get list of users */
+        List<UUID> subscribers = List.of();
+        return walkService.findAllVisibleWhereUserParticipant(requesterId, subscribers, pageable);
     }
 
     @Override
-    public Page<WalkResponse> getWalksUserSubscribedOn(Pageable pageable) {
-        return walkService.findAllUserSubscribedOn(pageable);
+    public Page<WalkResponse> getWalksUserSubscribedOn(UUID requesterId, Pageable pageable) {
+        /* TODO Get list of users */
+        List<UUID> subscribers = List.of();
+        return walkService.findAllVisibleUserSubscribedOn(requesterId, subscribers, pageable);
     }
 
     @Override
-    public WalkResponse getWalk(UUID walkId) {
-        return walkService.findById(walkId);
+    public WalkResponse getWalk(UUID requesterId, UUID walkId) {
+        /* TODO Get list of users */
+        List<UUID> subscribers = List.of();
+        return walkService.findById(requesterId, subscribers, walkId);
     }
 
     @Override
@@ -67,5 +78,10 @@ public class WalkController implements WalkApi {
     @Override
     public void removeParticipant(UUID participantId, UUID walkId) {
         walkService.removeParticipant(walkId, participantId);
+    }
+
+    @Override
+    public void acceptInvite(UUID acceptationToken, UUID walkId, UUID participantId) {
+        walkService.acceptInvite(walkId, participantId, acceptationToken);
     }
 }
