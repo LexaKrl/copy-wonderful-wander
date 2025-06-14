@@ -1,4 +1,4 @@
-package com.technokratos.dto.response.post;
+package com.technokratos.dto.response.comment;
 
 import java.util.List;
 

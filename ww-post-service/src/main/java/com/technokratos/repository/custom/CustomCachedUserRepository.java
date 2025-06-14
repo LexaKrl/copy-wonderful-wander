@@ -1,4 +1,4 @@
-package com.technokratos.repository;
+package com.technokratos.repository.custom;
 
 import com.technokratos.model.CachedUserEntity;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class CachedUserRepositoryCustom {
+public class CustomCachedUserRepository {
 
     private final MongoTemplate mongoTemplate;
 

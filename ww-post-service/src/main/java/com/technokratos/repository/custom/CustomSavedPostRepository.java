@@ -1,4 +1,4 @@
-package com.technokratos.repository;
+package com.technokratos.repository.custom;
 
 import com.technokratos.model.SavedPostEntity;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
-public class SavedPostRepositoryCustom {
+public class CustomSavedPostRepository {
 
     private final MongoTemplate mongoTemplate;
 

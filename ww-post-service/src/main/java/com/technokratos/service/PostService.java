@@ -13,6 +13,8 @@ import com.technokratos.model.EmbeddedUser;
 import com.technokratos.model.PostEntity;
 import com.technokratos.model.SavedPostEntity;
 import com.technokratos.repository.*;
+import com.technokratos.repository.custom.CustomPostRepository;
+import com.technokratos.repository.custom.CustomSavedPostRepository;
 import com.technokratos.util.mapper.PostMapper;
 import com.technokratos.util.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
@@ -35,8 +37,8 @@ public class PostService {
     private final UserService userService;
     private final PostMapper postMapper;
     private final UserMapper userMapper;
-    private final PostRepositoryCustom postRepositoryCustom;
-    private final SavedPostRepositoryCustom savedPostRepositoryCustom;
+    private final CustomPostRepository customPostRepository;
+    private final CustomSavedPostRepository customSavedPostRepository;
 
 
     public List<PostResponse> getRecommendedPosts(String currentUserId, Pageable pageable) {
@@ -49,7 +51,7 @@ public class PostService {
             throw new ForbiddenServiceException("You don`t have authority to see this post");
         }
 
-        List<String> savedPostIds = savedPostRepositoryCustom.getSavedPostIdsByUserId(userId);
+        List<String> savedPostIds = customSavedPostRepository.getSavedPostIdsByUserId(userId);
 
         log.info("saved post ids: {}", savedPostIds);
 
@@ -135,7 +137,7 @@ public class PostService {
         PostEntity post = postRepository.findById(postId).orElseThrow(() -> new PostByIdNotFoundException(postId));
 
         if (!post.getUser().getUserId().equals(currentUserId)) {
-            throw new ForbiddenServiceException("You can't edit this post");
+            throw new ForbiddenServiceException("You don`t have authority to edit this post");
         }
 
         CategoryEntity category = categoryRepository.findById(updatePostRequest.categoryId())
@@ -154,15 +156,23 @@ public class PostService {
                         post.getUser().getAvatarId() + "test.jpg"));//todo сделать получение фото из минио по id и отдачу url
         }
 
-    public void delete(String currentUserId, String postId) {
-        postRepository.findById(postId)
-                .ifPresent(post -> {
-                    if (!post.getUser().getUserId().equals(currentUserId)) {
-                        throw new ForbiddenServiceException("You can't delete this post");
-                    }
-                    postRepository.deleteById(postId);
-                    savedPostRepository.deleteByPostId(postId);
-                });
+    public void delete(String currentUserId, String postId) { //todo потестить
+        if (postRepository.existsById(postId)) {
+            if (!getUserIdByPostId(postId).equals(currentUserId)) {
+                throw new ForbiddenServiceException("You don`t have authority to delete this post");
+            }
+            postRepository.deleteById(postId);
+            savedPostRepository.deleteByPostId(postId);
+        }
+
+//        postRepository.findById(postId)
+//                .ifPresent(post -> {
+//                    if (!post.getUser().getUserId().equals(currentUserId)) {
+//                        throw new ForbiddenServiceException("You can't delete this post");
+//                    }
+//                    postRepository.deleteById(postId);
+//                    savedPostRepository.deleteByPostId(postId);
+//                });
     }
 
     public UUID savePost(String currentUserId, String postId) {
@@ -187,15 +197,22 @@ public class PostService {
     }
 
     public Long getLikesCountByPostId(String postId) {
-        PostEntity post = postRepositoryCustom.getLikesCountByPostId(postId);
+        PostEntity post = customPostRepository.getLikesCountByPostId(postId);
 
         if (post == null) {
             throw new PostByIdNotFoundException(postId);
         }
-
         return post.getLikesCount();
     }
 
+    public Long getCommentCountByPostId(String postId) {
+        PostEntity post = customPostRepository.getCommentsCountByPostId(postId);
+
+        if (post == null) {
+            throw new PostByIdNotFoundException(postId);
+        }
+        return post.getCommentsCount();
+    }
     public boolean checkPostPrivacy(String viewerId, String userId, PhotoVisibility photoVisibility) {
         if (viewerId.equals(userId)) {
             return true;
@@ -226,7 +243,7 @@ public class PostService {
     }
 
     public String getUserIdByPostId(String postId) {
-        PostEntity post = postRepositoryCustom.getUserIdByPostId(postId);
+        PostEntity post = customPostRepository.getUserIdByPostId(postId);
 
         if (post == null) {
             throw new PostByIdNotFoundException(postId);

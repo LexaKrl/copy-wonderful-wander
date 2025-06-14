@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends MongoRepository<CommentEntity, String> {
     List<CommentEntity> findByPostId(String postId);
+    List<CommentEntity> findByRootCommentId(String rootCommentId);
 }

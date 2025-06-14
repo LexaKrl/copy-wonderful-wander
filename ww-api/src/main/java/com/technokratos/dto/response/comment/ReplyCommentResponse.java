@@ -1,10 +1,9 @@
-package com.technokratos.dto.response.post;
+package com.technokratos.dto.response.comment;
 
 import com.technokratos.dto.response.user.UserCompactResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 public record ReplyCommentResponse(
         @Schema(description = "Уникальный идентификатор комментария UUID", example = "550e8400-e29b-41d4-a716-446655440000")

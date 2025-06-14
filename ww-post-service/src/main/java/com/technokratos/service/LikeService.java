@@ -8,15 +8,12 @@ import com.technokratos.exception.ForbiddenServiceException;
 import com.technokratos.exception.PostByIdNotFoundException;
 import com.technokratos.model.EmbeddedUser;
 import com.technokratos.model.LikeEntity;
-import com.technokratos.model.PostEntity;
 import com.technokratos.repository.LikeRepository;
+import com.technokratos.repository.custom.CustomLikeRepository;
 import com.technokratos.repository.PostRepository;
+import com.technokratos.repository.custom.CustomPostRepository;
 import com.technokratos.util.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,9 +26,10 @@ public class LikeService {
     private final LikeRepository likeRepository;
     private final UserMapper userMapper;
     private final UserService userService;
-    private final MongoTemplate mongoTemplate;
     private final PostRepository postRepository;
     private final PostService postService;
+    private final CustomLikeRepository customLikeRepository;
+    private final CustomPostRepository customPostRepository;
 
 
     public List<UserCompactResponse> getLikesByPostId(String viewerId, String postId) {
@@ -45,9 +43,9 @@ public class LikeService {
         List<UserCompactResponse> userCompactResponses = likeRepository.findByPostId(postId)
                 .stream()
                 .map(LikeEntity::getUser)
-                .map(embeddedUser -> userMapper.toUserCompactResponse(
-                        embeddedUser,
+                .map(embeddedUser -> new UserCompactResponse(
                         UUID.fromString(embeddedUser.getUserId()),
+                        embeddedUser.getUsername(),
                         "test.jpg" //todo сделать получение из минио
                 ))
                 .toList();
@@ -61,7 +59,7 @@ public class LikeService {
             throw new PostByIdNotFoundException(postId);
         }
 
-        if (likeExists(currentUserId, postId)) {
+        if (customLikeRepository.likeExists(currentUserId, postId)) {
             throw new ConflictServiceException("The like has already been set");
         }
 
@@ -75,41 +73,20 @@ public class LikeService {
 
         likeRepository.save(like);
 
-        mongoTemplate.updateFirst(
-                Query.query(Criteria.where("postId").is(postId)),
-                new Update().inc("likesCount", 1),
-                PostEntity.class
-        );
+        customPostRepository.incrementLikesCount(postId);
 
         return new LikeResponse(postService.getLikesCountByPostId(postId));
     }
 
     public LikeResponse deleteLike(String currentUserId, String postId) {
 
-        Query query = new Query(
-                Criteria.where("user.userId").is(currentUserId)
-                        .and("postId").is(postId)
-        );
-
-        DeleteResult deleteResult = mongoTemplate.remove(query, LikeEntity.class);
+        DeleteResult deleteResult = customLikeRepository.removeByUserIdAndPostId(currentUserId, postId);
 
         if (deleteResult.getDeletedCount() > 0) {
-            mongoTemplate.updateFirst(
-                    Query.query(Criteria.where("postId").is(postId)),
-                    new Update().inc("likesCount", -1),
-                    PostEntity.class
-            );
+            customPostRepository.decrementLikesCount(postId);
         }
 
         return new LikeResponse(postService.getLikesCountByPostId(postId));
     }
 
-
-    public boolean likeExists(String userId, String postId) {
-        Query query = new Query(
-                Criteria.where("user.userId").is(userId)
-                        .and("postId").is(postId)
-        );
-        return mongoTemplate.exists(query, LikeEntity.class);
-    }
-}
+}//todo перепроверить методы лайков

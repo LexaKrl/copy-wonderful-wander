@@ -1,7 +1,7 @@
 package com.technokratos.service;
 
 import com.technokratos.enums.user.PhotoVisibility;
-import com.technokratos.repository.CachedUserRepositoryCustom;
+import com.technokratos.repository.custom.CustomCachedUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import java.util.Set;
 public class UserService {
 
     private final CachedUserRepository cachedUserRepository;
-    private final CachedUserRepositoryCustom cachedUserRepositoryCustom;
+    private final CustomCachedUserRepository customCachedUserRepository;
 
     public CachedUserEntity getUserById(String userId) {
 //        return cachedUserRepository.findById(userId)
@@ -28,7 +28,7 @@ public class UserService {
     }
 
     public PhotoVisibility getMyPhotoVisibility(String userId) {
-        CachedUserEntity user = cachedUserRepositoryCustom.getMyPhotoVisibility(userId);
+        CachedUserEntity user = customCachedUserRepository.getMyPhotoVisibility(userId);
 
         log.info("getMyPhotoVisibility data: {}", user);
 
@@ -40,7 +40,7 @@ public class UserService {
     }
 
     public PhotoVisibility getSavedPhotoVisibility(String userId) {
-        CachedUserEntity user = cachedUserRepositoryCustom.getSavedPhotoVisibility(userId);
+        CachedUserEntity user = customCachedUserRepository.getSavedPhotoVisibility(userId);
 
         log.info("getSavedPhotoVisibility data: {}", user);
 
@@ -52,7 +52,7 @@ public class UserService {
     }
 
     public Set<String> getUserFriend(String userId) {
-        CachedUserEntity user = cachedUserRepositoryCustom.getUserFriend(userId);
+        CachedUserEntity user = customCachedUserRepository.getUserFriend(userId);
 
         log.info("get user friends data: {}", user);
 
