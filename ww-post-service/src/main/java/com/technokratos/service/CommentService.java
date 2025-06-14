@@ -85,7 +85,6 @@ public class CommentService {
                     "No information was found on this comment, because it is not a root comment");
         }
 
-        //todo делать какую то проверку на то что это корневой иначе все пойдет по пизде
         RootCommentResponse rootCommentResponse = commentMapper.toRootCommentResponse(
                 rootComment,
                 new UserCompactResponse(

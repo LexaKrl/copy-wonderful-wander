@@ -89,4 +89,4 @@ public class LikeService {
         return new LikeResponse(postService.getLikesCountByPostId(postId));
     }
 
-}//todo перепроверить методы лайков
+}

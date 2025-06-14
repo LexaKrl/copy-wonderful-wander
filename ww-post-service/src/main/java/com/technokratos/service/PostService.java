@@ -156,7 +156,7 @@ public class PostService {
                         post.getUser().getAvatarId() + "test.jpg"));//todo сделать получение фото из минио по id и отдачу url
         }
 
-    public void delete(String currentUserId, String postId) { //todo потестить
+    public void delete(String currentUserId, String postId) {
         if (postRepository.existsById(postId)) {
             if (!getUserIdByPostId(postId).equals(currentUserId)) {
                 throw new ForbiddenServiceException("You don`t have authority to delete this post");
@@ -164,15 +164,6 @@ public class PostService {
             postRepository.deleteById(postId);
             savedPostRepository.deleteByPostId(postId);
         }
-
-//        postRepository.findById(postId)
-//                .ifPresent(post -> {
-//                    if (!post.getUser().getUserId().equals(currentUserId)) {
-//                        throw new ForbiddenServiceException("You can't delete this post");
-//                    }
-//                    postRepository.deleteById(postId);
-//                    savedPostRepository.deleteByPostId(postId);
-//                });
     }
 
     public UUID savePost(String currentUserId, String postId) {
