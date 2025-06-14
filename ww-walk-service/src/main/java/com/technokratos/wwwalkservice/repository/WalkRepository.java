@@ -1,10 +1,8 @@
 package com.technokratos.wwwalkservice.repository;
 
-import com.technokratos.dto.response.walk.WalkResponse;
 import com.technokratos.wwwalkservice.entity.Walk;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Range;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

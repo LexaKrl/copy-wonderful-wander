@@ -10,4 +10,5 @@ import org.springframework.stereotype.Component;
 public class ApplicationUrlProperties {
     private String baseUrl;
     private String walkAcceptationUrl;
+    private String subscribersRetrieveUrl;
 }

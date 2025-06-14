@@ -32,11 +32,11 @@ public class BaseWalkService implements WalkService {
     private final WalkRepository walkRepository;
     private final WalkMapper walkMapper;
     private final UserWalkVisibilityRepository userWalkVisibilityRepository;
+    private final WalkInvitationRepository walkInvitationRepository;
     private final ApplicationUrlProperties applicationUrlProperties; /* TODO use when send messages to notification service */
 
     private static final int MAX_PARTICIPANT_AMOUNT = 20;
     private static final Double SIMPLIFYING_TOLERANCE = 0.0001D;
-    private final WalkInvitationRepository walkInvitationRepository;
 
     @Override
     public Page<WalkResponse> findAllVisible(UUID requesterId, List<UUID> subscribers, Pageable pageable) {
@@ -171,8 +171,9 @@ public class BaseWalkService implements WalkService {
         userWalkVisibilityRepository.save(userWalkVisibility);
     }
 
-    public void deleteWalkVisibility(UserWalkVisibility userWalkVisibility) {
-        /* TODO define kafka consumer */
+    /* TODO define kafka consumer */
+    public void deleteWalkVisibility(UUID userId) {
+        userWalkVisibilityRepository.deleteByUserId(userId);
     }
 
     public void finishWalk(UUID walkId, WalkLocationData walkLocationData) {

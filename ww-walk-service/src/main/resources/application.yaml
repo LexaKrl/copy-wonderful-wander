@@ -2,20 +2,19 @@ spring:
   application:
     name: ww-walk-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/agona_db
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://localhost:${POSTGRES_PORT}/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: validate
   data:
     mongodb:
-      uri: mongodb://localhost:27017/ww-walk-service
+      uri: mongodb://localhost:${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@localhost:${MONGO_PORT}/ww-walk-service
       auto-index-creation: true
   liquibase:
-    change-log: "../../../"
-
+    change-log: classpath:/db/changelog/walk-service/changelog-master.yaml
 
 walk:
   record:
@@ -26,3 +25,4 @@ app:
   url:
     base-url: "https://wonderful-wander.ru"
     walk-acceptation-url: "/api/walks/{walkId}/participant/{participantId}/accept"
+    subscribers-retrieve-url: "/api/users/" # TODO add link to the retrieving subscribers
