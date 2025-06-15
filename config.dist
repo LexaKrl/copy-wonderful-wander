@@ -1,0 +1,5 @@
+Host main
+    HostName ${SSH_HOST}
+    User ${SSH_USER}
+    Port ${SSH_PORT}
+    StrictHostKeyChecking no

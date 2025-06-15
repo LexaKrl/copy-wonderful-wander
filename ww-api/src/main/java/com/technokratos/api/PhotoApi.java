@@ -3,6 +3,7 @@ package com.technokratos.api;
 import com.technokratos.dto.exception.BaseExceptionMessage;
 import com.technokratos.dto.exception.ValidationExceptionMessage;
 import com.technokratos.dto.response.photo.PhotoFilenameResponse;
+import com.technokratos.util.HttpHeaders;
 import com.technokratos.validation.image.Image;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -39,6 +40,7 @@ public interface PhotoApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
     void uploadAvatar(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) UUID ownerId,
             @Parameter(description = "Файл изображения (JPG/JPEG, PNG, GIF, WEBP) size <= 25MB", required = true)
             @Validated @Image @RequestPart("avatar") MultipartFile avatar
     );
@@ -59,6 +61,7 @@ public interface PhotoApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
     PhotoFilenameResponse uploadPhotoOfPost(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) UUID ownerId,
             @Parameter(description = "Файл изображения (JPG/JPEG, PNG, GIF, WEBP) size <= 25MB", required = true)
             @Validated @Image @RequestPart("photo") MultipartFile photo
     );
@@ -77,6 +80,7 @@ public interface PhotoApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
     void uploadPhotoOfWalk(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) UUID ownerId,
             @Parameter(description = "Идентификатор прогулки", example = "123e4567-e89b-12d3-a456-426614174000", required = true)
             @RequestParam UUID walkId,
             @Parameter(description = "Файл изображения (JPG/JPEG, PNG, GIF, WEBP) size <= 25MB", required = true)

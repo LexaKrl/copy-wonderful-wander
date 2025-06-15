@@ -1,4 +1,4 @@
-package com.technokratos.dto.request.security;
+package com.technokratos.dto;
 
 import com.technokratos.enums.security.UserRole;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.Length;
 
 import java.util.UUID;
 
-public record UserForJwtTokenRequest(
+public record UserInfoForJwt(
         @Schema(description = "Уникальный идентификатор пользователя UUID", example = "550e8400-e29b-41d4-a716-446655440000"
                 , requiredMode = Schema.RequiredMode.REQUIRED)
         @NotNull(message = "User id can not be null")

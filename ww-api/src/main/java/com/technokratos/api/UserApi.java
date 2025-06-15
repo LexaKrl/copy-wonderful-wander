@@ -3,9 +3,11 @@ package com.technokratos.api;
 import com.technokratos.dto.exception.BaseExceptionMessage;
 import com.technokratos.dto.exception.ValidationExceptionMessage;
 import com.technokratos.dto.request.user.UserRequest;
+import com.technokratos.dto.response.PageResponse;
 import com.technokratos.dto.response.user.UserCompactResponse;
 import com.technokratos.dto.response.user.UserProfileResponse;
 import com.technokratos.dto.response.user.UserResponse;
+import com.technokratos.util.HttpHeaders;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,13 +15,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.data.domain.Pageable;
+import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @Tag(
@@ -41,7 +42,7 @@ public interface UserApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class))),
     })
-    UserResponse getCurrentUserProfile();
+    UserResponse getCurrentUserProfile(@Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) UUID ownerId);
 
     @PutMapping("/me")
     @ResponseStatus(HttpStatus.OK)
@@ -58,6 +59,7 @@ public interface UserApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class))),
     })
     UserResponse updateCurrentUser(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) UUID ownerId,
             @Parameter(description = "Данные для обновления профиля пользователя", required = true)
             @RequestBody @Validated UserRequest userRequest);
 
@@ -70,7 +72,7 @@ public interface UserApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    void deleteCurrentUser();
+    void deleteCurrentUser(@Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) UUID ownerId);
 
     @PostMapping("/me/follows/{targetUserId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -93,6 +95,7 @@ public interface UserApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
     void follow(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) UUID ownerId,
             @Parameter(description = "Id пользователя, на которого нужно подписаться", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable UUID targetUserId);
 
@@ -115,6 +118,7 @@ public interface UserApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
     void unfollow(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) UUID ownerId,
             @Parameter(description = "ID пользователя, от которого нужно отписаться", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable UUID targetUserId);
 
@@ -136,6 +140,7 @@ public interface UserApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
     UserProfileResponse getUserProfileById(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) UUID ownerId,
             @Parameter(description = "ID пользователя", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable UUID targetUserId);
 
@@ -159,10 +164,14 @@ public interface UserApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    List<UserCompactResponse> getFriendsByUserId(
+    PageResponse<UserCompactResponse> getFriendsByUserId(
             @Parameter(description = "ID пользователя", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable UUID userId,
-            Pageable pageable);
+            @Parameter(description = "Номер страницы", example = "1")
+            @Positive @RequestParam(required = false, defaultValue = "1")
+            Integer page,
+            @Parameter(description = "Размер страницы", example = "10")
+            @RequestParam(required = false, defaultValue = "10") Integer size);
 
     @GetMapping("/{userId}/following")
     @ResponseStatus(HttpStatus.OK)
@@ -184,10 +193,14 @@ public interface UserApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    List<UserCompactResponse> getFollowingByUserId(
+    PageResponse<UserCompactResponse> getFollowingByUserId(
             @Parameter(description = "ID пользователя", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable UUID userId,
-            Pageable pageable);
+            @Parameter(description = "Номер страницы", example = "1")
+            @Positive @RequestParam(required = false, defaultValue = "1")
+            Integer page,
+            @Parameter(description = "Размер страницы", example = "10")
+            @RequestParam(required = false, defaultValue = "10") Integer size);
 
     @GetMapping("/{userId}/followers")
     @ResponseStatus(HttpStatus.OK)
@@ -209,8 +222,12 @@ public interface UserApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    List<UserCompactResponse> getFollowersByUserId(
+    PageResponse<UserCompactResponse> getFollowersByUserId(
             @Parameter(description = "ID пользователя", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable UUID userId,
-            Pageable pageable);
+            @Parameter(description = "Номер страницы", example = "1")
+            @Positive @RequestParam(required = false, defaultValue = "1")
+            Integer page,
+            @Parameter(description = "Размер страницы", example = "10")
+            @RequestParam(required = false, defaultValue = "10") Integer size);
 }

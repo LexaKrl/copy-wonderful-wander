@@ -6,6 +6,7 @@ import com.technokratos.util.KafkaTopics;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.config.TopicConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;
@@ -98,9 +99,9 @@ public class KafkaConfig {
     public NewTopic userCreatedEventTopic() {
         return TopicBuilder
                 .name(KafkaTopics.USER_CREATED_TOPIC)
-                .partitions(3)
-                .replicas(3)
-                .configs(Map.of("min.insync.replicas", "2"))
+                .partitions(2)
+                .replicas(2)
+                .configs(Map.of(TopicConfig.MIN_IN_SYNC_REPLICAS_CONFIG, "2"))
                 .build();
     }
 
@@ -108,9 +109,9 @@ public class KafkaConfig {
     public NewTopic userUpdatedEventTopic() {
         return TopicBuilder
                 .name(KafkaTopics.USER_UPDATED_TOPIC)
-                .partitions(3)
-                .replicas(3)
-                .configs(Map.of("min.insync.replicas", "2"))
+                .partitions(2)
+                .replicas(2)
+                .configs(Map.of(TopicConfig.MIN_IN_SYNC_REPLICAS_CONFIG, "2"))
                 .build();
     }
 
@@ -118,9 +119,9 @@ public class KafkaConfig {
     public NewTopic userDeletedEventTopic() {
         return TopicBuilder
                 .name(KafkaTopics.USER_DELETED_TOPIC)
-                .partitions(3)
-                .replicas(3)
-                .configs(Map.of("min.insync.replicas", "2"))
+                .partitions(2)
+                .replicas(2)
+                .configs(Map.of(TopicConfig.MIN_IN_SYNC_REPLICAS_CONFIG, "2"))
                 .build();
     }
 }

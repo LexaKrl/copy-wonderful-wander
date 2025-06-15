@@ -3,8 +3,8 @@ plugins {
     id 'java'
     id 'java-library'
     id 'maven-publish'
-    id 'org.springframework.boot' version "${springBootVersion}"
-    id 'io.spring.dependency-management' version "${dependencyManagementVersion}"
+    id 'org.springframework.boot' version "$springBootVersion"
+    id 'io.spring.dependency-management' version "$dependencyManagementVersion"
 }
 
 group = 'com.technokratos'
@@ -12,6 +12,8 @@ version = '1.0.0'
 
 jar.enabled = true
 bootJar.enabled = false
+
+jar.archiveFileName = "${project.name}.jar"
 
 java {
     toolchain {
@@ -25,12 +27,14 @@ repositories {
 }
 
 dependencies {
-    api "io.minio:minio:${minioVersion}"
-    api 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter'
+
+    api "io.minio:minio:$minioVersion"
 
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-    compileOnly "org.projectlombok:lombok:${lombokVersion}"
-    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    compileOnly "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
 }
 
 publishing {

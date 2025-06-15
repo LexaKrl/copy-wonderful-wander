@@ -1,16 +1,59 @@
 spring:
+  application:
+    name: user-service
+
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB_NAME}
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
+
   liquibase:
     change-log: classpath:/db/changelog/user-service/changelog-master.xml
+
   jooq:
     sql-dialect: postgres
+
   jackson:
     deserialization:
       fail-on-unknown-properties: true
+
+  cloud:
+    consul:
+      host: ${CONSUL_HOST}
+      port: ${CONSUL_PORT}
+      discovery:
+        prefer-ip-address: true
+        instance-id: ${spring.application.name}:${random.value}
+        service-name: ${spring.application.name}
+        register: true
+        register-health-check: true
+
+  kafka:
+    bootstrap-servers: ${KAFKA_HOST_1}:${KAFKA_PORT_1}, ${KAFKA_HOST_2}:${KAFKA_PORT_2}
+    consumer:
+      bootstrap-servers: ${KAFKA_HOST_1}:${KAFKA_PORT_1}, ${KAFKA_HOST_2}:${KAFKA_PORT_2}
+      group-id: avatar-saved-events
+      properties:
+        spring-json-trusted-packages: com.technokratos.event
+    producer:
+      bootstrap-servers: ${KAFKA_HOST_1}:${KAFKA_PORT_1}, ${KAFKA_HOST_2}:${KAFKA_PORT_2}
+      acks: all
+      retries: 10
+      properties:
+        delivery-timeout-ms: 20000
+        linger-ms: 0
+        request-timeout-ms: 10000
+        enable-idempotence: true
+        max-in-flight-requests-per-connection: 5
+
+minio:
+  enabled: true
+  url: http://${MINIO_HOST}:${MINIO_PORT}
+  accessKey: ${MINIO_ROOT_USER}
+  secretKey: ${MINIO_ROOT_PASSWORD}
+  bucket: ww-photos
+  presigned-url-expiration: 600
 
 logging:
   level:
@@ -18,7 +61,9 @@ logging:
     org.jooq: WARN
 
 jwt:
-  access-token-duration: ${ACCESS_TOKEN_DURATION}
-  refresh-token-duration: ${REFRESH_TOKEN_DURATION}
-  time-token-end-soon: ${TIME_TOKEN_END_SOON}
-  secret-key: ${SECRET_KEY}
+  enabled: true
+  secret-key: ${JWT_SECRET_KEY}
+  access-token-duration: ${JWT_ACCESS_TOKEN_DURATION}
+  refresh-token-duration: ${JWT_REFRESH_TOKEN_DURATION}
+  time-token-end-soon: ${JWT_TIME_TOKEN_END_SOON}
+

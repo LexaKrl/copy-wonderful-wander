@@ -19,12 +19,11 @@ public class PhotoController implements PhotoApi {
     private final PhotoService photoService;
 
     @Override
-    public void uploadAvatar(MultipartFile avatar) {
-        UUID userId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
+    public void uploadAvatar(UUID ownerId, MultipartFile avatar) {
         try {
             photoService.saveAvatar(
                     PhotoUploadRequest.builder()
-                            .ownerId(userId)
+                            .ownerId(ownerId)
                             .photoId(UUID.randomUUID())
                             .inputStream(avatar.getInputStream())
                             .filename(avatar.getOriginalFilename())
@@ -38,12 +37,11 @@ public class PhotoController implements PhotoApi {
     }
 
     @Override
-    public PhotoFilenameResponse uploadPhotoOfPost(MultipartFile photo) {
-        UUID userId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
+    public PhotoFilenameResponse uploadPhotoOfPost(UUID ownerId, MultipartFile photo) {
         try {
             return photoService.savePhotoOfPost(
                     PhotoUploadRequest.builder()
-                            .ownerId(userId)
+                            .ownerId(ownerId)
                             .photoId(UUID.randomUUID())
                             .inputStream(photo.getInputStream())
                             .filename(photo.getOriginalFilename())
@@ -57,15 +55,14 @@ public class PhotoController implements PhotoApi {
     }
 
     @Override
-    public void uploadPhotoOfWalk(UUID walkId, MultipartFile photo) {
-        UUID userId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
+    public void uploadPhotoOfWalk(UUID ownerId, UUID walkId, MultipartFile photo) {
         try {
             photoService.savePhotoOfWalk(
                     PhotoOfWalkUploadRequest.builder()
                             .walkId(walkId)
                             .photoUploadRequest(
                                     PhotoUploadRequest.builder()
-                                            .ownerId(userId)
+                                            .ownerId(ownerId)
                                             .photoId(UUID.randomUUID())
                                             .inputStream(photo.getInputStream())
                                             .filename(photo.getOriginalFilename())

@@ -1,6 +1,7 @@
 package com.technokratos.util.mapper;
 
-import com.technokratos.dto.request.security.UserForJwtTokenRequest;
+import com.technokratos.dto.StarterUserInfoForJwt;
+import com.technokratos.dto.UserInfoForJwt;
 import com.technokratos.dto.request.security.UserRegistrationRequest;
 import com.technokratos.dto.response.user.UserCompactResponse;
 import com.technokratos.dto.response.user.UserProfileResponse;
@@ -16,7 +17,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.UUID;
 
 
@@ -24,21 +24,24 @@ import java.util.UUID;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserMapper {
 
-    UserForJwtTokenRequest toJwtUserInfo(UserEntity userEntity);
+    UserInfoForJwt toJwtUserInfo(UserEntity userEntity);
 
-    UserForJwtTokenRequest toJwtUserInfo(UserResponse user);
+    UserInfoForJwt toJwtUserInfo(UserResponse user);
 
-    UserForJwtTokenRequest toJwtUserInfo(UserPrincipal userPrincipal);
+    UserInfoForJwt toJwtUserInfo(UserPrincipal userPrincipal);
 
     UserEntity accountToUserEntity(Account account);
+
+    StarterUserInfoForJwt toStarterUserInfoJwt(UserInfoForJwt userInfoForJwt);
+
+    StarterUserInfoForJwt toStarterUserInfoJwt(UserResponse user);
+
 
     UserEntity userRegistrationRequestToUserEntity(UserRegistrationRequest userRegistrationRequest);
 
     @Mapping(target = "avatarUrl")
     UserResponse toUserResponse(Account account,
                                 String avatarUrl);
-
-    UserResponse toUserResponse(Account account);
 
     @Mapping(target = "isFollowedByUser")
     @Mapping(target = "isFollowingByUser")
@@ -50,7 +53,10 @@ public interface UserMapper {
                                               boolean isFriends,
                                               String avatarUrl);
 
-    List<UserCompactResponse> toUserCompactResponse(List<Account> followersByUserId);
+    @Mapping(target = "avatarUrl")
+    UserCompactResponse toUserCompactResponse(
+            Account followersByUserId,
+            String avatarUrl);
 
     UserCreatedEvent toUserCreatedEvent(Account account);
 

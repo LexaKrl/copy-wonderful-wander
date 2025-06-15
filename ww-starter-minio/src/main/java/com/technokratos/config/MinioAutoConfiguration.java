@@ -3,7 +3,6 @@ package com.technokratos.config;
 import com.technokratos.config.properties.MinioProperties;
 import com.technokratos.service.MinioService;
 import io.minio.MinioClient;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +14,6 @@ import org.springframework.context.annotation.Configuration;
 public class MinioAutoConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean
     public MinioClient minioClient(MinioProperties minioProperties) {
         return MinioClient.builder()
                 .endpoint(minioProperties.getUrl())

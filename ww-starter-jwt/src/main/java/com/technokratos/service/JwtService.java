@@ -1,8 +1,8 @@
-package com.technokratos.service.auth;
+package com.technokratos.service;
 
 import com.technokratos.config.properties.JwtProperties;
-import com.technokratos.dto.request.security.UserForJwtTokenRequest;
-import com.technokratos.enums.security.UserRole;
+import com.technokratos.dto.StarterUserInfoForJwt;
+import com.technokratos.dto.enums.StarterUserRole;
 import com.technokratos.exception.InvalidJwtException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -11,8 +11,6 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -21,14 +19,13 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 
-@Service
 @RequiredArgsConstructor
 @Slf4j
 public class JwtService {
 
     private final JwtProperties jwtProperties;
 
-    public String generateAccessToken(UserForJwtTokenRequest userInfo) {
+    public String generateAccessToken(StarterUserInfoForJwt userInfo) {
         log.info("Access token generating for user: {}", userInfo);
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userInfo.userId());
@@ -77,7 +74,7 @@ public class JwtService {
         return UUID.fromString(userId);
     }
 
-    public UserRole extractUserRole(String token) {
+    public StarterUserRole extractUserRole(String token) {
         Claims claims = extractAllClaims(token);
         String userRole = claims.get("userRole", String.class);
 
@@ -85,7 +82,7 @@ public class JwtService {
             throw new RuntimeException("Role in jwt is null");
         }
 
-        return UserRole.valueOf(userRole);
+        return StarterUserRole.valueOf(userRole);
     }
 
     private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
@@ -106,10 +103,6 @@ public class JwtService {
         }
     }
 
-    public boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-    }
 
     public boolean isTokenExpiredSoon(String token) {
         Date expiration = extractExpiration(token);
