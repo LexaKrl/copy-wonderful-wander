@@ -1,0 +1,11 @@
+package com.technokratos;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class PhotoManagementServiceApplicationTests {
+    @Test
+    void contextLoads() {
+    }
+}

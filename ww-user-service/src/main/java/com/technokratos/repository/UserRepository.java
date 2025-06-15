@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -34,7 +33,7 @@ public class UserRepository {
     }
 
     public Optional<Account> findByUsername(String username) {
-        log.info("findByUsername doing..");
+        log.info("UserRepository: findByUsername() doing...");
         return dsl
                 .selectFrom(Tables.ACCOUNT)
                 .where(Tables.ACCOUNT.USERNAME.eq(username))
@@ -42,7 +41,15 @@ public class UserRepository {
                 .map(record -> record.into(Account.class));
     }
 
-    public List<Account> getFriendsByUserId(UUID userId, Pageable pageable) {
+    public Optional<Object> findByEmail(String email) {
+        return dsl
+                .selectFrom(Tables.ACCOUNT)
+                .where(Tables.ACCOUNT.EMAIL.eq(email))
+                .fetchOptional()
+                .map(record -> record.into(Account.class));
+    }
+
+    public List<Account> getFriendsByUserId(UUID userId, int limit, int offset) {
         val ur1 = Tables.USER_RELATIONSHIPS.as("ur1");
         val ur2 = Tables.USER_RELATIONSHIPS.as("ur2");
         return dsl.select(Tables.ACCOUNT.fields())
@@ -59,13 +66,13 @@ public class UserRepository {
                         .asTable("friends"))
                 .on(Tables.ACCOUNT.USER_ID.eq(DSL.field(DSL.name("friends", "friend_id"), UUID.class)))
                 .orderBy(DSL.field(DSL.name("friends", "friendship_date")).asc())
-                .limit(pageable.getPageSize())
-                .offset(pageable.getOffset())
+                .limit(limit)
+                .offset(offset)
                 .fetch()
                 .into(Account.class);
     }
 
-    public List<Account> getFollowersByUserId(UUID userId, Pageable pageable) {
+    public List<Account> getFollowersByUserId(UUID userId, int limit, int offset) {
         val ur = Tables.USER_RELATIONSHIPS.as("ur");
         return dsl
                 .select(Tables.ACCOUNT.fields())
@@ -78,13 +85,13 @@ public class UserRepository {
                 )
                 .on(Tables.ACCOUNT.USER_ID.eq(DSL.field(DSL.name("follows", "user_id"), UUID.class)))
                 .orderBy(DSL.field(DSL.name("follows", "created_at")).asc())
-                .limit(pageable.getPageSize())
-                .offset(pageable.getOffset())
+                .limit(limit)
+                .offset(offset)
                 .fetch()
                 .into(Account.class);
     }
 
-    public List<Account> getFollowingByUserId(UUID userId, Pageable pageable) {
+    public List<Account> getFollowingByUserId(UUID userId, int limit, int offset) {
         val ur = Tables.USER_RELATIONSHIPS.as("ur");
         return dsl
                 .select(Tables.ACCOUNT.fields())
@@ -98,8 +105,8 @@ public class UserRepository {
                 )
                 .on(Tables.ACCOUNT.USER_ID.eq(DSL.field(DSL.name("followings", "target_user_id"), UUID.class)))
                 .orderBy(DSL.field(DSL.name("followings", "created_at")).asc())
-                .limit(pageable.getPageSize())
-                .offset(pageable.getOffset())
+                .limit(limit)
+                .offset(offset)
                 .fetch()
                 .into(Account.class);
     }
@@ -186,5 +193,63 @@ public class UserRepository {
                 .returning()
                 .fetchOptional()
                 .map(record -> record.into(Account.class));
+    }
+
+    public void saveFilenameByUserId(UUID userId, String filename) {
+        dsl
+                .update(Tables.ACCOUNT)
+                .set(Tables.ACCOUNT.AVATAR_FILENAME, filename)
+                .where(Tables.ACCOUNT.USER_ID.eq(userId))
+                .execute();
+    }
+
+    public Integer getCountFollowersByUserId(UUID userId) {
+        val ur = Tables.USER_RELATIONSHIPS.as("ur");
+        return dsl
+                .selectCount()
+                .from(Tables.ACCOUNT)
+                .innerJoin(
+                        dsl.select(ur.USER_ID, ur.CREATED_AT)
+                                .from(ur)
+                                .where(ur.TARGET_USER_ID.eq(userId))
+                                .asTable("follows")
+                )
+                .on(Tables.ACCOUNT.USER_ID.eq(DSL.field(DSL.name("follows", "user_id"), UUID.class)))
+                .fetchOneInto(Integer.class);
+    }
+
+    public Integer getCountFriendsByUserId(UUID userId) {
+        val ur1 = Tables.USER_RELATIONSHIPS.as("ur1");
+        val ur2 = Tables.USER_RELATIONSHIPS.as("ur2");
+        return dsl.selectCount()
+                .from(Tables.ACCOUNT)
+                .innerJoin(dsl.select(
+                                ur1.TARGET_USER_ID.as("friend_id"),
+                                DSL.greatest(ur1.CREATED_AT, ur2.CREATED_AT).as("friendship_date")
+                        )
+                        .from(ur1)
+                        .innerJoin(ur2)
+                        .on(ur1.TARGET_USER_ID.eq(ur2.USER_ID))
+                        .and(ur2.TARGET_USER_ID.eq(ur1.USER_ID))
+                        .where(ur1.USER_ID.eq(userId))
+                        .asTable("friends"))
+                .on(Tables.ACCOUNT.USER_ID.eq(DSL.field(DSL.name("friends", "friend_id"), UUID.class)))
+                .fetchOneInto(Integer.class);
+    }
+
+    public Integer getCountFollowingByUserId(UUID userId) {
+        val ur = Tables.USER_RELATIONSHIPS.as("ur");
+        return dsl
+                .selectCount()
+                .from(Tables.ACCOUNT)
+                .innerJoin(
+                        dsl.select(ur.TARGET_USER_ID, ur.CREATED_AT
+                                )
+                                .from(ur)
+                                .where(ur.USER_ID.eq(userId))
+                                .asTable("followings")
+                )
+                .on(Tables.ACCOUNT.USER_ID.eq(DSL.field(DSL.name("followings", "target_user_id"), UUID.class)))
+                .fetchOneInto(Integer.class);
     }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @SuperBuilder
 @Schema(description = "Сообщение об ошибке валидации DTO или параметров запроса")
-public class ValidationExceptionMessage extends AbstractExceptionMessage {
+public class ValidationExceptionMessage extends BaseExceptionMessage {
     @Schema(description = "Список нарушений валидации по полям")
     private List<Violation> violations;
 

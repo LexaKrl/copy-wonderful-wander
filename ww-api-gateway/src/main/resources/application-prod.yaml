@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: api-gateway
+
+  main:
+    web-application-type: reactive
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/**, /api/auth/**
+          filters:
+            - JwtAuthentication
+        - id: photo-management-service
+          uri: lb://photo-management-service
+          predicates:
+            - Path=/api/photos/**
+          filters:
+            - JwtAuthentication
+
+    consul:
+      host: ${CONSUL_HOST}
+      port: ${CONSUL_PORT}
+      discovery:
+        prefer-ip-address: true
+        instance-id: ${spring.application.name}:${random.value}
+        service-name: ${spring.application.name}
+        register: true
+        register-health-check: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+jwt:
+  enabled: true
+  secret-key: ${JWT_SECRET_KEY}
+  access-token-duration: ${JWT_ACCESS_TOKEN_DURATION}
+  refresh-token-duration: ${JWT_REFRESH_TOKEN_DURATION}
+  time-token-end-soon: ${JWT_TIME_TOKEN_END_SOON}

@@ -1,16 +1,20 @@
 package com.technokratos.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.technokratos.dto.exception.BaseExceptionMessage;
+import com.technokratos.dto.exception.ValidationExceptionMessage;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
+@Slf4j
 public class ErrorResponse {
     private ErrorResponse() {}
 
@@ -18,15 +22,22 @@ public class ErrorResponse {
     public static void sendErrorResponse(HttpServletResponse response,
                                          HttpStatus status,
                                          Throwable exception) throws IOException {
+
+
         response.setStatus(status.value());
-        response.setContentType("application/json");
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-        Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("timestamp", LocalDateTime.now().toString());
-        errorResponse.put("error", exception.getClass().getSimpleName());
-        errorResponse.put("message", exception.getMessage());
+        BaseExceptionMessage errorResponse = BaseExceptionMessage.builder()
+                .status(status.value())
+                .error(exception.getClass().getSimpleName())
+                .message(exception.getMessage())
+                .build();
 
-        new ObjectMapper().writeValue(response.getWriter(), errorResponse);
+
+        ObjectMapper objectMapper = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        objectMapper.writeValue(response.getWriter(), errorResponse);
     }
-
 }

@@ -1,0 +1,58 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: photo-management-service
+
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 30MB
+
+  datasource:
+    username:
+    password:
+    url:
+    driver-class-name: org.postgresql.Driver
+
+  liquibase:
+    change-log: classpath:/db/changelog/photo-management-service/changelog-master.xml
+
+  cloud:
+    consul:
+      enabled: false
+      host: localhost
+      port: 8500
+      discovery:
+        prefer-ip-address: true
+        instance-id: ${spring.application.name}:${random.value}
+        service-name: ${spring.application.name}
+        register: true
+        register-health-check: true
+
+  kafka:
+    bootstrap-servers: localhost:9092, localhost:9094
+    producer:
+      bootstrap-servers: localhost:9092, localhost:9094
+      acks: all # Требуем подтверждения от всех синхронизированных брокеров с лидером партиции
+      retries: 10 # Максимальное количество retry
+      properties:
+        delivery-timeout-ms: 20000 # Максимальное время от отправки до получения ack - 20 секунд
+        linger-ms: 0 # Работаем без батч-режима, каждое сообщение отдаем по одному
+        request-timeout-ms: 10000 # Максимальное время ожидания ответа от брокера - 10 секунд
+        enable-idempotence: true # Идемпотентность продюсера
+        max-in-flight-requests-per-connection: 5 # Максимальное количество запросов без ответа
+
+minio:
+  enabled: true
+  url:
+  accessKey:
+  secretKey:
+  bucket: ww-photos
+  presigned-url-expiration: 600
+
+logging:
+  level:
+    org.springframework: info
+

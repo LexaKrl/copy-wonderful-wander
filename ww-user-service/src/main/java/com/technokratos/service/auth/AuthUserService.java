@@ -1,16 +1,16 @@
 package com.technokratos.service.auth;
 
+import com.technokratos.dto.exception.ValidationExceptionMessage;
 import com.technokratos.dto.request.security.PasswordChangeRequest;
-import com.technokratos.dto.request.security.UserForJwtTokenRequest;
+import com.technokratos.dto.UserInfoForJwt;
 import com.technokratos.dto.request.security.UserLoginRequest;
 import com.technokratos.dto.request.security.UserRegistrationRequest;
 import com.technokratos.dto.response.security.AuthResponse;
 import com.technokratos.enums.security.UserRole;
-import com.technokratos.exception.PasswordNotMatchException;
-import com.technokratos.exception.UserByIdNotFoundException;
-import com.technokratos.exception.UsernameNotUniqueException;
+import com.technokratos.exception.*;
 import com.technokratos.model.UserEntity;
 import com.technokratos.model.UserPrincipal;
+import com.technokratos.producer.UserEventProducer;
 import com.technokratos.repository.UserRepository;
 import com.technokratos.tables.pojos.Account;
 import com.technokratos.util.mapper.UserMapper;
@@ -22,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -35,28 +36,31 @@ public class AuthUserService {
     private final JwtProvider jwtProvider;
     private final UserMapper userMapper;
     private final MyUserDetailsService userDetailsService;
+    private final UserEventProducer userEventProducer;
 
-
-    public AuthResponse register(UserRegistrationRequest userDto) {
+    public AuthResponse register(UserRegistrationRequest userRegistrationRequest) {
         log.info("user service register doing");
 
-        if (!userDto.password().equals(userDto.duplicatePassword())) {
-            throw new PasswordNotMatchException("Passwords don't match");
+        if (userRepository.findByUsername(userRegistrationRequest.username()).isPresent()) {
+            throw new UsernameNotUniqueException(userRegistrationRequest.username());
         }
 
-        if (userRepository.findByUsername(userDto.username()).isPresent()) {
-            throw new UsernameNotUniqueException(userDto.username());
+        if (userRepository.findByEmail(userRegistrationRequest.email()).isPresent()) {
+            throw new EmailNotUniqueException(userRegistrationRequest.email());
         }
 
-        UserEntity user = userMapper.userRegistrationRequestToUserEntity(userDto);
+        UserEntity user = userMapper.userRegistrationRequestToUserEntity(userRegistrationRequest);
 
         user.setUserId(UUID.randomUUID());
         user.setRole(UserRole.ROLE_USER);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         userRepository.save(user);
+        Account newUser = userRepository.findByUsername(userRegistrationRequest.username())
+                .orElseThrow(() -> new UserByUsernameNotFoundException(userRegistrationRequest.username()));
+        userEventProducer.sendUserCreatedEvent(userMapper.toUserCreatedEvent(newUser));
 
-        UserForJwtTokenRequest userInfo = userMapper.toJwtUserInfo(user);
+        UserInfoForJwt userInfo = userMapper.toJwtUserInfo(user);
         return jwtProvider.generateTokens(userInfo);
     }
 
@@ -68,10 +72,11 @@ public class AuthUserService {
                         userDto.password()));
         if (authentication.isAuthenticated()) {
             UserPrincipal user = (UserPrincipal) userDetailsService.loadUserByUsername(userDto.username());
-            UserForJwtTokenRequest userInfo = userMapper.toJwtUserInfo(user);
+            UserInfoForJwt userInfo = userMapper.toJwtUserInfo(user);
+            log.info("auth service verify user data: {}", user);
             return jwtProvider.generateTokens(userInfo);
         }
-        throw new RuntimeException("User is not authenticated");
+        throw new UnauthorizedException("User is not authenticated");
     }
 
     public void changePassword(UUID userId, PasswordChangeRequest passwordChangeRequest) {
@@ -81,7 +86,7 @@ public class AuthUserService {
         Account account = userRepository.findById(userId)
                 .orElseThrow(() -> new UserByIdNotFoundException(userId));
 
-        if (!passwordEncoder.matches(oldPassword, account.getPassword())){
+        if (!passwordEncoder.matches(oldPassword, account.getPassword())) {
             throw new PasswordNotMatchException("The old password doesn't match");
         }
 

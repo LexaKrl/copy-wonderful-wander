@@ -1,6 +1,2 @@
 jar.enabled = true
 bootJar.enabled = false
-
-dependencies {
-    implementation project(':ww-api')
-}
