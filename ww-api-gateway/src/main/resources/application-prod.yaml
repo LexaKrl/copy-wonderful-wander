@@ -12,12 +12,23 @@ spring:
           enabled: true
           lower-case-service-id: true
       routes:
+        - id: user-service-swagger
+          uri: lb://user-service
+          predicates:
+            - Path=/users/**
+
+        - id: photo-management-swagger
+          uri: lb://photo-management-service
+          predicates:
+            - Path=/photos/**
+
         - id: user-service
           uri: lb://user-service
           predicates:
             - Path=/api/users/**, /api/auth/**
           filters:
             - JwtAuthentication
+
         - id: photo-management-service
           uri: lb://photo-management-service
           predicates:
@@ -34,6 +45,19 @@ spring:
         service-name: ${spring.application.name}
         register: true
         register-health-check: true
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      - name: user-service
+        url: /users/v3/api-docs
+      - name: photo-management-service
+        url: /photos/v3/api-docs
 
 management:
   endpoints:

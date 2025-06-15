@@ -19,11 +19,11 @@ public record WalkDataResponse(
         Integer meters,
 
         @Schema(
-                description = "String UUID.jpeg(example) of photos uploaded by user. When client uploads a photo he receives a photo UUID",
+                description = "Links of photos uploaded by user",
                 example = """
-                        "a1e5f6d4-e2f3-4a8b-eb5c-1e2f3a4b5c6d",
-                        "ad4d3a54-e5f6-47ab-9c0d-1b5c3a4b3a4d",
-                        "a1bb5cd4-e5f6-4c8b-9c0d-13a43a4b5c6d"
+                        "http://example.com/123",
+                        "http://example.com/456",
+                        "http://example.com/789"
                         """
         )
         List<String> photos,

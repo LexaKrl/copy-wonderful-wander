@@ -4,7 +4,6 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 @Component
 public class RouteValidator {
@@ -12,9 +11,6 @@ public class RouteValidator {
             "/api/auth/register",
             "/api/auth/login",
             "/api/auth/refresh-token",
-            "/swagger-ui/**",
-            "/v3/api-docs/**",
-            "/swagger-ui.html",
             "/actuator/**",
             "/error"
     );

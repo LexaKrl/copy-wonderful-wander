@@ -47,6 +47,17 @@ spring:
         enable-idempotence: true
         max-in-flight-requests-per-connection: 5
 
+springdoc:
+  api-docs:
+    enabled: true
+    path: /users/v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /users/swagger-ui.html
+
+swagger:
+  server-url: ${SWAGGER_SERVER_URL}
+
 minio:
   enabled: true
   url: http://${MINIO_HOST}:${MINIO_PORT}

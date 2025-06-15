@@ -151,9 +151,7 @@ public interface UserApi {
             description = "Возвращает список друзей пользователя с пагинацией и сортировкой в порядке от старых друзей к новым"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Список друзей успешно получен",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = UserCompactResponse.class))),
+            @ApiResponse(responseCode = "200", description = "Список друзей успешно получен"),
             @ApiResponse(responseCode = "400", description = "Ошибка валидации",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ValidationExceptionMessage.class))),
@@ -180,9 +178,7 @@ public interface UserApi {
             description = "Возвращает список пользователей, на которых подписан указанный пользователь в порядке от старых подписок к новым"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Список подписок успешно получен",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = UserCompactResponse.class))),
+            @ApiResponse(responseCode = "200", description = "Список подписок успешно получен"),
             @ApiResponse(responseCode = "400", description = "Ошибка валидации",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ValidationExceptionMessage.class))),
@@ -209,9 +205,7 @@ public interface UserApi {
             description = "Возвращает список пользователей, которые подписаны на данного пользователя в порядке от старых подписок к новым"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Список подписчиков успешно получен",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = UserProfileResponse.class))),
+            @ApiResponse(responseCode = "200", description = "Список подписчиков успешно получен"),
             @ApiResponse(responseCode = "400", description = "Ошибка валидации",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ValidationExceptionMessage.class))),

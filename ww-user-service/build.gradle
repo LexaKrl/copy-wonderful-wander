@@ -28,6 +28,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-jooq'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$openApiVersion"
 
     implementation 'org.jooq:jooq-codegen'
     jooqGenerator "org.jooq:jooq-meta-extensions-liquibase:$jooqMetaExtensionsLiquibase"
