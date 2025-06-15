@@ -66,8 +66,8 @@ public class UserRepository {
                         .asTable("friends"))
                 .on(Tables.ACCOUNT.USER_ID.eq(DSL.field(DSL.name("friends", "friend_id"), UUID.class)))
                 .orderBy(DSL.field(DSL.name("friends", "friendship_date")).asc())
-                .limit(pageable.getPageSize())
-                .offset(pageable.getOffset())
+                .limit(limit)
+                .offset(offset)
                 .fetch()
                 .into(Account.class);
     }
