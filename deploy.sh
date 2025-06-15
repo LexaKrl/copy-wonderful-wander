@@ -21,8 +21,8 @@ ssh -o "StrictHostKeyChecking=no" $SSH
 ssh "$SSH" "sudo docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY"
 ssh "$SSH" "sudo rm -rf wonderful-wander || echo 0"
 ssh "$SSH" "git clone git@gitlab.com:wonderful-wander-team/wonderful-wander.git"
-
 ssh "$SSH" "cd ~/wonderful-wander/ && git checkout $BRANCH"
+
 scp ./env/.api-gateway.env "$SSH":~/wonderful-wander/env
 scp ./env/.user-service.env "$SSH":~/wonderful-wander/env
 scp ./env/.photo-management-service.env "$SSH":~/wonderful-wander/env
