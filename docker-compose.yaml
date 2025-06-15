@@ -51,7 +51,7 @@ services:
       - "9000:9000"
       - "9001:9001"
     env_file:
-      - .env/.user-service.env
+      - env/.user-service.env
     volumes:
       - minio-storage:/data
     networks:
@@ -68,7 +68,7 @@ services:
   postgres-user-service:
     image: postgres:15-alpine
     env_file:
-      - .env/.user-service.env
+      - env/.user-service.env
     volumes:
       - postgres-user-service:/var/lib/postgresql/data
     networks:
@@ -77,7 +77,7 @@ services:
   postgres-photo-management-service:
     image: postgres:15-alpine
     env_file:
-      - .env/.photo-management-service.env
+      - env/.photo-management-service.env
     volumes:
       - postgres-photo-management-service:/var/lib/postgresql/data
     networks:
@@ -87,7 +87,7 @@ services:
     container_name: api-gateway
     image: registry.gitlab.com/wonderful-wander-team/wonderful-wander/ww-api-gateway
     env_file:
-      - .env/.api-gateway.env
+      - env/.api-gateway.env
     ports:
       - "8080:8080"
     depends_on:
@@ -99,7 +99,7 @@ services:
     container_name: user-service
     image: registry.gitlab.com/wonderful-wander-team/wonderful-wander/ww-user-service
     env_file:
-      - .env/.user-service.env
+      - env/.user-service.env
     depends_on:
       - kafka-1
       - kafka-2
@@ -113,7 +113,7 @@ services:
     container_name: photo-management-service
     image: registry.gitlab.com/wonderful-wander-team/wonderful-wander/ww-photo-management-service
     env_file:
-      - .env/.photo-management-service.env
+      - env/.photo-management-service.env
     depends_on:
       - kafka-1
       - kafka-2
