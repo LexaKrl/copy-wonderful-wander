@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "spring.kafka.consumer")
 public class KafkaConsumerProperties {
-    private String bootstrapServers;
     private String groupId;
     private Properties properties;
 

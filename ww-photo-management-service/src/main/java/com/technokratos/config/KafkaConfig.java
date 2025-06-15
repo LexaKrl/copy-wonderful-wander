@@ -24,7 +24,6 @@ public class KafkaConfig {
     public Map<String, Object> producerConfigs(KafkaProducerProperties kafkaProducerProperties) {
         Map<String, Object> config = new HashMap<>();
 
-        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProducerProperties.getBootstrapServers());
         config.put(ProducerConfig.ACKS_CONFIG, kafkaProducerProperties.getAcks());
         config.put(ProducerConfig.RETRIES_CONFIG, kafkaProducerProperties.getRetries());
         config.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, kafkaProducerProperties.getProperties().getDeliveryTimeoutMs());
