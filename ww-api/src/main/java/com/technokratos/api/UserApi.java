@@ -5,6 +5,7 @@ import com.technokratos.dto.exception.ValidationExceptionMessage;
 import com.technokratos.dto.request.user.UserRequest;
 import com.technokratos.dto.response.PageResponse;
 import com.technokratos.dto.response.user.UserCompactResponse;
+import com.technokratos.dto.response.user.UserForPostResponse;
 import com.technokratos.dto.response.user.UserProfileResponse;
 import com.technokratos.dto.response.user.UserResponse;
 import com.technokratos.util.HttpHeaders;
@@ -21,6 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Tag(
@@ -230,4 +232,12 @@ public interface UserApi {
             Integer page,
             @Parameter(description = "Размер страницы", example = "10")
             @RequestParam(required = false, defaultValue = "10") Integer size);
+
+
+    @GetMapping("/{userId}/tech")
+    UserForPostResponse getUserById(@PathVariable UUID userId);
+
+    @GetMapping("/{userId}/friends/tech")
+    List<UUID> getFriendsByUserId(@PathVariable UUID userId);
+
 }

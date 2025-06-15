@@ -6,6 +6,7 @@ import com.technokratos.enums.PhotoVisibility;
 import com.technokratos.enums.WalkVisibility;
 import com.technokratos.model.UserEntity;
 import com.technokratos.tables.pojos.Account;
+import io.micrometer.common.KeyValues;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -268,5 +269,31 @@ public class UserRepository {
                                                 .and(Tables.USER_RELATIONSHIPS.TARGET_USER_ID.eq(userId)))
                         )
         );
+    }
+
+    public List<Account> getFriendsForPostByUserId(UUID userId) {
+
+        val ur1 = Tables.USER_RELATIONSHIPS.as("ur1");
+        val ur2 = Tables.USER_RELATIONSHIPS.as("ur2");
+
+        return dsl.select(Tables.ACCOUNT.fields())
+                .from(Tables.ACCOUNT)
+                .innerJoin(
+                        dsl.select(
+                                        ur1.TARGET_USER_ID.as("friend_id"),
+                                        DSL.greatest(ur1.CREATED_AT, ur2.CREATED_AT).as("friendship_date")
+                                )
+                                .from(ur1)
+                                .innerJoin(ur2)
+                                .on(ur1.TARGET_USER_ID.eq(ur2.USER_ID))
+                                .and(ur2.TARGET_USER_ID.eq(ur1.USER_ID))
+                                .where(ur1.USER_ID.eq(userId))
+                                .asTable("friends")
+                )
+                .on(Tables.ACCOUNT.USER_ID.eq(DSL.field(DSL.name("friends", "friend_id"), UUID.class)))
+                .orderBy(DSL.field(DSL.name("friends", "friendship_date")).asc())
+                .fetch()
+                .into(Account.class);
+
     }
 }

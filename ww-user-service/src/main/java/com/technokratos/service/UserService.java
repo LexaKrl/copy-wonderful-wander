@@ -3,6 +3,7 @@ package com.technokratos.service;
 import com.technokratos.dto.request.user.UserRequest;
 import com.technokratos.dto.response.PageResponse;
 import com.technokratos.dto.response.user.UserCompactResponse;
+import com.technokratos.dto.response.user.UserForPostResponse;
 import com.technokratos.dto.response.user.UserProfileResponse;
 import com.technokratos.dto.response.user.UserResponse;
 import com.technokratos.event.FriendshipUpdateEvent;
@@ -36,6 +37,12 @@ public class UserService {
         Account account = userRepository.findById(userId).orElseThrow(() -> new UserByIdNotFoundException(userId));
         String avatarUrl = minioService.getPresignedUrl(account.getAvatarFilename());
         return userMapper.toUserResponse(account, avatarUrl);
+    }
+
+    public UserForPostResponse getUserForPostById(UUID userId) {
+        Account account = userRepository.findById(userId).orElseThrow(() -> new UserByIdNotFoundException(userId));
+        log.info("account: {}", account);
+        return userMapper.toUserForPostResponse(account);
     }
 
     public UserResponse getUserByUsername(String username) {
@@ -190,5 +197,15 @@ public class UserService {
 
     private boolean checkOnFollow(UUID userId, UUID targetId) {
         return userRepository.existsFollow(userId, targetId);
+    }
+
+    public List<UUID> getFriendsForPostByUserId(UUID userId) {
+        if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(userId);
+
+        return userRepository
+                .getFriendsForPostByUserId(userId)
+                .stream()
+                .map(Account::getUserId)
+                .toList();
     }
 }
