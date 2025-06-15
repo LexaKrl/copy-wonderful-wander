@@ -4,6 +4,7 @@ import com.technokratos.dto.exception.BaseExceptionMessage;
 import com.technokratos.dto.exception.ValidationExceptionMessage;
 import com.technokratos.dto.request.post.CommentRequest;
 import com.technokratos.dto.response.comment.*;
+import com.technokratos.util.HttpHeaders;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -45,6 +46,7 @@ public interface CommentApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
     List<RootCommentResponse> getCommentsByPostId(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable String postId,
             Pageable pageable);
@@ -67,6 +69,7 @@ public interface CommentApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
     CommentHierarchyResponse getCommentById(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable String postId,
             @Parameter(description = "ID комментария", example = "550e8400-e29b-41d4-a716-446655440000")
@@ -90,6 +93,7 @@ public interface CommentApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
     CommentResponse createComment(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable String postId,
             @Parameter(description = "Данные комментария", required = true)
@@ -116,6 +120,7 @@ public interface CommentApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
     CommentResponse updateComment(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable String postId,
             @Parameter(description = "ID комментария", example = "550e8400-e29b-41d4-a716-446655440000")
@@ -139,6 +144,7 @@ public interface CommentApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
     void deleteComment(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable String postId,
             @Parameter(description = "ID комментария", example = "550e8400-e29b-41d4-a716-446655440000")

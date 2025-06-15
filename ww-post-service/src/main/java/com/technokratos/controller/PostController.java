@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RestController;
 import com.technokratos.service.PostService;
 
+import java.awt.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,62 +23,58 @@ public class PostController implements PostApi {
 
 
     @Override
-    public List<PostResponse> getRecommendedPosts(Pageable pageable) {
-        return postService.getRecommendedPosts(getCurrentUserId(), pageable);
+    public List<PostResponse> getRecommendedPosts(String currentUserId, Pageable pageable) {
+        return postService.getRecommendedPosts(currentUserId, pageable);
     }
 
     @Override
-    public List<PostResponse> getCurrentUserPosts(Pageable pageable) {
-        return postService.getPostsByUserId(getCurrentUserId(), getCurrentUserId(), pageable);
+    public List<PostResponse> getCurrentUserPosts(String currentUserId, Pageable pageable) {
+        return postService.getPostsByUserId(currentUserId, currentUserId, pageable);
     }
 
     @Override
-    public List<PostResponse> getCurrentUserSavedPosts(Pageable pageable) {
-        return postService.getSavedPostsByUserId(getCurrentUserId(), getCurrentUserId(), pageable);
+    public List<PostResponse> getCurrentUserSavedPosts(String currentUserId, Pageable pageable) {
+        return postService.getSavedPostsByUserId(currentUserId, currentUserId, pageable);
     }
 
     @Override
-    public List<PostResponse> getPostsByUserId(String userId, Pageable pageable) {
+    public List<PostResponse> getPostsByUserId(String currentUserId, String userId, Pageable pageable) {
         log.info("controller getPostsByUserId, data: {}", userId);
-        return postService.getPostsByUserId(getCurrentUserId(), userId, pageable);
+        return postService.getPostsByUserId(currentUserId, userId, pageable);
     }
 
     @Override
-    public List<PostResponse> getSavedPostsByUserId(String userId, Pageable pageable) {
-        return postService.getSavedPostsByUserId(getCurrentUserId(), userId, pageable);
+    public List<PostResponse> getSavedPostsByUserId(String currentUserId, String userId, Pageable pageable) {
+        return postService.getSavedPostsByUserId(currentUserId, userId, pageable);
     }
 
     @Override
-    public PostResponse getPostById(String postId) {
-        return postService.getPostById(getCurrentUserId(), postId);
+    public PostResponse getPostById(String currentUserId, String postId) {
+        return postService.getPostById(currentUserId, postId);
     }
 
     @Override
-    public PostResponse createPost(PostRequest createPostRequest) {
-        return postService.create(getCurrentUserId(), createPostRequest);
+    public PostResponse createPost(String currentUserId, PostRequest createPostRequest) {
+        return postService.create(currentUserId, createPostRequest);
     }
 
     @Override
-    public PostResponse updatePost(String postId, PostRequest updatePostRequest) {
-        return postService.update(getCurrentUserId(), postId, updatePostRequest);
+    public PostResponse updatePost(String currentUserId, String postId, PostRequest updatePostRequest) {
+        return postService.update(currentUserId, postId, updatePostRequest);
     }
 
     @Override
-    public void deletePost(String postId) {
-        postService.delete(getCurrentUserId(), postId);
+    public void deletePost(String currentUserId, String postId) {
+        postService.delete(currentUserId, postId);
     }
 
     @Override
-    public UUID savePost(String postId) {
-        return postService.savePost(getCurrentUserId(), postId);
+    public UUID savePost(String currentUserId, String postId) {
+        return postService.savePost(currentUserId, postId);
     }
 
     @Override
-    public void deleteSavedPost(String postId) {
-        postService.deleteSavedPost(getCurrentUserId(), postId);
-    }
-
-    private String getCurrentUserId() {
-        return "00000000-0000-0000-0000-000000000001";
+    public void deleteSavedPost(String currentUserId, String postId) {
+        postService.deleteSavedPost(currentUserId, postId);
     }
 }

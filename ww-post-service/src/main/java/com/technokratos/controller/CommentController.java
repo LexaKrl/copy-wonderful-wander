@@ -18,31 +18,27 @@ public class CommentController implements CommentApi {
     private final CommentService commentService;
 
     @Override
-    public List<RootCommentResponse> getCommentsByPostId(String postId, Pageable pageable) {
-        return commentService.getCommentsByPostId(getCurrentUserId(), postId);
+    public List<RootCommentResponse> getCommentsByPostId(String currentUserId, String postId, Pageable pageable) {
+        return commentService.getCommentsByPostId(currentUserId, postId);
     }
 
     @Override
-    public CommentHierarchyResponse getCommentById(String postId, String commentId) {
-        return commentService.getCommentById(getCurrentUserId(), postId, commentId);
+    public CommentHierarchyResponse getCommentById(String currentUserId, String postId, String commentId) {
+        return commentService.getCommentById(currentUserId, postId, commentId);
     }
 
     @Override
-    public CommentResponse createComment(String postId, CommentRequest commentRequest) {
-        return commentService.createComment(getCurrentUserId(), postId, commentRequest);
+    public CommentResponse createComment(String currentUserId, String postId, CommentRequest commentRequest) {
+        return commentService.createComment(currentUserId, postId, commentRequest);
     }
 
     @Override
-    public CommentResponse updateComment(String postId, String commentId, CommentRequest commentRequest) {
-        return commentService.updateComment(getCurrentUserId(), postId, commentId, commentRequest);
+    public CommentResponse updateComment(String currentUserId, String postId, String commentId, CommentRequest commentRequest) {
+        return commentService.updateComment(currentUserId, postId, commentId, commentRequest);
     }
 
     @Override
-    public void deleteComment(String postId, String commentId) {
-        commentService.deleteComment(getCurrentUserId(), postId, commentId);
-    }
-
-    private String getCurrentUserId() {
-        return "00000000-0000-0000-0000-000000000001";
+    public void deleteComment(String currentUserId, String postId, String commentId) {
+        commentService.deleteComment(currentUserId, postId, commentId);
     }
 }

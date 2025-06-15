@@ -4,6 +4,7 @@ import com.technokratos.dto.exception.BaseExceptionMessage;
 import com.technokratos.dto.exception.ValidationExceptionMessage;
 import com.technokratos.dto.request.post.PostRequest;
 import com.technokratos.dto.response.post.PostResponse;
+import com.technokratos.util.HttpHeaders;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -39,7 +40,8 @@ public interface PostApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    List<PostResponse> getRecommendedPosts(Pageable pageable);
+    List<PostResponse> getRecommendedPosts(@Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
+                                           Pageable pageable);
 
     @GetMapping("/me")
     @ResponseStatus(HttpStatus.OK)
@@ -52,7 +54,8 @@ public interface PostApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    List<PostResponse> getCurrentUserPosts(Pageable pageable);
+    List<PostResponse> getCurrentUserPosts(@Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
+                                           Pageable pageable);
 
     @GetMapping("/saved")
     @ResponseStatus(HttpStatus.OK)
@@ -64,7 +67,8 @@ public interface PostApi {
             @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))    })
-    List<PostResponse> getCurrentUserSavedPosts(Pageable pageable);
+    List<PostResponse> getCurrentUserSavedPosts(@Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
+                                                Pageable pageable);
 
     @GetMapping("/users/{userId}/posts")
     @ResponseStatus(HttpStatus.OK)
@@ -84,6 +88,7 @@ public interface PostApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
                     })
     List<PostResponse> getPostsByUserId(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
             @Parameter(description = "ID пользователя", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable String userId,
             Pageable pageable);
@@ -103,6 +108,7 @@ public interface PostApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
             })
     List<PostResponse> getSavedPostsByUserId(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
             @Parameter(description = "ID пользователя", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable String userId,
             Pageable pageable);
@@ -122,6 +128,7 @@ public interface PostApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
                     })
     PostResponse getPostById(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable String postId);
 
@@ -140,6 +147,7 @@ public interface PostApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
     PostResponse createPost(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
             @Parameter(description = "Данные для создания поста", required = true)
             @RequestBody @Validated PostRequest createPostRequest);
 
@@ -164,6 +172,7 @@ public interface PostApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
                     })
     PostResponse updatePost(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable String postId,
             @Parameter(description = "Данные для обновления поста", required = true)
@@ -188,6 +197,7 @@ public interface PostApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
             })
     void deletePost(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable String postId);
 
@@ -211,8 +221,10 @@ public interface PostApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    UUID savePost(@Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-                  @PathVariable String postId);
+    UUID savePost(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
+            @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
+            @PathVariable String postId);
 
     @DeleteMapping("/saved/{postId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -232,6 +244,8 @@ public interface PostApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    void deleteSavedPost(@Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-                         @PathVariable String postId);
+    void deleteSavedPost(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
+            @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
+            @PathVariable String postId);
 }

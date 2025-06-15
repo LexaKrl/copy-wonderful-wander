@@ -5,6 +5,7 @@ import com.technokratos.dto.exception.ValidationExceptionMessage;
 import com.technokratos.dto.response.post.LikeResponse;
 import com.technokratos.dto.response.post.PostResponse;
 import com.technokratos.dto.response.user.UserCompactResponse;
+import com.technokratos.util.HttpHeaders;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -47,6 +48,7 @@ public interface LikeApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
     List<UserCompactResponse> getLikesByPostId(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable String postId,
             Pageable pageable);
@@ -72,6 +74,7 @@ public interface LikeApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
     LikeResponse createLike(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable String postId);
 
@@ -93,6 +96,7 @@ public interface LikeApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
     LikeResponse deleteLike(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable String postId);
 }

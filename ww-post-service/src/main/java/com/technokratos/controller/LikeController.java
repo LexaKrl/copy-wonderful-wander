@@ -20,21 +20,17 @@ public class LikeController implements LikeApi {
     private final LikeService likeService;
 
     @Override
-    public List<UserCompactResponse> getLikesByPostId(String postId, Pageable pageable) {
-        return likeService.getLikesByPostId(getCurrentUserId(), postId);
+    public List<UserCompactResponse> getLikesByPostId(String currentUserId, String postId, Pageable pageable) {
+        return likeService.getLikesByPostId(currentUserId, postId);
     }
 
     @Override
-    public LikeResponse createLike(String postId) {
-        return likeService.createLike(getCurrentUserId(), postId);
+    public LikeResponse createLike(String currentUserId, String postId) {
+        return likeService.createLike(currentUserId, postId);
     }
 
     @Override
-    public LikeResponse deleteLike(String postId) {
-        return likeService.deleteLike(getCurrentUserId(), postId);
-    }
-
-    private String getCurrentUserId() {
-        return "00000000-0000-0000-0000-000000000001";
+    public LikeResponse deleteLike(String currentUserId, String postId) {
+        return likeService.deleteLike(currentUserId, postId);
     }
 }
