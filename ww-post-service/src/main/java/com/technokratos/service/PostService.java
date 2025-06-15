@@ -63,7 +63,7 @@ public class PostService {
                         new UserCompactResponse(
                                 UUID.fromString(postEntity.getUser().getUserId()),
                                 postEntity.getUser().getUsername(),
-                                postEntity.getUser().getAvatarId() + "test.jpg") //todo сделать получение из минио
+                                postEntity.getUser().getAvatarFilename() + "test.jpg") //todo сделать получение из минио
                 ))
                 .toList();
 
@@ -87,7 +87,7 @@ public class PostService {
                         new UserCompactResponse(
                                 UUID.fromString(postEntity.getUser().getUserId()),
                                 postEntity.getUser().getUsername(),
-                                postEntity.getUser().getAvatarId() + "test.jpg") //todo сделать получение из минио
+                                postEntity.getUser().getAvatarFilename() + "test.jpg") //todo сделать получение из минио
                 ))
                 .toList();;
 
@@ -108,7 +108,7 @@ public class PostService {
                 new UserCompactResponse(
                         UUID.fromString(post.getUser().getUserId()),
                         post.getUser().getUsername(),
-                        post.getUser().getAvatarId() + "test.jpg"));//todo сделать получение фото из минио по id и отдачу url
+                        post.getUser().getAvatarFilename() + "test.jpg"));//todo сделать получение фото из минио по id и отдачу url
     }
 
     public PostResponse create(String currentUserId, PostRequest createPostRequest) {
@@ -130,7 +130,7 @@ public class PostService {
                 new UserCompactResponse(
                         UUID.fromString(post.getUser().getUserId()),
                         post.getUser().getUsername(),
-                        post.getUser().getAvatarId() + "test.jpg"));//todo сделать получение фото из минио по id и отдачу url
+                        post.getUser().getAvatarFilename() + "test.jpg"));//todo сделать получение фото из минио по id и отдачу url
     }
 
     public PostResponse update(String currentUserId, String postId, PostRequest updatePostRequest) {
@@ -153,7 +153,7 @@ public class PostService {
                 new UserCompactResponse(
                         UUID.fromString(post.getUser().getUserId()),
                         post.getUser().getUsername(),
-                        post.getUser().getAvatarId() + "test.jpg"));//todo сделать получение фото из минио по id и отдачу url
+                        post.getUser().getAvatarFilename() + "test.jpg"));//todo сделать получение фото из минио по id и отдачу url
         }
 
     public void delete(String currentUserId, String postId) {

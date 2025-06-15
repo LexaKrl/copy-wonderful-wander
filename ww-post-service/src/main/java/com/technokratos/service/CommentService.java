@@ -54,7 +54,7 @@ public class CommentService {
                         new UserCompactResponse(
                                 UUID.fromString(comment.getUser().getUserId()),
                                 comment.getUser().getUsername(),
-                                comment.getUser().getAvatarId() + "test.jpg") //todo сделать получение из минио
+                                comment.getUser().getAvatarFilename() + "test.jpg") //todo сделать получение из минио
                 ))
                 .toList();
 
@@ -99,7 +99,7 @@ public class CommentService {
                         new UserCompactResponse(
                                 UUID.fromString(comment.getUser().getUserId()),
                                 comment.getUser().getUsername(),
-                                comment.getUser().getAvatarId() + "test.jpg") //todo сделать получение из минио
+                                comment.getUser().getAvatarFilename() + "test.jpg") //todo сделать получение из минио
                 ))
                 .toList();
 

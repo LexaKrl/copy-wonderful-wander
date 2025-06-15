@@ -2,8 +2,6 @@ package com.technokratos.model;
 
 import lombok.*;
 
-import java.util.UUID;
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -12,5 +10,5 @@ import java.util.UUID;
 public class EmbeddedUser {
     private String userId;
     private String username;
-    private String avatarId;
+    private String avatarFilename;
 }
