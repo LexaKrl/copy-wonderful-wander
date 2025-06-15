@@ -53,6 +53,17 @@ spring:
         enable-idempotence: true # Идемпотентность продюсера
         max-in-flight-requests-per-connection: 5 # Максимальное количество запросов без ответа
 
+springdoc:
+  api-docs:
+    enabled: true
+    path: /users/v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /users/swagger-ui.html
+
+swagger:
+  server-url: http://localhost:8080
+
 minio:
   enabled: true
   url:
