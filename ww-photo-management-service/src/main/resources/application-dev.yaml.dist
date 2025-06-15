@@ -34,6 +34,7 @@ spring:
   kafka:
     bootstrap-servers: localhost:9092, localhost:9094
     producer:
+      bootstrap-servers: localhost:9092, localhost:9094
       acks: all # Требуем подтверждения от всех синхронизированных брокеров с лидером партиции
       retries: 10 # Максимальное количество retry
       properties:

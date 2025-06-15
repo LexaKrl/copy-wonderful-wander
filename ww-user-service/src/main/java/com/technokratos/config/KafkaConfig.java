@@ -30,6 +30,7 @@ public class KafkaConfig {
     public Map<String, Object> consumerConfigs(KafkaConsumerProperties kafkaConsumerProperties) {
         Map<String, Object> config = new HashMap<>();
 
+        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConsumerProperties.getBootstrapServers());
         config.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaConsumerProperties.getGroupId());
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
@@ -43,6 +44,7 @@ public class KafkaConfig {
     public Map<String, Object> producerConfigs(KafkaProducerProperties kafkaProducerProperties) {
         Map<String, Object> config = new HashMap<>();
 
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProducerProperties.getBootstrapServers());
         config.put(ProducerConfig.ACKS_CONFIG, kafkaProducerProperties.getAcks());
         config.put(ProducerConfig.RETRIES_CONFIG, kafkaProducerProperties.getRetries());
         config.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, kafkaProducerProperties.getProperties().getDeliveryTimeoutMs());

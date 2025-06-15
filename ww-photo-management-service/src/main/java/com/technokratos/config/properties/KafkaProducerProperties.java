@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "spring.kafka.producer")
 public class KafkaProducerProperties {
+    private String bootstrapServers;
     private String acks;
     private Integer retries;
     private Properties properties;

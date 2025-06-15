@@ -36,12 +36,14 @@ spring:
   kafka:
     bootstrap-servers: localhost:9092, localhost:9094
     consumer:
+      bootstrap-servers: localhost:9092, localhost:9094
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       group-id: avatar-saved-events
       properties:
         spring-json-trusted-packages: com.technokratos.event # Доверенные пакеты, где лежат наши event
     producer:
+      bootstrap-servers: localhost:9092, localhost:9094
       acks: all # Требуем подтверждения от всех синхронизированных брокеров с лидером партиции
       retries: 10 # Максимальное количество retry
       properties:

@@ -32,10 +32,12 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKA_HOST_1}:${KAFKA_PORT_1}, ${KAFKA_HOST_2}:${KAFKA_PORT_2}
     consumer:
+      bootstrap-servers: ${KAFKA_HOST_1}:${KAFKA_PORT_1}, ${KAFKA_HOST_2}:${KAFKA_PORT_2}
       group-id: avatar-saved-events
       properties:
         spring-json-trusted-packages: com.technokratos.event
     producer:
+      bootstrap-servers: ${KAFKA_HOST_1}:${KAFKA_PORT_1}, ${KAFKA_HOST_2}:${KAFKA_PORT_2}
       acks: all
       retries: 10
       properties:
