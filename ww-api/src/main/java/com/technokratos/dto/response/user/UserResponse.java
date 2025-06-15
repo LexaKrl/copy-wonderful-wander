@@ -32,7 +32,9 @@ public record UserResponse(
         @Schema(description = "Количество друзей пользователя", example = "100")
         int friendsCount,
         @Schema(description = "Уровень видимости своих фотографий другим пользователям", example = "FRIENDS_ONLY")
-        PhotoVisibility photoVisibility,
+        PhotoVisibility myPhotoVisibility,
+        @Schema(description = "Уровень видимости сохраненных фотографий другим пользователям", example = "FRIENDS_ONLY")
+        PhotoVisibility savedPhotoVisibility,
         @Schema(description = "Уровень видимости своих прогулок другим пользователям", example = "PUBLIC")
         WalkVisibility walkVisibility) {
 }
