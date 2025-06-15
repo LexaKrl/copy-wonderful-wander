@@ -1,4 +1,4 @@
-package ru.itis.danyook.config;
+package com.technokratos.config;
 
 import org.springframework.context.annotation.Configuration;
 

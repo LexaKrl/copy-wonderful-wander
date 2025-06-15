@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -38,7 +39,7 @@ public interface PostApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    List<PostResponse> getRecommendedPosts();
+    List<PostResponse> getRecommendedPosts(Pageable pageable);
 
     @GetMapping("/me")
     @ResponseStatus(HttpStatus.OK)
@@ -51,7 +52,7 @@ public interface PostApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    List<PostResponse> getCurrentUserPosts();
+    List<PostResponse> getCurrentUserPosts(Pageable pageable);
 
     @GetMapping("/saved")
     @ResponseStatus(HttpStatus.OK)
@@ -63,7 +64,7 @@ public interface PostApi {
             @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))    })
-    List<PostResponse> getCurrentUserSavedPosts();
+    List<PostResponse> getCurrentUserSavedPosts(Pageable pageable);
 
     @GetMapping("/users/{userId}/posts")
     @ResponseStatus(HttpStatus.OK)
@@ -84,7 +85,8 @@ public interface PostApi {
                     })
     List<PostResponse> getPostsByUserId(
             @Parameter(description = "ID пользователя", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID userId);
+            @PathVariable String userId,
+            Pageable pageable);
 
     @GetMapping("/users/{userId}/saved")
     @ResponseStatus(HttpStatus.OK)
@@ -102,7 +104,8 @@ public interface PostApi {
             })
     List<PostResponse> getSavedPostsByUserId(
             @Parameter(description = "ID пользователя", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID userId);
+            @PathVariable String userId,
+            Pageable pageable);
 
     @GetMapping("/{postId}")
     @ResponseStatus(HttpStatus.OK)
@@ -120,7 +123,7 @@ public interface PostApi {
                     })
     PostResponse getPostById(
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID postId);
+            @PathVariable String postId);
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -162,7 +165,7 @@ public interface PostApi {
                     })
     PostResponse updatePost(
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID postId,
+            @PathVariable String postId,
             @Parameter(description = "Данные для обновления поста", required = true)
             @RequestBody @Validated PostRequest updatePostRequest);
 
@@ -186,5 +189,49 @@ public interface PostApi {
             })
     void deletePost(
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID postId);
+            @PathVariable String postId);
+
+    @PostMapping("/saved/{postId}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Сохранить пост пост к себе")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Пост успешно сохранен",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = UUID.class))),
+            @ApiResponse(responseCode = "400", description = "Невалидный uuid поста",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ValidationExceptionMessage.class))),
+            @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = BaseExceptionMessage.class))),
+            @ApiResponse(responseCode = "404", description = "Пост не найден",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = BaseExceptionMessage.class))),
+            @ApiResponse(responseCode = "409", description = "Пост уже сохранен",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = BaseExceptionMessage.class)))
+    })
+    UUID savePost(@Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
+                  @PathVariable String postId);
+
+    @DeleteMapping("/saved/{postId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Удалить пост из своих сохраненок")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Пост успешно удален"),
+            @ApiResponse(responseCode = "400", description = "Невалидный uuid поста",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ValidationExceptionMessage.class))),
+            @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = BaseExceptionMessage.class))),
+            @ApiResponse(responseCode = "403", description = "Нет прав для удаления поста из сохраненок",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = BaseExceptionMessage.class))),
+            @ApiResponse(responseCode = "404", description = "Пост не найден",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = BaseExceptionMessage.class)))
+    })
+    void deleteSavedPost(@Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
+                         @PathVariable String postId);
 }

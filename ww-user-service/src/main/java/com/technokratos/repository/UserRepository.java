@@ -33,10 +33,18 @@ public class UserRepository {
     }
 
     public Optional<Account> findByUsername(String username) {
-        log.info("findByUsername doing..");
+        log.info("UserRepository: findByUsername() doing...");
         return dsl
                 .selectFrom(Tables.ACCOUNT)
                 .where(Tables.ACCOUNT.USERNAME.eq(username))
+                .fetchOptional()
+                .map(record -> record.into(Account.class));
+    }
+
+    public Optional<Object> findByEmail(String email) {
+        return dsl
+                .selectFrom(Tables.ACCOUNT)
+                .where(Tables.ACCOUNT.EMAIL.eq(email))
                 .fetchOptional()
                 .map(record -> record.into(Account.class));
     }
@@ -58,8 +66,8 @@ public class UserRepository {
                         .asTable("friends"))
                 .on(Tables.ACCOUNT.USER_ID.eq(DSL.field(DSL.name("friends", "friend_id"), UUID.class)))
                 .orderBy(DSL.field(DSL.name("friends", "friendship_date")).asc())
-                .limit(limit)
-                .offset(offset)
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
                 .fetch()
                 .into(Account.class);
     }

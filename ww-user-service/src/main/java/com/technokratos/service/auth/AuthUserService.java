@@ -1,5 +1,6 @@
 package com.technokratos.service.auth;
 
+import com.technokratos.dto.exception.ValidationExceptionMessage;
 import com.technokratos.dto.request.security.PasswordChangeRequest;
 import com.technokratos.dto.UserInfoForJwt;
 import com.technokratos.dto.request.security.UserLoginRequest;
@@ -21,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -36,26 +38,26 @@ public class AuthUserService {
     private final MyUserDetailsService userDetailsService;
     private final UserEventProducer userEventProducer;
 
-    public AuthResponse register(UserRegistrationRequest userDto) {
+    public AuthResponse register(UserRegistrationRequest userRegistrationRequest) {
         log.info("user service register doing");
 
-        if (!userDto.password().equals(userDto.duplicatePassword())) {
-            throw new PasswordNotMatchException("Passwords don't match");
+        if (userRepository.findByUsername(userRegistrationRequest.username()).isPresent()) {
+            throw new UsernameNotUniqueException(userRegistrationRequest.username());
         }
 
-        if (userRepository.findByUsername(userDto.username()).isPresent()) {
-            throw new UsernameNotUniqueException(userDto.username());
+        if (userRepository.findByEmail(userRegistrationRequest.email()).isPresent()) {
+            throw new EmailNotUniqueException(userRegistrationRequest.email());
         }
 
-        UserEntity user = userMapper.userRegistrationRequestToUserEntity(userDto);
+        UserEntity user = userMapper.userRegistrationRequestToUserEntity(userRegistrationRequest);
 
         user.setUserId(UUID.randomUUID());
         user.setRole(UserRole.ROLE_USER);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         userRepository.save(user);
-        Account newUser = userRepository.findByUsername(userDto.username())
-                .orElseThrow(() -> new UserByUsernameNotFoundException(userDto.username()));
+        Account newUser = userRepository.findByUsername(userRegistrationRequest.username())
+                .orElseThrow(() -> new UserByUsernameNotFoundException(userRegistrationRequest.username()));
         userEventProducer.sendUserCreatedEvent(userMapper.toUserCreatedEvent(newUser));
 
         UserInfoForJwt userInfo = userMapper.toJwtUserInfo(user);

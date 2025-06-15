@@ -2,8 +2,9 @@ package com.technokratos.api;
 
 import com.technokratos.dto.exception.BaseExceptionMessage;
 import com.technokratos.dto.exception.ValidationExceptionMessage;
-import com.technokratos.dto.response.post.UserLikeResponse;
+import com.technokratos.dto.response.post.LikeResponse;
 import com.technokratos.dto.response.post.PostResponse;
+import com.technokratos.dto.response.user.UserCompactResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -33,7 +35,7 @@ public interface LikeApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Лайки поста успешно получены",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = UserLikeResponse.class))),
+                            schema = @Schema(implementation = UserCompactResponse.class))),
             @ApiResponse(responseCode = "400", description = "Невалидный uuid поста",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ValidationExceptionMessage.class))),
@@ -44,17 +46,18 @@ public interface LikeApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    List<UserLikeResponse> getLikesByPostId(
+    List<UserCompactResponse> getLikesByPostId(
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID postId);
+            @PathVariable String postId,
+            Pageable pageable);
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Поставить лайк посту", description = "Добавляет лайк текущего пользователя к указанному посту")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Пост успешно создан",
+            @ApiResponse(responseCode = "201", description = "Лайк успешно поставлен",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = PostResponse.class))),
+                            schema = @Schema(implementation = LikeResponse.class))),
             @ApiResponse(responseCode = "400", description = "Невалидный uuid поста",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ValidationExceptionMessage.class))),
@@ -68,15 +71,17 @@ public interface LikeApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    List<PostResponse> createLike(
+    LikeResponse createLike(
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID postId);
+            @PathVariable String postId);
 
     @DeleteMapping
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Убрать лайк с поста", description = "Удаляет лайк текущего пользователя с указанного поста")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Лайк успешно удален"),
+            @ApiResponse(responseCode = "200", description = "Лайк успешно удален",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = LikeResponse.class))),
             @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class))),
@@ -87,7 +92,7 @@ public interface LikeApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    void deleteLike(
+    LikeResponse deleteLike(
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID postId);
+            @PathVariable String postId);
 }
