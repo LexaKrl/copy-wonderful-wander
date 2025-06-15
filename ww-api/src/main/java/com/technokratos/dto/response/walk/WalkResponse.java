@@ -1,5 +1,6 @@
 package com.technokratos.dto.response.walk;
 
+import com.technokratos.enums.walk.WalkStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Size;
 
@@ -22,6 +23,12 @@ public record WalkResponse(
         @Schema(description = "Walk description", example = "Daily morning walk in the park")
         String description,
 
+        @Schema(description = "All steps made during the walk")
+        Integer totalSteps,
+
+        @Schema(description = "All meters covered during the walk")
+        Integer totalMeters,
+
         @Schema(
                 description = "UUID list of participants of the walk",
                 example = """
@@ -37,16 +44,28 @@ public record WalkResponse(
         List<UUID> walkParticipants,
 
         @Schema(
-                description = "String UUID.jpeg(example) of photos uploaded by user. When client uploads a photo he receives a photo UUID",
+                description = "Links of photos uploaded by user",
                 example = """
-                        "a1e5f6d4-e2f3-4a8b-eb5c-1e2f3a4b5c6d",
-                        "ad4d3a54-e5f6-47ab-9c0d-1b5c3a4b3a4d",
-                        "a1bb5cd4-e5f6-4c8b-9c0d-13a43a4b5c6d"
+                        "http://example.com/123",
+                        "http://example.com/456",
+                        "http://example.com/789"
                         """
         )
         List<String> photos,
 
         @Schema(description = "Time walk was created", example = "2023-10-05 14:30:00")
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+
+        @Schema(description = "Longitude", example = "-77.0364")
+        Double startPointLongitude,
+
+        @Schema(description = "Latitude", example = "38.8951")
+        Double startPointLatitude,
+
+        @Schema(description = "LineString parsed to String in geoJson format")
+        String geoJsonRoute,
+
+        @Schema(description = "Walk status")
+        WalkStatus walkStatus
 ) {
 }

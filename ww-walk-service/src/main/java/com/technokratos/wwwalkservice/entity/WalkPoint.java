@@ -13,7 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class WalkPoint {
-    // TODO consider add GeoPoint
     private Double longitude;
 
     private Double latitude;
@@ -21,8 +20,6 @@ public class WalkPoint {
     private Integer steps;
 
     private Integer meters;
-
-    private List<String> photos;
 
     private LocalDateTime time;
 }
