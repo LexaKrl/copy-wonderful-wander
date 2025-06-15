@@ -1,5 +1,6 @@
 package com.technokratos.producer;
 
+import com.technokratos.event.FriendshipUpdateEvent;
 import com.technokratos.event.UserCreatedEvent;
 import com.technokratos.event.UserDeletedEvent;
 import com.technokratos.event.UserUpdatedEvent;
@@ -31,6 +32,13 @@ public class UserEventProducer {
         kafkaTemplate.send(
                 KafkaTopics.USER_DELETED_TOPIC,
                 userDeletedEvent
+        );
+    }
+
+    public void sendFriendshipUpdateEvent(FriendshipUpdateEvent friendshipUpdateEvent) {
+        kafkaTemplate.send(
+                KafkaTopics.USER_FRIENDSHIP_UPDATE,
+                friendshipUpdateEvent
         );
     }
 }

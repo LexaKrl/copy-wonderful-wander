@@ -111,6 +111,7 @@ public class UserRepository {
                 .into(Account.class);
     }
 
+
     public void follow(UUID userId, UUID targetUserId) {
         dsl
                 .insertInto(Tables.USER_RELATIONSHIPS)
@@ -153,7 +154,8 @@ public class UserRepository {
                 .set(Tables.ACCOUNT.FIRSTNAME, userRequest.firstname())
                 .set(Tables.ACCOUNT.LASTNAME, userRequest.lastname())
                 .set(Tables.ACCOUNT.BIO, userRequest.bio())
-                .set(Tables.ACCOUNT.PHOTO_VISIBILITY, PhotoVisibility.valueOf(userRequest.photoVisibility().name()))
+                .set(Tables.ACCOUNT.MY_PHOTO_VISIBILITY, PhotoVisibility.valueOf(userRequest.myPhotoVisibility().name()))
+                .set(Tables.ACCOUNT.SAVED_PHOTO_VISIBILITY, PhotoVisibility.valueOf(userRequest.savedPhotoVisibility().name()))
                 .set(Tables.ACCOUNT.WALK_VISIBILITY, WalkVisibility.valueOf(userRequest.walkVisibility().name()))
                 .where(Tables.ACCOUNT.USER_ID.eq(userId))
                 .returning()
@@ -251,5 +253,20 @@ public class UserRepository {
                 )
                 .on(Tables.ACCOUNT.USER_ID.eq(DSL.field(DSL.name("followings", "target_user_id"), UUID.class)))
                 .fetchOneInto(Integer.class);
+    }
+
+    public boolean isFriends(UUID userId, UUID targetUserId) {
+        return dsl.fetchExists(
+                dsl.selectOne()
+                        .from(Tables.USER_RELATIONSHIPS)
+                        .where(Tables.USER_RELATIONSHIPS.USER_ID.eq(userId)
+                                .and(Tables.USER_RELATIONSHIPS.TARGET_USER_ID.eq(targetUserId)))
+                        .andExists(
+                                dsl.selectOne()
+                                        .from(Tables.USER_RELATIONSHIPS)
+                                        .where(Tables.USER_RELATIONSHIPS.USER_ID.eq(targetUserId)
+                                                .and(Tables.USER_RELATIONSHIPS.TARGET_USER_ID.eq(userId)))
+                        )
+        );
     }
 }

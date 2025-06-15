@@ -212,7 +212,7 @@ public class PostService {
         boolean check = switch (photoVisibility) {
             case PhotoVisibility.PUBLIC -> true;
             case PhotoVisibility.PRIVATE -> false;
-            case PhotoVisibility.FRIENDS_ONLY -> userService.getUserFriend(userId).contains(viewerId);
+            case PhotoVisibility.FRIENDS_ONLY -> userService.isFriends(userId, viewerId);
         };
         log.info("checkPostPrivacy: {}, photoVisibility: {}", check, photoVisibility);
         log.info("view id: {}", viewerId);

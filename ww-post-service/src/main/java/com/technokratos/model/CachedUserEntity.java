@@ -21,5 +21,4 @@ public class CachedUserEntity {
     private String avatarFilename;
     private PhotoVisibility myPhotoVisibility;
     private PhotoVisibility savedPhotoVisibility;
-    private Set<String> friends;
 }

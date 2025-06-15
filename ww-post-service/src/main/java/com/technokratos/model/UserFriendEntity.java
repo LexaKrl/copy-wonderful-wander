@@ -6,17 +6,14 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.UUID;
-
-@Document(collection = "like")
+@Document(collection = "user_friends")
 @Getter
 @Builder
-public class LikeEntity {
-
+public class UserFriendEntity {
     @Id
-    private String likeId;
+    private String id;
     @Indexed
-    private String postId;
+    private String userId;
     @Indexed
-    private EmbeddedUser user;
+    private String friendId;
 }
