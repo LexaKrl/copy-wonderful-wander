@@ -15,7 +15,7 @@ import java.util.UUID;
 public interface WalkRepository extends JpaRepository<Walk, UUID> {
 
     @Query("""
-    SELECT w FROM Walk w JOIN UserWalkVisibility uwv ON w.ownerId = uwv.userId
+    SELECT w from Walk w JOIN UserWalkVisibility uwv ON w.ownerId = uwv.userId
     WHERE w.walkId = :walkId AND (
         uwv.walkVisibility = 'PUBLIC'
         OR (uwv.walkVisibility = 'FRIENDS_ONLY' AND :requesterId IN :subscribers)
@@ -48,7 +48,7 @@ public interface WalkRepository extends JpaRepository<Walk, UUID> {
 
     @Query("""
     SELECT w from Walk w JOIN UserWalkVisibility uwv ON w.ownerId = uwv.userId
-    WHERE :requesterId IN w.walkParticipants AND (
+    WHERE :requesterId MEMBER OF w.walkParticipants AND (
         uwv.walkVisibility = 'PUBLIC'
         OR (uwv.walkVisibility = 'FRIENDS_ONLY' AND :requesterId IN :subscribers)
         OR (uwv.walkVisibility = 'REMEMBER_ONLY')

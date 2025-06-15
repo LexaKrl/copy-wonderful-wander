@@ -1,18 +1,15 @@
 package com.technokratos.wwwalkservice.entity;
 
 
-import com.technokratos.enums.user.WalkVisibility;
 import com.technokratos.enums.walk.WalkStatus;
 import jakarta.persistence.*;
-/*import jakarta.validation.constraints.Size;*/
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -21,6 +18,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Walk {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -34,16 +32,16 @@ public class Walk {
     private String name;
 
     @Column(name = "description")
-    @ColumnDefault("")
-    private String description;
+    @Builder.Default
+    private String description = "";
 
     @Column(name = "steps")
-    @ColumnDefault("0")
-    private Integer totalSteps;
+    @Builder.Default
+    private Integer totalSteps = 0;
 
     @Column(name = "meters")
-    @ColumnDefault("0")
-    private Integer totalMeters;
+    @Builder.Default
+    private Integer totalMeters = 0;
 
     @Column(name = "created_at", nullable = false)
     @CreationTimestamp
@@ -54,20 +52,22 @@ public class Walk {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "walk_status")
-    @ColumnDefault("NOT_STARTED")
-    private WalkStatus walkStatus;
+    @Builder.Default
+    private WalkStatus walkStatus = WalkStatus.NOT_STARTED;
 
     @ElementCollection
     @CollectionTable(name = "walk_participants", joinColumns = @JoinColumn(name = "walk_id"))
     @Column(name = "participant_id")
-    private Set<UUID> walkParticipants;
+    @Builder.Default
+    private Set<UUID> walkParticipants = new HashSet<>();
 
     @ElementCollection
     @CollectionTable(name = "walk_photos", joinColumns = @JoinColumn(name = "walk_id"))
     @Column(name = "photo")
-    private Set<String> photos;
+    @Builder.Default
+    private Set<String> photos = new HashSet<>();
 
-    @Column(name = "startPoint", columnDefinition = "geometry(Point, 4326)")
+    @Column(name = "start_point", columnDefinition = "geometry(Point, 4326)")
     private Point startPoint;
 
     @Column(name = "route", columnDefinition = "geometry(LineString, 4326)")
