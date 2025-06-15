@@ -1,22 +1,27 @@
 server:
-  port: 0
+  port: 8082
 
 spring:
   application:
     name: photo-management-service
+
   servlet:
     multipart:
       max-file-size: 25MB
       max-request-size: 30MB
+
   datasource:
     username:
     password:
     url:
     driver-class-name: org.postgresql.Driver
+
   liquibase:
     change-log: classpath:/db/changelog/photo-management-service/changelog-master.xml
+
   cloud:
     consul:
+      enabled: false
       host: localhost
       port: 8500
       discovery:
@@ -25,9 +30,10 @@ spring:
         service-name: ${spring.application.name}
         register: true
         register-health-check: true
+
   kafka:
+    bootstrap-servers: localhost:9092, localhost:9094
     producer:
-      bootstrap-servers: localhost:9092, localhost:9094, localhost:9096
       acks: all # Требуем подтверждения от всех синхронизированных брокеров с лидером партиции
       retries: 10 # Максимальное количество retry
       properties:
@@ -39,7 +45,7 @@ spring:
 
 minio:
   enabled: true
-  url: http://localhost:9000
+  url:
   accessKey:
   secretKey:
   bucket: ww-photos

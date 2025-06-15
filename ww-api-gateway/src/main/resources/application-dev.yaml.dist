@@ -4,8 +4,10 @@ server:
 spring:
   application:
     name: api-gateway
+
   main:
     web-application-type: reactive
+
   cloud:
     gateway:
       discovery:
@@ -25,6 +27,7 @@ spring:
             - Path=/api/photos/**
           filters:
             - JwtAuthentication
+
     consul:
       host: localhost
       port: 8500
@@ -42,7 +45,8 @@ management:
         include: "*"
 
 jwt:
-  access-token-duration: 3_600_00
+  enabled: true
+  access-token-duration: 3_600_000
   refresh-token-duration: 86_400_00
   time-token-end-soon: 900_000
   secret-key:
