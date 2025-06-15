@@ -52,6 +52,39 @@ public interface WalkRecordingApi {
     );
 
     /*
+     *   Finish walk
+     * */
+
+    @Operation(
+            summary = "Finish streaming location data",
+            description = "Finish walk and stop sending data to the server",
+            tags = {"Walk recording"},
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Successfully finished"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Walk not found"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid data"
+                    )
+            }
+    )
+    @PostMapping("/{walkId}/stream/finish")
+    void finishWalk(
+            @Parameter(
+                    description = "UUID of the walk",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
+            )
+            @PathVariable UUID walkId
+    );
+
+    /*
     *   Stream data
     * */
 
@@ -61,8 +94,8 @@ public interface WalkRecordingApi {
             tags = {"Walk recording"},
             responses = {
                     @ApiResponse(
-                            responseCode = "200",
-                            description = "Successfully subscribed"
+                            responseCode = "204",
+                            description = "Successfully sent"
                     ),
                     @ApiResponse(
                             responseCode = "400",
@@ -75,7 +108,7 @@ public interface WalkRecordingApi {
             }
     )
     @PostMapping("/{walkId}/stream/data")
-    ResponseEntity<Void> streamData(
+    void streamData(
             @Parameter(
                     description = "UUID of the walk",
                     example = "550e8400-e29b-41d4-a716-446655440000",

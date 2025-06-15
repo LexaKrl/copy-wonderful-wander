@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public record WalkDataRequest(
 
@@ -31,23 +30,6 @@ public record WalkDataRequest(
         @PositiveOrZero(message = "Meters must be positive or zero")
         @Max(value = 10000, message = "Meters value is unrealistic (max 10000)")
         Integer meters,
-
-        @Schema(
-                description = "String UUID.jpeg(example) of photos uploaded by user. When client uploads a photo he receives a photo UUID",
-                example = """
-                        "a1e5f6d4-e2f3-4a8b-eb5c-1e2f3a4b5c6d",
-                        "ad4d3a54-e5f6-47ab-9c0d-1b5c3a4b3a4d",
-                        "a1bb5cd4-e5f6-4c8b-9c0d-13a43a4b5c6d"
-                        """
-        )
-        @NotNull(message = "Photo String list cannot be null")
-        @Size(max = 10, message = "Maximum 10 photos per request allowed")
-        List<
-                @NotBlank(message = "Participant UUID cannot be blank")
-                @Pattern(regexp = "^(?i)[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\\.(jpe?g|png|gif|bmp|webp)$",
-                        message = "Invalid String UUID.ext format")
-                String
-        > photos,
 
         @Schema(description = "Time when data were posted", example = "2023-10-05 14:30:00")
         @NotNull(message = "Timestamp cannot be null")

@@ -12,6 +12,18 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/ww-walk-service
+      # uri: mongodb://localhost:${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@localhost:${MONGO_PORT}/ww-walk-service
       auto-index-creation: true
   liquibase:
-    change-log: "../../../"
+    change-log: classpath:/db/changelog/walk-service/changelog-master.yaml
+
+walk:
+  record:
+    location:
+      max-sse-timeout: 90_000
+      reconnection-time: 3_000
+app:
+  url:
+    base-url: "https://wonderful-wander.ru"
+    walk-acceptation-url: "/api/walks/{walkId}/participant/{participantId}/accept"
+    subscribers-retrieve-url: "/api/users/" # TODO add link to the retrieving subscribers

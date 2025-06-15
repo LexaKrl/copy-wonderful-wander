@@ -6,4 +6,8 @@ public class WalkParticipantOverflowException extends WalkConflictServiceExcepti
     public WalkParticipantOverflowException(UUID walkId) {
         super("Walk overflowed by participants with id: %s".formatted(walkId));
     }
+
+    public WalkParticipantOverflowException(String message) {
+        super(message);
+    }
 }
