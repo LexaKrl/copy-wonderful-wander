@@ -4,6 +4,7 @@ import com.technokratos.api.WalkApi;
 import com.technokratos.dto.request.walk.WalkRequest;
 import com.technokratos.dto.response.walk.WalkResponse;
 import com.technokratos.service.WalkService;
+import com.technokratos.utils.RestTemplateUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,39 +18,35 @@ import java.util.UUID;
 public class WalkController implements WalkApi {
 
     private final WalkService walkService;
+    private final RestTemplateUtils restTemplateUtils;
 
     @Override
     public Page<WalkResponse> getWalks(UUID requesterId, Pageable pageable) {
-        /* TODO Get list of users */
-        List<UUID> subscribers = List.of();
+        List<UUID> subscribers = restTemplateUtils.getFollowingByUserId(requesterId);
         return walkService.findAllVisible(requesterId, subscribers, pageable);
     }
 
     @Override
     public Page<WalkResponse> getWalksForUser(UUID userId, UUID requesterId, Pageable pageable) {
-        /* TODO Get list of users */
-        List<UUID> subscribers = List.of();
+        List<UUID> subscribers = restTemplateUtils.getFollowingByUserId(requesterId);
         return walkService.findAllVisibleForUser(requesterId, userId, subscribers, pageable);
     }
 
     @Override
     public Page<WalkResponse> getWalksWhereUserParticipant(UUID requesterId, Pageable pageable) {
-        /* TODO Get list of users */
-        List<UUID> subscribers = List.of();
+        List<UUID> subscribers = restTemplateUtils.getFollowingByUserId(requesterId);
         return walkService.findAllVisibleWhereUserParticipant(requesterId, subscribers, pageable);
     }
 
     @Override
     public Page<WalkResponse> getWalksUserSubscribedOn(UUID requesterId, Pageable pageable) {
-        /* TODO Get list of users */
-        List<UUID> subscribers = List.of();
+        List<UUID> subscribers = restTemplateUtils.getFollowingByUserId(requesterId);
         return walkService.findAllVisibleUserSubscribedOn(requesterId, subscribers, pageable);
     }
 
     @Override
     public WalkResponse getWalk(UUID requesterId, UUID walkId) {
-        /* TODO Get list of users */
-        List<UUID> subscribers = List.of();
+        List<UUID> subscribers = restTemplateUtils.getFollowingByUserId(requesterId);
         return walkService.findById(requesterId, subscribers, walkId);
     }
 
