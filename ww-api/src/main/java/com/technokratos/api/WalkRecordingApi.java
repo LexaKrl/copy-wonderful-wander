@@ -1,6 +1,7 @@
 package com.technokratos.api;
 
 import com.technokratos.dto.request.walk.WalkDataRequest;
+import com.technokratos.util.HttpHeaders;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -44,6 +45,12 @@ public interface WalkRecordingApi {
     @GetMapping("/{walkId}/stream/subscribe")
     SseEmitter subscribe(
             @Parameter(
+                    description = "UUID of the currentUser",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
+            )
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) UUID currentUserId,
+            @Parameter(
                     description = "UUID of the walk",
                     example = "550e8400-e29b-41d4-a716-446655440000",
                     required = true
@@ -77,6 +84,12 @@ public interface WalkRecordingApi {
     @PostMapping("/{walkId}/stream/finish")
     void finishWalk(
             @Parameter(
+                    description = "UUID of the currentUser",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
+            )
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) UUID currentUserId,
+            @Parameter(
                     description = "UUID of the walk",
                     example = "550e8400-e29b-41d4-a716-446655440000",
                     required = true
@@ -109,6 +122,12 @@ public interface WalkRecordingApi {
     )
     @PostMapping("/{walkId}/stream/data")
     void streamData(
+            @Parameter(
+                    description = "UUID of the currentUser",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
+            )
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) UUID currentUserId,
             @Parameter(
                     description = "UUID of the walk",
                     example = "550e8400-e29b-41d4-a716-446655440000",

@@ -13,14 +13,14 @@ services:
 
   mongo:
     image: mongo:5.2.1
-    restart: always
+    ports:
+      - "${MONGO_PORT}:27017"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
-    ports:
-      - "${MONGO_PORT}:27017"
     volumes:
       - walk-service-mongo_data:/data/db
+    restart: unless-stopped
 
 volumes:
   walk-service-mongo_data:
