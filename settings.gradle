@@ -1,0 +1,10 @@
+rootProject.name = 'wonderful-wander'
+include 'ww-core'
+include 'ww-api'
+include 'ww-db'
+include 'ww-user-service'
+include 'ww-photo-management-service'
+//include 'ww-post-service'
+//include 'ww-walk-service'
+include 'ww-api-gateway'
+

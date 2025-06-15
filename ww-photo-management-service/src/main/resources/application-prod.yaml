@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: photo-management-service
+
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 30MB
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+
+  liquibase:
+    change-log: classpath:/db/changelog/photo-management-service/changelog-master.xml
+
+  cloud:
+    consul:
+      host: ${CONSUL_HOST}
+      port: ${CONSUL_PORT}
+      discovery:
+        prefer-ip-address: true
+        instance-id: ${spring.application.name}:${random.value}
+        service-name: ${spring.application.name}
+        register: true
+        register-health-check: true
+
+  kafka:
+    bootstrap-servers: ${KAFKA_HOST_1}:${KAFKA_PORT_1}, ${KAFKA_HOST_2}:${KAFKA_PORT_2}
+    producer:
+      bootstrap-servers: ${KAFKA_HOST_1}:${KAFKA_PORT_1}, ${KAFKA_HOST_2}:${KAFKA_PORT_2}
+      acks: all
+      retries: 10
+      properties:
+        delivery-timeout-ms: 20000
+        linger-ms: 0
+        request-timeout-ms: 10000
+        enable-idempotence: true
+        max-in-flight-requests-per-connection: 5
+
+minio:
+  enabled: true
+  url: http://${MINIO_HOST}:${MINIO_PORT}
+  accessKey: ${MINIO_ROOT_USER}
+  secretKey: ${MINIO_ROOT_PASSWORD}
+  bucket: ww-photos
+  presigned-url-expiration: 600
+
+logging:
+  level:
+    org.springframework: INFO

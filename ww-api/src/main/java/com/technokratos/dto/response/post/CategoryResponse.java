@@ -1,0 +1,10 @@
+package com.technokratos.dto.response.post;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+
+public record CategoryResponse(
+        @Schema(description = "Уникальный идентификатор категории", example = "234523423")
+        Long categoryId,
+        @Schema(description = "Название категории", example = "Путешенствия")
+        String name
+) {}

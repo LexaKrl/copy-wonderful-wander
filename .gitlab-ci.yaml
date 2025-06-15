@@ -1,0 +1,56 @@
+services:
+  - name: docker:dind
+    command: [ "--storage-driver=overlay2", "--host=tcp://0.0.0.0:2375" ]
+
+variables:
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_HOST: tcp://docker:2375
+
+stages:
+  - build
+  - publish-image
+  - deploy
+
+build:
+  stage: build
+  image: gradle:8.12-jdk21
+  script:
+    - (cd ww-starter-jwt && gradle :clean :publishToMavenLocal -stacktrace --parallel --console=plain)
+    - (cd ww-starter-minio && gradle :clean :publishToMavenLocal -stacktrace --parallel --console=plain)
+    - gradle clean assemble --stacktrace --parallel --console=plain
+  artifacts:
+    paths:
+      - ww-api-gateway/build/libs/
+      - ww-user-service/build/libs/
+      - ww-photo-management-service/build/libs/
+    expire_in: 1 days
+  only:
+    - main
+
+publish-image:
+  stage: publish-image
+  image: docker
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  script:
+    - docker build -t "$CI_REGISTRY_IMAGE/ww-api-gateway:latest" -f ww-api-gateway/Dockerfile .
+    - docker build -t "$CI_REGISTRY_IMAGE/ww-user-service:latest" -f ww-user-service/Dockerfile .
+    - docker build -t "$CI_REGISTRY_IMAGE/ww-photo-management-service:latest" -f ww-photo-management-service/Dockerfile .
+    - docker push "$CI_REGISTRY_IMAGE/ww-api-gateway:latest"
+    - docker push "$CI_REGISTRY_IMAGE/ww-user-service:latest"
+    - docker push "$CI_REGISTRY_IMAGE/ww-photo-management-service:latest"
+  only:
+    - main
+
+deploy:
+  stage: deploy
+  image: docker:19.03.8-dind
+  script:
+    - chmod +x ./deploy.sh
+    - ./deploy.sh
+  environment: main
+  variables:
+    BRANCH: main
+    SSH: main
+  only:
+    - main
