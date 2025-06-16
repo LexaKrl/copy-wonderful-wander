@@ -10,4 +10,5 @@ public final class KafkaTopics {
     public static final String USER_UPDATED_TOPIC = "user-updated";
     public static final String USER_DELETED_TOPIC = "user-deleted";
     public static final String USER_FRIENDSHIP_UPDATE = "user-friendship-update";
+    public static final String WALK_INVITE_TOPIC = "walk-invite";
 }

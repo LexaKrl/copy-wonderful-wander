@@ -1,21 +1,9 @@
-group = 'com.technokratos'
-version = '0.0.1-SNAPSHOT'
-
 jar.enabled=false
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
-ext {
-    mapstructVersion = '1.5.5.Final'
-    lombokMapstructBindingVersion = '0.2.0'
-    jacksonVersion = '2.18.1'
-}
 
 dependencies {
     implementation project(':ww-api')
+    implementation project(':ww-core')
+    implementation project(':ww-db')
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
@@ -23,7 +11,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.liquibase:liquibase-core'
     implementation 'org.hibernate.orm:hibernate-spatial:6.4.4.Final'
-    implementation 'org.locationtech.jts:jts-core:1.18.2'
+    implementation 'org.locationtech.jts:jts-core:1.19.0'
+    implementation 'org.wololo:jts2geojson:0.14.3'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     testImplementation 'org.springframework.security:spring-security-test'
     compileOnly 'org.projectlombok:lombok'
@@ -40,6 +29,7 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok-mapstruct-binding:${lombokMapstructBindingVersion}"
     implementation "org.projectlombok:lombok-mapstruct-binding:${lombokMapstructBindingVersion}"
 }
+
 
 tasks.named('test') {
     useJUnitPlatform()

@@ -1,10 +1,7 @@
 package com.technokratos.dto.request.walk;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -40,6 +37,16 @@ public record WalkRequest(
                 @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
                         message = "Invalid UUID format")
                 UUID
-        > walkParticipants
+        > walkParticipants,
+
+        @Schema(description = "Longitude", example = "-77.0364")
+        @DecimalMin(value = "-180.0", message = "Longitude must be >= -180")
+        @DecimalMax(value = "180.0", message = "Longitude must be <= 180")
+        Double startPointLongitude,
+
+        @Schema(description = "Latitude", example = "38.8951")
+        @DecimalMin(value = "-90.0", message = "Latitude must be >= -90")
+        @DecimalMax(value = "90.0", message = "Latitude must be <= 90")
+        Double startPointLatitude
 ) {
 }
