@@ -4,6 +4,7 @@ import com.technokratos.validation.password.ValidPassword;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
+@Schema(description = "DTO для смены пароля пользователя")
 public record PasswordChangeRequest(
 
         @Schema(description = "Старый пароль пользователя", example = "ivanIvan11", requiredMode = Schema.RequiredMode.REQUIRED)

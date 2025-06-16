@@ -18,6 +18,7 @@ public class CommentEntity {
     private String commentId;
     @Indexed
     private String postId;
+    @Indexed
     private EmbeddedUser user;
     private String text;
     @Indexed

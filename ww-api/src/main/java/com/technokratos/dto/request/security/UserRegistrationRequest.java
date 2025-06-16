@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;
 
+@Schema(description = "DTO для регестрации пользователя")
 public record UserRegistrationRequest(
         @Schema(description = "Username пользователя", example = "ivanich_777", requiredMode = Schema.RequiredMode.REQUIRED)
         @NotBlank(message = "Username is required")

@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: ${SPRING_PROFILES_ACTIVE}
+    active: dev
 
 server:
-  port: ${SERVER_PORT}
+  port: 8086

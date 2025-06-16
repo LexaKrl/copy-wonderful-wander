@@ -17,7 +17,8 @@ CREATE TABLE account
     followers_count  INT              DEFAULT 0,
     following_count  INT              DEFAULT 0,
     friends_count    INT              DEFAULT 0,
-    photo_visibility photo_visibility DEFAULT 'PUBLIC',
+    my_photo_visibility photo_visibility DEFAULT 'PUBLIC',
+    saved_photo_visibility photo_visibility DEFAULT 'PUBLIC',
     walk_visibility  walk_visibility  DEFAULT 'REMEMBER_ONLY',
     ----------------------------------------------------------
     CONSTRAINT user_id_pk PRIMARY KEY (user_id)

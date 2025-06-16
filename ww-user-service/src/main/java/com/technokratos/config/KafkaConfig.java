@@ -124,4 +124,16 @@ public class KafkaConfig {
                 .configs(Map.of(TopicConfig.MIN_IN_SYNC_REPLICAS_CONFIG, "2"))
                 .build();
     }
+
+    @Bean
+    public NewTopic friendshipUpdateEventTopic() {
+        return TopicBuilder
+                .name(KafkaTopics.USER_FRIENDSHIP_UPDATE)
+                .partitions(2)
+                .replicas(2)
+                .configs(Map.of(TopicConfig.MIN_IN_SYNC_REPLICAS_CONFIG, "2"))
+                .build();
+    }
+
+
 }

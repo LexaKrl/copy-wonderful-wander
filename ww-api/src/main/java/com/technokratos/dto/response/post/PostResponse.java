@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Schema(description = "DTO представляющий все данные поста")
 public record PostResponse(
         @Schema(description = "Уникальный идентификатор поста UUID", example = "550e8400-e29b-41d4-a716-446655440000")
         String postId,
