@@ -3,6 +3,7 @@ package com.technokratos.api;
 import com.technokratos.dto.exception.BaseExceptionMessage;
 import com.technokratos.dto.exception.ValidationExceptionMessage;
 import com.technokratos.dto.request.post.PostRequest;
+import com.technokratos.dto.response.PageResponse;
 import com.technokratos.dto.response.post.PostResponse;
 import com.technokratos.util.HttpHeaders;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Positive;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -40,8 +42,12 @@ public interface PostApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    List<PostResponse> getRecommendedPosts(@Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
-                                           Pageable pageable);
+    PageResponse<PostResponse> getRecommendedPosts(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
+            @Parameter(description = "Номер страницы", example = "1")
+            @Positive @RequestParam(required = false, defaultValue = "1") Integer page,
+            @Parameter(description = "Размер страницы", example = "10")
+            @RequestParam(required = false, defaultValue = "10") Integer size);
 
     @GetMapping("/me")
     @ResponseStatus(HttpStatus.OK)
@@ -54,8 +60,12 @@ public interface PostApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    List<PostResponse> getCurrentUserPosts(@Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
-                                           Pageable pageable);
+    PageResponse<PostResponse> getCurrentUserPosts(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
+            @Parameter(description = "Номер страницы", example = "1")
+            @Positive @RequestParam(required = false, defaultValue = "1") Integer page,
+            @Parameter(description = "Размер страницы", example = "10")
+            @RequestParam(required = false, defaultValue = "10") Integer size);
 
     @GetMapping("/saved")
     @ResponseStatus(HttpStatus.OK)
@@ -66,9 +76,14 @@ public interface PostApi {
                             schema = @Schema(implementation = PostResponse.class))),
             @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = BaseExceptionMessage.class)))    })
-    List<PostResponse> getCurrentUserSavedPosts(@Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
-                                                Pageable pageable);
+                            schema = @Schema(implementation = BaseExceptionMessage.class)))
+    })
+    PageResponse<PostResponse> getCurrentUserSavedPosts(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
+            @Parameter(description = "Номер страницы", example = "1")
+            @Positive @RequestParam(required = false, defaultValue = "1") Integer page,
+            @Parameter(description = "Размер страницы", example = "10")
+            @RequestParam(required = false, defaultValue = "10") Integer size);
 
     @GetMapping("/users/{userId}/posts")
     @ResponseStatus(HttpStatus.OK)
@@ -86,12 +101,15 @@ public interface PostApi {
             @ApiResponse(responseCode = "404", description = "Пользователь не найден",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
-                    })
-    List<PostResponse> getPostsByUserId(
+    })
+    PageResponse<PostResponse> getPostsByUserId(
             @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
             @Parameter(description = "ID пользователя", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable String userId,
-            Pageable pageable);
+            @Parameter(description = "Номер страницы", example = "1")
+            @Positive @RequestParam(required = false, defaultValue = "1") Integer page,
+            @Parameter(description = "Размер страницы", example = "10")
+            @RequestParam(required = false, defaultValue = "10") Integer size);
 
     @GetMapping("/users/{userId}/saved")
     @ResponseStatus(HttpStatus.OK)
@@ -106,12 +124,15 @@ public interface PostApi {
             @ApiResponse(responseCode = "404", description = "Пользователь не найден",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
-            })
-    List<PostResponse> getSavedPostsByUserId(
+    })
+    PageResponse<PostResponse> getSavedPostsByUserId(
             @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
             @Parameter(description = "ID пользователя", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable String userId,
-            Pageable pageable);
+            @Parameter(description = "Номер страницы", example = "1")
+            @Positive @RequestParam(required = false, defaultValue = "1") Integer page,
+            @Parameter(description = "Размер страницы", example = "10")
+            @RequestParam(required = false, defaultValue = "10") Integer size);
 
     @GetMapping("/{postId}")
     @ResponseStatus(HttpStatus.OK)
@@ -126,7 +147,7 @@ public interface PostApi {
             @ApiResponse(responseCode = "404", description = "Пост не найден",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
-                    })
+    })
     PostResponse getPostById(
             @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
@@ -170,7 +191,7 @@ public interface PostApi {
             @ApiResponse(responseCode = "404", description = "Пост не найден",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
-                    })
+    })
     PostResponse updatePost(
             @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
@@ -195,7 +216,7 @@ public interface PostApi {
             @ApiResponse(responseCode = "404", description = "Пост не найден",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
-            })
+    })
     void deletePost(
             @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")

@@ -1,6 +1,7 @@
 package com.technokratos.service;
 
 import com.technokratos.dto.request.post.PostRequest;
+import com.technokratos.dto.response.PageResponse;
 import com.technokratos.dto.response.post.PostResponse;
 import com.technokratos.dto.response.user.UserCompactResponse;
 import com.technokratos.enums.user.PhotoVisibility;
@@ -8,17 +9,17 @@ import com.technokratos.exception.CategoryByIdNotFoundException;
 import com.technokratos.exception.ConflictServiceException;
 import com.technokratos.exception.ForbiddenServiceException;
 import com.technokratos.exception.PostByIdNotFoundException;
-import com.technokratos.model.CategoryEntity;
-import com.technokratos.model.EmbeddedUser;
-import com.technokratos.model.PostEntity;
-import com.technokratos.model.SavedPostEntity;
+import com.technokratos.model.*;
 import com.technokratos.repository.*;
 import com.technokratos.repository.custom.CustomPostRepository;
 import com.technokratos.repository.custom.CustomSavedPostRepository;
+import com.technokratos.util.Pagination;
 import com.technokratos.util.mapper.PostMapper;
 import com.technokratos.util.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -42,11 +43,13 @@ public class PostService {
     private final MinioService minioService;
 
 
-    public List<PostResponse> getRecommendedPosts(String currentUserId, Pageable pageable) {
-        return List.of();//todo после сервиса рекомендаций
+    public PageResponse<PostResponse> getRecommendedPosts(String currentUserId, int page, int size) {
+        return null;//todo после сервиса рекомендаций
     }
 
-    public List<PostResponse> getSavedPostsByUserId(String viewerId, String userId, Pageable pageable) {
+    public PageResponse<PostResponse> getSavedPostsByUserId(String viewerId, String userId, int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
 
         if (!checkPostPrivacy(viewerId, userId, userService.getSavedPhotoVisibility(userId))) {
             throw new ForbiddenServiceException("You don`t have authority to see this post");
@@ -56,22 +59,24 @@ public class PostService {
 
         log.info("saved post ids: {}", savedPostIds);
 
-        List<PostResponse> posts = postRepository.findAllById(savedPostIds)
-                .stream()
-                .map(postEntity -> postMapper.toPostResponse(
-                        postEntity,
-                        minioService.getPresignedUrl(postEntity.getImageFilename()),
-                        new UserCompactResponse(
-                                UUID.fromString(postEntity.getUser().getUserId()),
-                                postEntity.getUser().getUsername(),
-                                minioService.getPresignedUrl(postEntity.getUser().getAvatarFilename()))
-                ))
-                .toList();
+        Page<PostEntity> postsPage = postRepository.findAllByPostIdIn(savedPostIds, pageable);
 
-        return posts;//todo сделать правильную пагинацию
+        int total = postsPage.getTotalPages();
+        int offset = Pagination.offset(total, page, size);
+
+        List<PostResponse> posts = postPageToPostResponse(postsPage);
+
+        return PageResponse.<PostResponse>builder()
+                .data(posts)
+                .total(total)
+                .limit(size)
+                .offset(offset)
+                .build();
     }
 
-    public List<PostResponse> getPostsByUserId(String viewerId, String userId, Pageable pageable) {
+    public PageResponse<PostResponse> getPostsByUserId(String viewerId, String userId, int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
 
         log.info("service getPostsByUserId data: viewerId: {}, userId: {}, myPhotoVisibility: {}",
                 viewerId, userId, userService.getMyPhotoVisibility(userId));
@@ -80,19 +85,19 @@ public class PostService {
             throw new ForbiddenServiceException("You don`t have authority to see this post");
         }
 
-        List<PostResponse> posts = postRepository.findByUser_UserId(userId, pageable)
-                .stream()
-                .map(postEntity -> postMapper.toPostResponse(
-                        postEntity,
-                        minioService.getPresignedUrl(postEntity.getImageFilename()),
-                        new UserCompactResponse(
-                                UUID.fromString(postEntity.getUser().getUserId()),
-                                postEntity.getUser().getUsername(),
-                                minioService.getPresignedUrl(postEntity.getUser().getAvatarFilename()))
-                ))
-                .toList();;
+        Page<PostEntity> postsPage = postRepository.findByUser_UserId(userId, pageable);
 
-        return posts;//todo сделать правильную пагинацию
+        int total = postsPage.getTotalPages();
+        int offset = Pagination.offset(total, page, size);
+
+        List<PostResponse> posts = postPageToPostResponse(postsPage);
+
+        return PageResponse.<PostResponse>builder()
+                .data(posts)
+                .total(total)
+                .limit(size)
+                .offset(offset)
+                .build();
     }
 
     public PostResponse getPostById(String viewerId, String postId) {
@@ -155,7 +160,7 @@ public class PostService {
                         UUID.fromString(post.getUser().getUserId()),
                         post.getUser().getUsername(),
                         minioService.getPresignedUrl(post.getUser().getAvatarFilename())));
-        }
+    }
 
     public void delete(String currentUserId, String postId) {
         if (postRepository.existsById(postId)) {
@@ -205,6 +210,7 @@ public class PostService {
         }
         return post.getCommentsCount();
     }
+
     public boolean checkPostPrivacy(String viewerId, String userId, PhotoVisibility photoVisibility) {
         if (viewerId.equals(userId)) {
             return true;
@@ -242,6 +248,20 @@ public class PostService {
         }
 
         return post.getUser().getUserId();
+    }
+
+    private List<PostResponse> postPageToPostResponse(Page<PostEntity> postsPage) {
+        return postsPage
+                .stream()
+                .map(postEntity -> postMapper.toPostResponse(
+                        postEntity,
+                        minioService.getPresignedUrl(postEntity.getImageFilename()),
+                        new UserCompactResponse(
+                                UUID.fromString(postEntity.getUser().getUserId()),
+                                postEntity.getUser().getUsername(),
+                                minioService.getPresignedUrl(postEntity.getUser().getAvatarFilename()))
+                ))
+                .toList();
     }
 }
 

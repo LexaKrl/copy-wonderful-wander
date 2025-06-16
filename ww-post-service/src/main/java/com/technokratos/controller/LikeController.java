@@ -1,6 +1,7 @@
 package com.technokratos.controller;
 
 import com.technokratos.api.LikeApi;
+import com.technokratos.dto.response.PageResponse;
 import com.technokratos.dto.response.post.LikeResponse;
 import com.technokratos.dto.response.post.PostResponse;
 import com.technokratos.dto.response.user.UserCompactResponse;
@@ -20,8 +21,8 @@ public class LikeController implements LikeApi {
     private final LikeService likeService;
 
     @Override
-    public List<UserCompactResponse> getLikesByPostId(String currentUserId, String postId, Pageable pageable) {
-        return likeService.getLikesByPostId(currentUserId, postId);
+    public PageResponse<UserCompactResponse> getLikesByPostId(String currentUserId, String postId, Integer page, Integer size) {
+        return likeService.getLikesByPostId(currentUserId, postId, page, size);
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.technokratos.service;
 
 import com.mongodb.client.result.DeleteResult;
 import com.technokratos.dto.request.post.CommentRequest;
+import com.technokratos.dto.response.PageResponse;
 import com.technokratos.dto.response.comment.CommentHierarchyResponse;
 import com.technokratos.dto.response.comment.CommentResponse;
 import com.technokratos.dto.response.comment.ReplyCommentResponse;
@@ -14,10 +15,15 @@ import com.technokratos.repository.CommentRepository;
 import com.technokratos.repository.PostRepository;
 import com.technokratos.repository.custom.CustomCommentRepository;
 import com.technokratos.repository.custom.CustomPostRepository;
+import com.technokratos.util.Pagination;
 import com.technokratos.util.mapper.CommentMapper;
 import com.technokratos.util.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -39,7 +45,8 @@ public class CommentService {
     private final CustomPostRepository customPostRepository;
     private final MinioService minioService;
 
-    public List<RootCommentResponse> getCommentsByPostId(String viewerId, String postId) {
+    public PageResponse<RootCommentResponse> getCommentsByPostId(String viewerId, String postId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
         String userId = postService.getUserIdByPostId(postId);
 
@@ -47,7 +54,12 @@ public class CommentService {
             throw new ForbiddenServiceException("You are not authorized to view the comments of this post");
         }
 
-        List<RootCommentResponse> comments = commentRepository.findByPostId(postId)
+        Page<CommentEntity> commentsPage = commentRepository.findByPostId(postId, pageable);
+
+        int total = commentsPage.getTotalPages();
+        int offset = Pagination.offset(total, page, size);
+
+        List<RootCommentResponse> comments = commentsPage
                 .stream()
                 .filter(commentEntity -> commentEntity.getRootCommentId() == null)
                 .map(comment -> commentMapper.toRootCommentResponse(
@@ -61,7 +73,13 @@ public class CommentService {
 
         log.info("service getCommentsByPostId comments: {}", comments);
 
-        return comments;//todo сделать правильную пагинацию
+        return PageResponse.<RootCommentResponse>builder()
+                .data(comments)
+                .total(total)
+                .limit(size)
+                .offset(offset)
+                .build();
+
     }
 
 

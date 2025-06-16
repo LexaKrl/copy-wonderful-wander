@@ -2,6 +2,7 @@ package com.technokratos.controller;
 
 import com.technokratos.api.PostApi;
 import com.technokratos.dto.request.post.PostRequest;
+import com.technokratos.dto.response.PageResponse;
 import com.technokratos.dto.response.post.PostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,29 +24,29 @@ public class PostController implements PostApi {
 
 
     @Override
-    public List<PostResponse> getRecommendedPosts(String currentUserId, Pageable pageable) {
-        return postService.getRecommendedPosts(currentUserId, pageable);
+    public PageResponse<PostResponse> getRecommendedPosts(String currentUserId, Integer page, Integer size) {
+        return postService.getRecommendedPosts(currentUserId, page, size);
     }
 
     @Override
-    public List<PostResponse> getCurrentUserPosts(String currentUserId, Pageable pageable) {
-        return postService.getPostsByUserId(currentUserId, currentUserId, pageable);
+    public PageResponse<PostResponse> getCurrentUserPosts(String currentUserId, Integer page, Integer size) {
+        return postService.getPostsByUserId(currentUserId, currentUserId, page, size);
     }
 
     @Override
-    public List<PostResponse> getCurrentUserSavedPosts(String currentUserId, Pageable pageable) {
-        return postService.getSavedPostsByUserId(currentUserId, currentUserId, pageable);
+    public PageResponse<PostResponse> getCurrentUserSavedPosts(String currentUserId, Integer page, Integer size) {
+        return postService.getSavedPostsByUserId(currentUserId, currentUserId, page, size);
     }
 
     @Override
-    public List<PostResponse> getPostsByUserId(String currentUserId, String userId, Pageable pageable) {
+    public PageResponse<PostResponse> getPostsByUserId(String currentUserId, String userId, Integer page, Integer size) {
         log.info("controller getPostsByUserId, data: {}", userId);
-        return postService.getPostsByUserId(currentUserId, userId, pageable);
+        return postService.getPostsByUserId(currentUserId, userId, page, size);
     }
 
     @Override
-    public List<PostResponse> getSavedPostsByUserId(String currentUserId, String userId, Pageable pageable) {
-        return postService.getSavedPostsByUserId(currentUserId, userId, pageable);
+    public PageResponse<PostResponse> getSavedPostsByUserId(String currentUserId, String userId, Integer page, Integer size) {
+        return postService.getSavedPostsByUserId(currentUserId, userId, page, size);
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.technokratos.controller;
 
 import com.technokratos.api.CommentApi;
 import com.technokratos.dto.request.post.CommentRequest;
+import com.technokratos.dto.response.PageResponse;
 import com.technokratos.dto.response.comment.*;
 import com.technokratos.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,8 @@ public class CommentController implements CommentApi {
     private final CommentService commentService;
 
     @Override
-    public List<RootCommentResponse> getCommentsByPostId(String currentUserId, String postId, Pageable pageable) {
-        return commentService.getCommentsByPostId(currentUserId, postId);
+    public PageResponse<RootCommentResponse> getCommentsByPostId(String currentUserId, String postId, Integer page, Integer size) {
+        return commentService.getCommentsByPostId(currentUserId, postId, page, size);
     }
 
     @Override
