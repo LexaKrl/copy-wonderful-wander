@@ -42,7 +42,7 @@ public class UserRepository {
                 .map(record -> record.into(Account.class));
     }
 
-    public Optional<Object> findByEmail(String email) {
+    public Optional<Account> findByEmail(String email) {
         return dsl
                 .selectFrom(Tables.ACCOUNT)
                 .where(Tables.ACCOUNT.EMAIL.eq(email))
