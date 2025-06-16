@@ -15,7 +15,7 @@ public record CommentRequest(
         String text,
         @Schema(description = "ID комментария на который ответили. Если 'null' - комментарий не является ответом"
                 , example = "550e8400-e29b-41d4-a716-446655440000")
-        @Max(value = 36, message = "Root comment uuid length should be less 36 characters")
+        @Length(min = 36, max = 36, message = "Root comment uuid length should be 36 characters")
         String rootCommentId,
         @Schema(description = "Username пользователя которому ответили в ответах. Если 'null' - комментарий не является ответом"
                 , example = "550e8400-e29b-41d4-a716-446655440000")
