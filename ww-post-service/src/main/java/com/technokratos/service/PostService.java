@@ -39,6 +39,7 @@ public class PostService {
     private final UserMapper userMapper;
     private final CustomPostRepository customPostRepository;
     private final CustomSavedPostRepository customSavedPostRepository;
+    private final MinioService minioService;
 
 
     public List<PostResponse> getRecommendedPosts(String currentUserId, Pageable pageable) {
@@ -59,11 +60,11 @@ public class PostService {
                 .stream()
                 .map(postEntity -> postMapper.toPostResponse(
                         postEntity,
-                        postEntity.getImageId() + "test.jpg", //todo сделать получение из минио
+                        minioService.getPresignedUrl(postEntity.getImageId()),
                         new UserCompactResponse(
                                 UUID.fromString(postEntity.getUser().getUserId()),
                                 postEntity.getUser().getUsername(),
-                                postEntity.getUser().getAvatarFilename() + "test.jpg") //todo сделать получение из минио
+                                minioService.getPresignedUrl(postEntity.getUser().getAvatarFilename()))
                 ))
                 .toList();
 
@@ -83,11 +84,11 @@ public class PostService {
                 .stream()
                 .map(postEntity -> postMapper.toPostResponse(
                         postEntity,
-                        postEntity.getImageId() + "test.jpg", //todo сделать получение из минио
+                        minioService.getPresignedUrl(postEntity.getImageId()),
                         new UserCompactResponse(
                                 UUID.fromString(postEntity.getUser().getUserId()),
                                 postEntity.getUser().getUsername(),
-                                postEntity.getUser().getAvatarFilename() + "test.jpg") //todo сделать получение из минио
+                                minioService.getPresignedUrl(postEntity.getUser().getAvatarFilename()))
                 ))
                 .toList();;
 
@@ -104,11 +105,11 @@ public class PostService {
             throw new ForbiddenServiceException("You don`t have authority to see this post");
         }
 
-        return postMapper.toPostResponse(post, post.getImageId() + "test.jpg", //todo сделать получение из минио
+        return postMapper.toPostResponse(post, minioService.getPresignedUrl(post.getImageId()),
                 new UserCompactResponse(
                         UUID.fromString(post.getUser().getUserId()),
                         post.getUser().getUsername(),
-                        post.getUser().getAvatarFilename() + "test.jpg"));//todo сделать получение фото из минио по id и отдачу url
+                        minioService.getPresignedUrl(post.getUser().getAvatarFilename())));
     }
 
     public PostResponse create(String currentUserId, PostRequest createPostRequest) {
@@ -126,11 +127,11 @@ public class PostService {
 
         postRepository.save(post);
 
-        return postMapper.toPostResponse(post, post.getImageId() + "test.jpg", //todo сделать получение из минио
+        return postMapper.toPostResponse(post, minioService.getPresignedUrl(post.getImageId()),
                 new UserCompactResponse(
                         UUID.fromString(post.getUser().getUserId()),
                         post.getUser().getUsername(),
-                        post.getUser().getAvatarFilename() + "test.jpg"));//todo сделать получение фото из минио по id и отдачу url
+                        minioService.getPresignedUrl(post.getUser().getAvatarFilename())));
     }
 
     public PostResponse update(String currentUserId, String postId, PostRequest updatePostRequest) {
@@ -149,11 +150,11 @@ public class PostService {
 
         postRepository.save(post);
 
-        return postMapper.toPostResponse(post, post.getImageId() + "test.jpg", //todo сделать получение из минио
+        return postMapper.toPostResponse(post, minioService.getPresignedUrl(post.getImageId()),
                 new UserCompactResponse(
                         UUID.fromString(post.getUser().getUserId()),
                         post.getUser().getUsername(),
-                        post.getUser().getAvatarFilename() + "test.jpg"));//todo сделать получение фото из минио по id и отдачу url
+                        minioService.getPresignedUrl(post.getUser().getAvatarFilename())));
         }
 
     public void delete(String currentUserId, String postId) {

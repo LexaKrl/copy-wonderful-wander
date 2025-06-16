@@ -37,6 +37,7 @@ public class CommentService {
     private final UserMapper userMapper;
     private final CustomCommentRepository customCommentRepository;
     private final CustomPostRepository customPostRepository;
+    private final MinioService minioService;
 
     public List<RootCommentResponse> getCommentsByPostId(String viewerId, String postId) {
 
@@ -54,7 +55,7 @@ public class CommentService {
                         new UserCompactResponse(
                                 UUID.fromString(comment.getUser().getUserId()),
                                 comment.getUser().getUsername(),
-                                comment.getUser().getAvatarFilename() + "test.jpg") //todo сделать получение из минио
+                                minioService.getPresignedUrl(comment.getUser().getAvatarFilename()))
                 ))
                 .toList();
 
@@ -90,7 +91,7 @@ public class CommentService {
                 new UserCompactResponse(
                         UUID.fromString(rootComment.getUser().getUserId()),
                         rootComment.getUser().getUsername(),
-                        rootComment.getUser().getUserId() + "test.jpg"));//todo сделать получение из минио
+                        minioService.getPresignedUrl(rootComment.getUser().getUserId())));
 
         List<ReplyCommentResponse> replyComments = commentRepository.findByRootCommentId(commentId)
                 .stream()
@@ -99,7 +100,7 @@ public class CommentService {
                         new UserCompactResponse(
                                 UUID.fromString(comment.getUser().getUserId()),
                                 comment.getUser().getUsername(),
-                                comment.getUser().getAvatarFilename() + "test.jpg") //todo сделать получение из минио
+                                minioService.getPresignedUrl(comment.getUser().getAvatarFilename()))
                 ))
                 .toList();
 

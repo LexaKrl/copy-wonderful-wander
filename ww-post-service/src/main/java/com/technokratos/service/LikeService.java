@@ -30,6 +30,7 @@ public class LikeService {
     private final PostService postService;
     private final CustomLikeRepository customLikeRepository;
     private final CustomPostRepository customPostRepository;
+    private final MinioService minioService;
 
 
     public List<UserCompactResponse> getLikesByPostId(String viewerId, String postId) {
@@ -46,7 +47,7 @@ public class LikeService {
                 .map(embeddedUser -> new UserCompactResponse(
                         UUID.fromString(embeddedUser.getUserId()),
                         embeddedUser.getUsername(),
-                        "test.jpg" //todo сделать получение из минио
+                        minioService.getPresignedUrl(embeddedUser.getAvatarFilename())
                 ))
                 .toList();
 
