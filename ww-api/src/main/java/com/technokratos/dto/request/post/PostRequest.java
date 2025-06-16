@@ -1,8 +1,7 @@
 package com.technokratos.dto.request.post;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-
-import java.util.UUID;
+import jakarta.validation.constraints.NotNull;
 
 public record PostRequest(
         @Schema(description = "Подпись к фотографии", example = "Это мы в Дубае))",
@@ -10,9 +9,11 @@ public record PostRequest(
         String title,
         @Schema(description = "Уникальный идентификатор фотографии UUID, по которому из облака можно получить ссылку на фото",
                 example = "550e8400-e29b-41d4-a716-446655440000", requiredMode = Schema.RequiredMode.REQUIRED)
-        String imageId,
+        @NotNull(message = "Image id is required")
+        String imageFilename,
         @Schema(description = "Уникальный идентификатор категории", example = "234523423",
                 requiredMode = Schema.RequiredMode.REQUIRED)
+        @NotNull(message = "Category id is required")
         Long categoryId
 ) {
 }

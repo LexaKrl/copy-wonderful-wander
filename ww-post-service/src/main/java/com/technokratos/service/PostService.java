@@ -60,7 +60,7 @@ public class PostService {
                 .stream()
                 .map(postEntity -> postMapper.toPostResponse(
                         postEntity,
-                        minioService.getPresignedUrl(postEntity.getImageId()),
+                        minioService.getPresignedUrl(postEntity.getImageFilename()),
                         new UserCompactResponse(
                                 UUID.fromString(postEntity.getUser().getUserId()),
                                 postEntity.getUser().getUsername(),
@@ -84,7 +84,7 @@ public class PostService {
                 .stream()
                 .map(postEntity -> postMapper.toPostResponse(
                         postEntity,
-                        minioService.getPresignedUrl(postEntity.getImageId()),
+                        minioService.getPresignedUrl(postEntity.getImageFilename()),
                         new UserCompactResponse(
                                 UUID.fromString(postEntity.getUser().getUserId()),
                                 postEntity.getUser().getUsername(),
@@ -105,7 +105,7 @@ public class PostService {
             throw new ForbiddenServiceException("You don`t have authority to see this post");
         }
 
-        return postMapper.toPostResponse(post, minioService.getPresignedUrl(post.getImageId()),
+        return postMapper.toPostResponse(post, minioService.getPresignedUrl(post.getImageFilename()),
                 new UserCompactResponse(
                         UUID.fromString(post.getUser().getUserId()),
                         post.getUser().getUsername(),
@@ -127,7 +127,7 @@ public class PostService {
 
         postRepository.save(post);
 
-        return postMapper.toPostResponse(post, minioService.getPresignedUrl(post.getImageId()),
+        return postMapper.toPostResponse(post, minioService.getPresignedUrl(post.getImageFilename()),
                 new UserCompactResponse(
                         UUID.fromString(post.getUser().getUserId()),
                         post.getUser().getUsername(),
@@ -145,12 +145,12 @@ public class PostService {
                 .orElseThrow(() -> new CategoryByIdNotFoundException(updatePostRequest.categoryId()));
 
         post.setTitle(updatePostRequest.title());
-        post.setImageId(updatePostRequest.imageId());
+        post.setImageFilename(updatePostRequest.imageFilename());
         post.setCategory(postMapper.toEmbeddedCategoryEntity(category));
 
         postRepository.save(post);
 
-        return postMapper.toPostResponse(post, minioService.getPresignedUrl(post.getImageId()),
+        return postMapper.toPostResponse(post, minioService.getPresignedUrl(post.getImageFilename()),
                 new UserCompactResponse(
                         UUID.fromString(post.getUser().getUserId()),
                         post.getUser().getUsername(),

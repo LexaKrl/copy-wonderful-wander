@@ -8,7 +8,6 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Document(collection = "post")
 @Setter
@@ -19,7 +18,7 @@ public class PostEntity {
     @Id
     private String postId;
     private String title;
-    private String imageId;
+    private String imageFilename;
     @Indexed
     private EmbeddedCategory category;
     @Indexed
