@@ -1,25 +1,17 @@
-#spring:
-#  profiles:
-#    active: ${SPRING_PROFILES_ACTIVE}
-#
-#server:
-#  port: ${SERVER_PORT}
-
 spring:
   application:
     name: ww-walk-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/agona_db
-    username: postgres
-    password: postgres
+    url:
+    username:
+    password:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: validate
   data:
     mongodb:
-      uri: mongodb://localhost:27017/ww-walk-service
-      # uri: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@localhost:${MONGO_PORT}/ww-walk-service
+      uri: mongodb://localhost:${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@localhost:${MONGO_PORT}/ww-walk-service
       auto-index-creation: true
   liquibase:
     change-log: classpath:/db/changelog/walk-service/changelog-master.yaml
@@ -42,10 +34,10 @@ spring:
         enable-idempotence: true
         max-in-flight-requests-per-connection: 5
   rabbitmq:
-    username: root
-    password: root
-    host: localhost
-    port: 5672
+    username:
+    password:
+    host:
+    port:
     listener:
       simple:
         retry:
@@ -59,5 +51,6 @@ walk:
       max-walk-expires-time: 3
 app:
   url:
-    walk-acceptation-url: "https://wonderful-wander.ru/api/walks/{walkId}/participant/{participantId}/accept"
-    subscribers-retrieve-url: "https://wonderful-wander.ru/api/users/{userId}/following"
+    base-url: "https://wonderful-wander.ru"
+    walk-acceptation-url: "/api/walks/{walkId}/participant/{participantId}/accept"
+    subscribers-retrieve-url: "/api/users/{userId}/following"
