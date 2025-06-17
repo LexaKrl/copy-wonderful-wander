@@ -2,6 +2,7 @@ package com.technokratos.handler;
 
 import com.technokratos.event.UserCreatedEvent;
 import com.technokratos.event.UserDeletedEvent;
+import com.technokratos.event.UserUpdatedEvent;
 import com.technokratos.util.KafkaTopics;
 import com.technokratos.entity.UserWalkVisibility;
 import com.technokratos.service.impl.BaseWalkService;
@@ -14,16 +15,28 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@KafkaListener(topics = {KafkaTopics.USER_CREATED_TOPIC, KafkaTopics.USER_DELETED_TOPIC})
+@KafkaListener(topics = {KafkaTopics.USER_CREATED_TOPIC, KafkaTopics.USER_DELETED_TOPIC, KafkaTopics.USER_UPDATED_TOPIC})
 public class UserEventsHandler {
     private final BaseWalkService walkService;
 
     @KafkaHandler
     public void handleUserCreatedEvent(UserCreatedEvent userCreatedEvent) {
         log.info("Walk service accepted event: {}", userCreatedEvent);
-        walkService.saveWalkVisibility(UserWalkVisibility.builder()
+        walkService.saveWalkVisibility(
+                UserWalkVisibility.builder()
                         .userId(userCreatedEvent.getUserId())
                         .walkVisibility(userCreatedEvent.getWalkVisibility())
+                        .build()
+        );
+    }
+
+    @KafkaHandler
+    public void handleUserUpdatedEvent(UserUpdatedEvent userUpdatedEvent) {
+        log.info("Walk service accepted event: {}", userUpdatedEvent);
+        walkService.saveWalkVisibility(
+                UserWalkVisibility.builder()
+                        .userId(userUpdatedEvent.getUserId())
+                        .walkVisibility(userUpdatedEvent.getWalkVisibility())
                         .build()
         );
     }
