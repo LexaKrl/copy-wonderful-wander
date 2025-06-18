@@ -53,7 +53,7 @@ deploy:
     - ./deploy.sh
   environment: main
   variables:
-    BRANCH: main
+    BRANCH: feature/WANDER-32
     SSH: main
 #  only:
 #    - main
