@@ -1,7 +1,4 @@
 spring:
-  application:
-    name: photo-management-service
-
   servlet:
     multipart:
       max-file-size: 25MB
