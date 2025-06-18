@@ -7,7 +7,6 @@ import com.technokratos.service.UserDataService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -34,5 +33,17 @@ public class BaseUserDataService implements UserDataService {
     @Override
     public void deleteUserData(UUID userId) {
         userDataRepository.deleteUserDataByUserId(userId);
+    }
+
+    @Override
+    public void updateFcmToken(UUID userId, String fcmToken) {
+        UserData userData = getUserDataByUserId(userId);
+        userData.setFcmToken(fcmToken);
+        userDataRepository.save(userData);
+    }
+
+    @Override
+    public String getFcmToken(UUID userId) {
+        return userDataRepository.findFcmTokenByUserId(userId).orElse(null);
     }
 }

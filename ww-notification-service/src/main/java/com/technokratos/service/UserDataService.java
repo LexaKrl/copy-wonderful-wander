@@ -10,4 +10,6 @@ public interface UserDataService {
     void saveUserData(UserData userData);
     void updateUserData(UserData userData);
     void deleteUserData(UUID userId);
+    void updateFcmToken(UUID userId, String fcmToken);
+    String getFcmToken(UUID userId);
 }

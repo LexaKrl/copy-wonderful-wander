@@ -1,6 +1,7 @@
 package com.technokratos.handler;
 
 import com.technokratos.entity.UserData;
+import com.technokratos.event.FcmTokenReceivedEvent;
 import com.technokratos.event.UserCreatedEvent;
 import com.technokratos.event.UserDeletedEvent;
 import com.technokratos.event.UserUpdatedEvent;
@@ -12,10 +13,15 @@ import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@KafkaListener(topics = {KafkaTopics.USER_CREATED_TOPIC, KafkaTopics.USER_UPDATED_TOPIC, KafkaTopics.USER_DELETED_TOPIC})
+@KafkaListener(topics = {
+        KafkaTopics.USER_CREATED_TOPIC, KafkaTopics.USER_UPDATED_TOPIC, KafkaTopics.USER_DELETED_TOPIC,
+        KafkaTopics.FCM_TOKEN_RECEIVED_TOPIC
+})
 public class UserDataHandler {
 
     private final UserDataService userDataService;
@@ -27,7 +33,7 @@ public class UserDataHandler {
                 new UserData(
                         userCreatedEvent.getUserId(),
                         userCreatedEvent.getEmail(),
-                        userCreatedEvent.getEmail() /* TODO add FCM token */
+                        null
                 )
         );
     }
@@ -35,11 +41,12 @@ public class UserDataHandler {
     @KafkaHandler
     public void handleUserUpdated(UserUpdatedEvent userUpdatedEvent) {
         log.info("User data updated: {}", userUpdatedEvent);
+        UUID userId = userUpdatedEvent.getUserId();
         userDataService.updateUserData(
                 new UserData(
-                        userUpdatedEvent.getUserId(),
+                        userId,
                         userUpdatedEvent.getEmail(),
-                        userUpdatedEvent.getEmail() /* TODO add FCM token */
+                        userDataService.getFcmToken(userId)
                 )
         );
     }
@@ -48,5 +55,11 @@ public class UserDataHandler {
     public void handleUserDeleted(UserDeletedEvent userDeletedEvent) {
         log.info("User data deleted: {}", userDeletedEvent);
         userDataService.deleteUserData(userDeletedEvent.getUserId());
+    }
+
+    @KafkaHandler
+    public void handleFcmTokenReceived(FcmTokenReceivedEvent fcmTokenReceivedEvent) {
+        log.info("FCM token received in notification service: {}", fcmTokenReceivedEvent);
+        userDataService.updateFcmToken(fcmTokenReceivedEvent.getUserId(), fcmTokenReceivedEvent.getFcmToken());
     }
 }
