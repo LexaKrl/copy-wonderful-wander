@@ -25,7 +25,7 @@ public class WalkEventProducer {
     public void sendWalkFinishedEvent(WalkFinishedEvent walkFinishedEvent) {
         rabbitTemplate.convertAndSend(
                 RabbitUtilities.NOTIFICATION_EXCHANGE,
-                RabbitUtilities.WALK_NOTIFICATION_QUEUE,
+                RabbitUtilities.WALK_FINISHED_QUEUE,
                 walkFinishedEvent
         );
     }

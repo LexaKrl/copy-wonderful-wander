@@ -14,4 +14,5 @@ import java.util.UUID;
 public class WalkFinishedEvent {
     UUID walkId;
     UUID walkOwnerId;
+    String walkName;
 }
