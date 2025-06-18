@@ -19,6 +19,7 @@ public class UserCreatedEvent {
     private String email;
     private String role;
     private String avatarFilename;
-    private PhotoVisibility photoVisibility;
+    private PhotoVisibility myPhotoVisibility;
+    private PhotoVisibility savedPhotoVisibility;
     private WalkVisibility walkVisibility;
 }
