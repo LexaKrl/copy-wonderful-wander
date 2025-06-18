@@ -7,5 +7,6 @@
 <body>
 <h2 th:text="${title}">Заголовок</h2>
 <p th:text="${message}">Текст письма</p>
+<a th:if="not empty link" th:href="${link}">Ссылка в письме</a>
 </body>
 </html>
