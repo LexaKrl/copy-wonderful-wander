@@ -1,0 +1,19 @@
+services:
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=ww-post-service-db
+    volumes:
+      - mongodb-data:/data/db
+    networks:
+      - mongo-network
+    restart: unless-stopped
+
+volumes:
+  mongodb-data:
+
+networks:
+  mongo-network:
+    driver: bridge

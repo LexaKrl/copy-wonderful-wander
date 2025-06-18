@@ -17,5 +17,6 @@ public class LikeEntity {
     private String likeId;
     @Indexed
     private String postId;
+    @Indexed
     private EmbeddedUser user;
 }

@@ -2,6 +2,7 @@ package com.technokratos.api;
 
 import com.technokratos.dto.request.walk.WalkRequest;
 import com.technokratos.dto.response.walk.WalkResponse;
+import com.technokratos.util.HttpHeaders;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -53,7 +54,7 @@ public interface WalkApi {
                     example = "550e8400-e29b-41d4-a716-446655440000",
                     required = true
             )
-            UUID requesterId,
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) UUID requesterId,
             @Parameter(
                     description = "Pageable type with size and sort type",
                     required = true
@@ -99,7 +100,7 @@ public interface WalkApi {
                     example = "550e8400-e29b-41d4-a716-446655440000",
                     required = true
             )
-            UUID requesterId,
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) UUID requesterId,
             @Parameter(
                     description = "Pageable type with size and sort type",
                     required = true
@@ -138,7 +139,7 @@ public interface WalkApi {
                     example = "550e8400-e29b-41d4-a716-446655440000",
                     required = true
             )
-            UUID requesterId,
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) UUID requesterId,
             @Parameter(
                     description = "Pageable type with size and sort type",
                     required = true
@@ -177,7 +178,7 @@ public interface WalkApi {
                     example = "550e8400-e29b-41d4-a716-446655440000",
                     required = true
             )
-            UUID requesterId,
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) UUID requesterId,
             @Parameter(
                     description = "Pageable type with size and sort type",
                     required = true
@@ -209,6 +210,12 @@ public interface WalkApi {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     void createWalk(
+            @Parameter(
+                    description = "UUID of the currentUser",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
+            )
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) UUID currentUserId,
             @Parameter(
                     description = "Data for creation walk",
                     required = true,
@@ -252,7 +259,7 @@ public interface WalkApi {
                     example = "550e8400-e29b-41d4-a716-446655440000",
                     required = true
             )
-            UUID requesterId,
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) UUID requesterId,
             @Parameter(
                     description = "UUID of the walk",
                     example = "550e8400-e29b-41d4-a716-446655440000",
@@ -283,6 +290,12 @@ public interface WalkApi {
     @DeleteMapping("/{walkId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void deleteWalk(
+            @Parameter(
+                    description = "UUID of the currentUser",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
+            )
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) UUID currentUserId,
             @Parameter(
                     description = "UUID of the walk to delete",
                     example = "550e8400-e29b-41d4-a716-446655440000",
@@ -317,6 +330,12 @@ public interface WalkApi {
     @PutMapping("/{walkId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void updateWalk(
+            @Parameter(
+                    description = "UUID of the currentUser",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
+            )
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) UUID currentUserId,
             @Parameter(
                     description = "The body of the walk request that user sends to the server",
                     required = true,
@@ -358,6 +377,12 @@ public interface WalkApi {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void addParticipant(
             @Parameter(
+                    description = "UUID of the currentUser",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
+            )
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) UUID currentUserId,
+            @Parameter(
                     description = "UUID of the participant user want to add",
                     example = "550e8400-e29b-41d4-a716-446655440000",
                     required = true
@@ -397,6 +422,12 @@ public interface WalkApi {
     @DeleteMapping("/{walkId}/participant")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void removeParticipant(
+            @Parameter(
+                    description = "UUID of the currentUser",
+                    example = "550e8400-e29b-41d4-a716-446655440000",
+                    required = true
+            )
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) UUID currentUserId,
             @Parameter(
                     description = "UUID of the participant user want to remove",
                     example = "550e8400-e29b-41d4-a716-446655440000",

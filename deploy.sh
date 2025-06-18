@@ -13,6 +13,7 @@ envsubst < ./config.dist > ./config
 envsubst < ./env/.api-gateway.env.dist > ./env/.api-gateway.env
 envsubst < ./env/.user-service.env.dist > ./env/.user-service.env
 envsubst < ./env/.photo-management-service.env.dist > ./env/.photo-management-service.env
+envsubst < ./env/.post-service.env.dist > ./env/.post-service.env
 
 cp config ~/.ssh
 
@@ -26,6 +27,7 @@ ssh "$SSH" "cd ~/wonderful-wander/ && git checkout $BRANCH"
 scp ./env/.api-gateway.env "$SSH":~/wonderful-wander/env
 scp ./env/.user-service.env "$SSH":~/wonderful-wander/env
 scp ./env/.photo-management-service.env "$SSH":~/wonderful-wander/env
+scp ./env/.post-service.env "$SSH":~/wonderful-wander/env
 
 ssh "$SSH" "mv -f ~/wonderful-wander/nginx.conf ~/nginx/conf.d"
 ssh "$SSH" "sudo docker pull registry.gitlab.com/wonderful-wander-team/wonderful-wander/ww-api-gateway"

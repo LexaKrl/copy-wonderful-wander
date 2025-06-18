@@ -1,0 +1,11 @@
+jar.enabled = false;
+
+dependencies {
+    runtimeOnly 'org.postgresql:postgresql'
+
+    implementation project(':ww-core')
+}
+
+test {
+    useJUnitPlatform()
+}

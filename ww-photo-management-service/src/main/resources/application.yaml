@@ -1,4 +1,7 @@
 spring:
+  application:
+    name: photo-management-service
+
   profiles:
     active: ${SPRING_PROFILES_ACTIVE}
 

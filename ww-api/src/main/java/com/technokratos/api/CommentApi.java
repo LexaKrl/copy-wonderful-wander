@@ -3,7 +3,11 @@ package com.technokratos.api;
 import com.technokratos.dto.exception.BaseExceptionMessage;
 import com.technokratos.dto.exception.ValidationExceptionMessage;
 import com.technokratos.dto.request.post.CommentRequest;
-import com.technokratos.dto.response.comment.*;
+import com.technokratos.dto.response.PageResponse;
+import com.technokratos.dto.response.comment.CommentHierarchyResponse;
+import com.technokratos.dto.response.comment.CommentResponse;
+import com.technokratos.dto.response.comment.RootCommentResponse;
+import com.technokratos.util.HttpHeaders;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,13 +15,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.data.domain.Pageable;
+import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(
         name = "Комментарии",
@@ -44,10 +46,14 @@ public interface CommentApi {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
-    List<RootCommentResponse> getCommentsByPostId(
+    PageResponse<RootCommentResponse> getCommentsByPostId(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable String postId,
-            Pageable pageable);
+            @Parameter(description = "Номер страницы", example = "1")
+            @Positive @RequestParam(required = false, defaultValue = "1") Integer page,
+            @Parameter(description = "Размер страницы", example = "10")
+            @RequestParam(required = false, defaultValue = "10") Integer size);
 
     @GetMapping("/{commentId}")
     @ResponseStatus(HttpStatus.OK)
@@ -67,6 +73,7 @@ public interface CommentApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
     CommentHierarchyResponse getCommentById(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable String postId,
             @Parameter(description = "ID комментария", example = "550e8400-e29b-41d4-a716-446655440000")
@@ -90,6 +97,7 @@ public interface CommentApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
     CommentResponse createComment(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable String postId,
             @Parameter(description = "Данные комментария", required = true)
@@ -101,7 +109,7 @@ public interface CommentApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Комментарий успешно обновлен",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = CommentResponse.class))),
+                            schema = @Schema(implementation = CommentResponse.class))),
             @ApiResponse(responseCode = "400", description = "Ошибка валидации данных комментария или невалидный uuid поста или комментария",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ValidationExceptionMessage.class))),
@@ -116,6 +124,7 @@ public interface CommentApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
     CommentResponse updateComment(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable String postId,
             @Parameter(description = "ID комментария", example = "550e8400-e29b-41d4-a716-446655440000")
@@ -139,6 +148,7 @@ public interface CommentApi {
                             schema = @Schema(implementation = BaseExceptionMessage.class)))
     })
     void deleteComment(
+            @Schema(hidden = true) @RequestHeader(HttpHeaders.USER_ID) String currentUserId,
             @Parameter(description = "ID поста", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable String postId,
             @Parameter(description = "ID комментария", example = "550e8400-e29b-41d4-a716-446655440000")

@@ -10,7 +10,7 @@ VALUES ('550e8400-e29b-41d4-a716-446655440000',
         'ROLE_USER');
 
 -- Auxiliary accounts for checking the logic of relationships
-INSERT INTO account (user_id, username, email, firstname, lastname, password, bio, role, photo_visibility,
+INSERT INTO account (user_id, username, email, firstname, lastname, password, bio, role, my_photo_visibility,
                      walk_visibility)
 VALUES ('11111111-1111-1111-1111-111111111111', 'user1', 'user1@example.com', 'Alice', 'Smith',
         '$2a$12$KyCJ1co4GF5mI1TeMUuiRuime9RLD57ZJzX/qUHB8DfEKEFTDtNMS', 'Bio for user1',
@@ -72,7 +72,7 @@ VALUES ('11111111-1111-1111-1111-111111111111', 'user1', 'user1@example.com', 'A
        ('cafebabe-cafe-babe-cafe-babecafebabe', 'user20', 'user20@example.com', 'Tina', 'Roberts',
         '$2a$12$KyCJ1co4GF5mI1TeMUuiRuime9RLD57ZJzX/qUHB8DfEKEFTDtNMS', 'Bio for user20',
         'ROLE_USER', 'FRIENDS_ONLY', 'PUBLIC');
-INSERT INTO account (user_id, username, email, firstname, lastname, password, bio, role, photo_visibility,
+INSERT INTO account (user_id, username, email, firstname, lastname, password, bio, role, my_photo_visibility,
                      walk_visibility)
 VALUES ('1a2b3c4d-1a2b-1a2b-1a2b-1a2b3c4d5e6f', 'user21', 'user21@example.com', 'Uma', 'Turner',
         '$2a$12$KyCJ1co4GF5mI1TeMUuiRuime9RLD57ZJzX/qUHB8DfEKEFTDtNMS', 'Bio for user21',
@@ -105,7 +105,7 @@ VALUES ('1a2b3c4d-1a2b-1a2b-1a2b-1a2b3c4d5e6f', 'user21', 'user21@example.com', 
         '$2a$12$KyCJ1co4GF5mI1TeMUuiRuime9RLD57ZJzX/qUHB8DfEKEFTDtNMS', 'Bio for user30',
         'ROLE_USER', 'PRIVATE', 'FRIENDS_ONLY');
 
-INSERT INTO account (user_id, username, email, firstname, lastname, password, bio, role, photo_visibility, walk_visibility)
+INSERT INTO account (user_id, username, email, firstname, lastname, password, bio, role, my_photo_visibility, walk_visibility)
 VALUES
     ('a1b2c3d4-a1b2-a1b2-a1b2-a1b2c3d4e5f6', 'user31', 'user31@example.com', 'Ethan', 'Turner',
      '$2a$12$KyCJ1co4GF5mI1TeMUuiRuime9RLD57ZJzX/qUHB8DfEKEFTDtNMS', 'Bio for user31',

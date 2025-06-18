@@ -1,7 +1,4 @@
 spring:
-  application:
-    name: api-gateway
-
   main:
     web-application-type: reactive
 
@@ -22,6 +19,11 @@ spring:
           predicates:
             - Path=/photos/**
 
+        - id: post-swagger
+          uri: lb://post-service
+          predicates:
+            - Path=/posts/**
+
         - id: user-service
           uri: lb://user-service
           predicates:
@@ -33,6 +35,13 @@ spring:
           uri: lb://photo-management-service
           predicates:
             - Path=/api/photos/**
+          filters:
+            - JwtAuthentication
+
+        - id: post-service
+          uri: lb://post-service
+          predicates:
+            - Path=/api/posts/**
           filters:
             - JwtAuthentication
 
@@ -58,6 +67,8 @@ springdoc:
         url: /users/v3/api-docs
       - name: photo-management-service
         url: /photos/v3/api-docs
+      - name: post-service
+        url: /posts/v3/api-docs
 
 management:
   endpoints:
