@@ -7,6 +7,9 @@ dependencies {
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$openApiVersion"
     implementation 'org.springframework.kafka:spring-kafka'
 
+    implementation 'io.mongock:mongodb-springdata-v4-driver:5.5.1'
+    compileOnly 'io.mongock:mongock-springboot:5.5.1'
+
     runtimeOnly 'org.postgresql:postgresql'
 
     implementation project(':ww-api')
