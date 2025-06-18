@@ -1,6 +1,9 @@
 package com.technokratos.util.mapper;
 
 import com.technokratos.dto.response.user.UserCompactResponse;
+import com.technokratos.dto.response.user.UserForPostResponse;
+import com.technokratos.event.UserCreatedEvent;
+import com.technokratos.event.UserUpdatedEvent;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -20,5 +23,14 @@ public interface UserMapper {
     @Mapping(target = "avatarUrl")
     @Mapping(target = "userId")
     UserCompactResponse toUserCompactResponse(EmbeddedUser user, UUID userId, String avatarUrl);
+
+    @Mapping(target = "userId")
+    CachedUserEntity toCachedUserEntity(UserCreatedEvent event, String userId);
+
+
+    @Mapping(target = "userId")
+    CachedUserEntity toCachedUserEntity(UserUpdatedEvent event, String userId);
+
+    CachedUserEntity toCachedUserEntity(UserForPostResponse userForPostResponse);
 
 }

@@ -27,7 +27,10 @@ public record UserRequest(
         String bio,
         @Schema(description = "Уровень видимости своих фотографий другим пользователям", example = "FRIENDS_ONLY", requiredMode = Schema.RequiredMode.REQUIRED)
         @NotNull(message = "Photo visibility is required")
-        PhotoVisibility photoVisibility,
+        PhotoVisibility myPhotoVisibility,
+        @Schema(description = "Уровень видимости сохраненных фотографий другим пользователям", example = "FRIENDS_ONLY", requiredMode = Schema.RequiredMode.REQUIRED)
+        @NotNull(message = "Photo visibility is required")
+        PhotoVisibility savedPhotoVisibility,
         @Schema(description = "Уровень видимости своих прогулок другим пользователям", example = "PUBLIC", requiredMode = Schema.RequiredMode.REQUIRED)
         @NotNull(message = "Walk visibility is required")
         WalkVisibility walkVisibility) {

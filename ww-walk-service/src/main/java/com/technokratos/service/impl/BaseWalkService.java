@@ -5,6 +5,7 @@ import com.technokratos.dto.request.walk.WalkRequest;
 import com.technokratos.dto.response.walk.WalkResponse;
 import com.technokratos.entity.*;
 import com.technokratos.enums.walk.WalkStatus;
+import com.technokratos.event.WalkFinishedEvent;
 import com.technokratos.event.WalkInviteEvent;
 import com.technokratos.config.properties.ApplicationUrlProperties;
 import com.technokratos.exception.*;
@@ -14,13 +15,16 @@ import com.technokratos.repository.UserWalkVisibilityRepository;
 import com.technokratos.repository.WalkInvitationRepository;
 import com.technokratos.repository.WalkRepository;
 import com.technokratos.service.WalkService;
+import com.technokratos.util.RabbitUtilities;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.simplify.DouglasPeuckerSimplifier;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -194,7 +198,13 @@ public class BaseWalkService implements WalkService {
 
         walkRepository.save(existingWalk);
 
-        /* TODO send notification walk finished to subscribers RABBIT */
+        walkEventProducer.sendWalkFinishedEvent(
+                WalkFinishedEvent.builder()
+                        .walkId(walkId)
+                        .walkName(existingWalk.getName())
+                        .walkOwnerId(existingWalk.getOwnerId())
+                        .build()
+        );
     }
 
     private LineString simplifyAndSaveLineString(List<WalkPoint> points) {

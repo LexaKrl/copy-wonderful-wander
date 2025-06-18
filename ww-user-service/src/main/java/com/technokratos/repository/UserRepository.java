@@ -6,6 +6,7 @@ import com.technokratos.enums.PhotoVisibility;
 import com.technokratos.enums.WalkVisibility;
 import com.technokratos.model.UserEntity;
 import com.technokratos.tables.pojos.Account;
+import io.micrometer.common.KeyValues;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -41,7 +42,7 @@ public class UserRepository {
                 .map(record -> record.into(Account.class));
     }
 
-    public Optional<Object> findByEmail(String email) {
+    public Optional<Account> findByEmail(String email) {
         return dsl
                 .selectFrom(Tables.ACCOUNT)
                 .where(Tables.ACCOUNT.EMAIL.eq(email))
@@ -111,6 +112,7 @@ public class UserRepository {
                 .into(Account.class);
     }
 
+
     public void follow(UUID userId, UUID targetUserId) {
         dsl
                 .insertInto(Tables.USER_RELATIONSHIPS)
@@ -153,7 +155,8 @@ public class UserRepository {
                 .set(Tables.ACCOUNT.FIRSTNAME, userRequest.firstname())
                 .set(Tables.ACCOUNT.LASTNAME, userRequest.lastname())
                 .set(Tables.ACCOUNT.BIO, userRequest.bio())
-                .set(Tables.ACCOUNT.PHOTO_VISIBILITY, PhotoVisibility.valueOf(userRequest.photoVisibility().name()))
+                .set(Tables.ACCOUNT.MY_PHOTO_VISIBILITY, PhotoVisibility.valueOf(userRequest.myPhotoVisibility().name()))
+                .set(Tables.ACCOUNT.SAVED_PHOTO_VISIBILITY, PhotoVisibility.valueOf(userRequest.savedPhotoVisibility().name()))
                 .set(Tables.ACCOUNT.WALK_VISIBILITY, WalkVisibility.valueOf(userRequest.walkVisibility().name()))
                 .where(Tables.ACCOUNT.USER_ID.eq(userId))
                 .returning()
@@ -251,5 +254,46 @@ public class UserRepository {
                 )
                 .on(Tables.ACCOUNT.USER_ID.eq(DSL.field(DSL.name("followings", "target_user_id"), UUID.class)))
                 .fetchOneInto(Integer.class);
+    }
+
+    public boolean isFriends(UUID userId, UUID targetUserId) {
+        return dsl.fetchExists(
+                dsl.selectOne()
+                        .from(Tables.USER_RELATIONSHIPS)
+                        .where(Tables.USER_RELATIONSHIPS.USER_ID.eq(userId)
+                                .and(Tables.USER_RELATIONSHIPS.TARGET_USER_ID.eq(targetUserId)))
+                        .andExists(
+                                dsl.selectOne()
+                                        .from(Tables.USER_RELATIONSHIPS)
+                                        .where(Tables.USER_RELATIONSHIPS.USER_ID.eq(targetUserId)
+                                                .and(Tables.USER_RELATIONSHIPS.TARGET_USER_ID.eq(userId)))
+                        )
+        );
+    }
+
+    public List<Account> getFriendsForPostByUserId(UUID userId) {
+
+        val ur1 = Tables.USER_RELATIONSHIPS.as("ur1");
+        val ur2 = Tables.USER_RELATIONSHIPS.as("ur2");
+
+        return dsl.select(Tables.ACCOUNT.fields())
+                .from(Tables.ACCOUNT)
+                .innerJoin(
+                        dsl.select(
+                                        ur1.TARGET_USER_ID.as("friend_id"),
+                                        DSL.greatest(ur1.CREATED_AT, ur2.CREATED_AT).as("friendship_date")
+                                )
+                                .from(ur1)
+                                .innerJoin(ur2)
+                                .on(ur1.TARGET_USER_ID.eq(ur2.USER_ID))
+                                .and(ur2.TARGET_USER_ID.eq(ur1.USER_ID))
+                                .where(ur1.USER_ID.eq(userId))
+                                .asTable("friends")
+                )
+                .on(Tables.ACCOUNT.USER_ID.eq(DSL.field(DSL.name("friends", "friend_id"), UUID.class)))
+                .orderBy(DSL.field(DSL.name("friends", "friendship_date")).asc())
+                .fetch()
+                .into(Account.class);
+
     }
 }

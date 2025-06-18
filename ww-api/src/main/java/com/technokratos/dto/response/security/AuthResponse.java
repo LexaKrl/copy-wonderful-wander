@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
+@Schema(description = "DTO представляющий токены для пользователя")
 public record AuthResponse(
         @Schema(description = "Access token пользователя",
                 requiredMode = Schema.RequiredMode.REQUIRED)

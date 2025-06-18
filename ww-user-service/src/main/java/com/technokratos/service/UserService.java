@@ -3,8 +3,10 @@ package com.technokratos.service;
 import com.technokratos.dto.request.user.UserRequest;
 import com.technokratos.dto.response.PageResponse;
 import com.technokratos.dto.response.user.UserCompactResponse;
+import com.technokratos.dto.response.user.UserForPostResponse;
 import com.technokratos.dto.response.user.UserProfileResponse;
 import com.technokratos.dto.response.user.UserResponse;
+import com.technokratos.event.FriendshipUpdateEvent;
 import com.technokratos.exception.ConflictServiceException;
 import com.technokratos.exception.FollowConflictException;
 import com.technokratos.exception.UserByIdNotFoundException;
@@ -17,6 +19,7 @@ import com.technokratos.util.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -34,6 +37,12 @@ public class UserService {
         Account account = userRepository.findById(userId).orElseThrow(() -> new UserByIdNotFoundException(userId));
         String avatarUrl = minioService.getPresignedUrl(account.getAvatarFilename());
         return userMapper.toUserResponse(account, avatarUrl);
+    }
+
+    public UserForPostResponse getUserForPostById(UUID userId) {
+        Account account = userRepository.findById(userId).orElseThrow(() -> new UserByIdNotFoundException(userId));
+        log.info("account: {}", account);
+        return userMapper.toUserForPostResponse(account);
     }
 
     public UserResponse getUserByUsername(String username) {
@@ -111,19 +120,43 @@ public class UserService {
                 .build();
     }
 
+    @Transactional
     public void follow(UUID userId, UUID targetUserId) {
         if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(userId);
         if (checkUserNotExists(targetUserId)) throw new UserByIdNotFoundException(targetUserId);
         if (userId.equals(targetUserId)) throw new FollowConflictException("You can't follow to yourself");
         if (checkOnFollow(userId, targetUserId))
             throw new FollowConflictException("Follow already exists from user with id = %s to user with id = %s".formatted(userId, targetUserId));
+
         userRepository.follow(userId, targetUserId);
+
+        if (userRepository.isFriends(userId, targetUserId)) {
+            userEventProducer.sendFriendshipUpdateEvent(
+                    new FriendshipUpdateEvent(
+                            userId,
+                            targetUserId,
+                            FriendshipUpdateEvent.FriendshipEventType.ADD
+                    )
+            );
+        }
     }
 
+    @Transactional
     public void unfollow(UUID userId, UUID targetUserId) {
         if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(userId);
         if (checkUserNotExists(targetUserId)) throw new UserByIdNotFoundException(targetUserId);
         if (userId.equals(targetUserId)) throw new FollowConflictException("You can't unfollow from yourself");
+
+        if (userRepository.isFriends(userId, targetUserId)) {
+            userEventProducer.sendFriendshipUpdateEvent(
+                    new FriendshipUpdateEvent(
+                            userId,
+                            targetUserId,
+                            FriendshipUpdateEvent.FriendshipEventType.DELETE
+                    )
+            );
+        }
+
         userRepository.unfollow(userId, targetUserId);
     }
 
@@ -164,5 +197,15 @@ public class UserService {
 
     private boolean checkOnFollow(UUID userId, UUID targetId) {
         return userRepository.existsFollow(userId, targetId);
+    }
+
+    public List<UUID> getFriendsForPostByUserId(UUID userId) {
+        if (checkUserNotExists(userId)) throw new UserByIdNotFoundException(userId);
+
+        return userRepository
+                .getFriendsForPostByUserId(userId)
+                .stream()
+                .map(Account::getUserId)
+                .toList();
     }
 }

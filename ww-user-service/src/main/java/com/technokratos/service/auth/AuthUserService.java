@@ -7,6 +7,7 @@ import com.technokratos.dto.request.security.UserLoginRequest;
 import com.technokratos.dto.request.security.UserRegistrationRequest;
 import com.technokratos.dto.response.security.AuthResponse;
 import com.technokratos.enums.security.UserRole;
+import com.technokratos.event.FcmTokenReceivedEvent;
 import com.technokratos.exception.*;
 import com.technokratos.model.UserEntity;
 import com.technokratos.model.UserPrincipal;
@@ -59,6 +60,11 @@ public class AuthUserService {
         Account newUser = userRepository.findByUsername(userRegistrationRequest.username())
                 .orElseThrow(() -> new UserByUsernameNotFoundException(userRegistrationRequest.username()));
         userEventProducer.sendUserCreatedEvent(userMapper.toUserCreatedEvent(newUser));
+        userEventProducer.sendFcmTokenReceivedEvent(FcmTokenReceivedEvent.builder()
+                .userId(newUser.getUserId())
+                .fcmToken(userRegistrationRequest.fcmToken())
+                .build()
+        );
 
         UserInfoForJwt userInfo = userMapper.toJwtUserInfo(user);
         return jwtProvider.generateTokens(userInfo);
@@ -74,6 +80,10 @@ public class AuthUserService {
             UserPrincipal user = (UserPrincipal) userDetailsService.loadUserByUsername(userDto.username());
             UserInfoForJwt userInfo = userMapper.toJwtUserInfo(user);
             log.info("auth service verify user data: {}", user);
+            userEventProducer.sendFcmTokenReceivedEvent(FcmTokenReceivedEvent.builder()
+                    .userId(userInfo.userId())
+                    .fcmToken(userDto.fcmToken())
+                    .build());
             return jwtProvider.generateTokens(userInfo);
         }
         throw new UnauthorizedException("User is not authenticated");

@@ -4,6 +4,7 @@ import com.technokratos.dto.StarterUserInfoForJwt;
 import com.technokratos.dto.UserInfoForJwt;
 import com.technokratos.dto.request.security.UserRegistrationRequest;
 import com.technokratos.dto.response.user.UserCompactResponse;
+import com.technokratos.dto.response.user.UserForPostResponse;
 import com.technokratos.dto.response.user.UserProfileResponse;
 import com.technokratos.dto.response.user.UserResponse;
 import com.technokratos.event.UserCreatedEvent;
@@ -63,4 +64,7 @@ public interface UserMapper {
     UserUpdatedEvent toUserUpdatedEvent(Account account);
 
     UserDeletedEvent toUserDeletedEvent(UUID userId);
+
+    UserForPostResponse toUserForPostResponse(Account account);
+
 }
