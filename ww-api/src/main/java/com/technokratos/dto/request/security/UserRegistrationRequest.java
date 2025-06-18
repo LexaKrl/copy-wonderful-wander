@@ -5,6 +5,7 @@ import com.technokratos.validation.username.ValidUsername;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 
 @Schema(description = "DTO для регестрации пользователя")
@@ -36,5 +37,13 @@ public record UserRegistrationRequest(
         @Schema(description = "Фамилия пользователя", example = "Иванов", requiredMode = Schema.RequiredMode.REQUIRED)
         @NotBlank(message = "Lastname is required")
         @Length(min = 2, max = 64, message = "Lastname length should be between 2 to 64 characters")
-        String lastname) {
+        String lastname,
+
+        @Schema(description = "FCM токен для push-уведомлений",
+                example = "dEfAuLtToKeN:APA91b...",
+                requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+        @Pattern(regexp = "^[A-Za-z0-9_\\-:]*$",
+                message = "FCM token contains invalid characters. Only letters, numbers, '-', '_' and ':' are allowed")
+        @Length(max = 200, message = "FCM token too long")
+        String fcmToken) {
 }

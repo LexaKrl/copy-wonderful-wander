@@ -1,0 +1,26 @@
+group = 'com.technokratos'
+version = '0.0.1-SNAPSHOT'
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'com.google.firebase:firebase-admin:9.5.0'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+    implementation project(":ww-core")
+    implementation project(":ww-api")
+    implementation project(":ww-db")
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.liquibase:liquibase-core'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.amqp:spring-rabbit-test'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+    runtimeOnly 'org.postgresql:postgresql'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

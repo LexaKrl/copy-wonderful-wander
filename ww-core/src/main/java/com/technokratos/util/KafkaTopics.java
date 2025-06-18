@@ -11,4 +11,5 @@ public final class KafkaTopics {
     public static final String USER_DELETED_TOPIC = "user-deleted";
     public static final String USER_FRIENDSHIP_UPDATE = "user-friendship-update";
     public static final String WALK_INVITE_TOPIC = "walk-invite";
+    public static final String FCM_TOKEN_RECEIVED_TOPIC = "fcm-token-received";
 }
