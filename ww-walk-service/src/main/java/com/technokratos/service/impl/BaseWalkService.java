@@ -201,6 +201,7 @@ public class BaseWalkService implements WalkService {
         walkEventProducer.sendWalkFinishedEvent(
                 WalkFinishedEvent.builder()
                         .walkId(walkId)
+                        .walkName(existingWalk.getName())
                         .walkOwnerId(existingWalk.getOwnerId())
                         .build()
         );

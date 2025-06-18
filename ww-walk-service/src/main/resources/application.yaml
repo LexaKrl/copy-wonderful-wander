@@ -59,5 +59,5 @@ walk:
       max-walk-expires-time: 3
 app:
   url:
-    walk-acceptation-url: "https://wonderful-wander.ru/api/walks/{walkId}/participant/{participantId}/accept"
+    walk-acceptation-url: "https://wonderful-wander.ru/api/walks/{walkId}/participant/{participantId}/accept?{acceptationToken}"
     subscribers-retrieve-url: "https://wonderful-wander.ru/api/users/{userId}/following"
