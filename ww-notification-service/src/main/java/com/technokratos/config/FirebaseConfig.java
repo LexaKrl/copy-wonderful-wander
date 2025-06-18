@@ -14,10 +14,12 @@ public class FirebaseConfig {
 
     @PostConstruct
     public void init() throws IOException {
-        FirebaseOptions options = new FirebaseOptions.Builder()
-                .setCredentials(GoogleCredentials.fromStream(
-                        new ClassPathResource("firebase-credentials.json").getInputStream()
-                ))
+        GoogleCredentials credentials = GoogleCredentials.fromStream(
+                new ClassPathResource("firebase-credentials.json").getInputStream()
+        );
+
+        FirebaseOptions options = FirebaseOptions.builder()
+                .setCredentials(credentials)
                 .build();
 
         if (FirebaseApp.getApps().isEmpty()) {
