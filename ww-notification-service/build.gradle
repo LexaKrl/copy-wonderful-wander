@@ -9,7 +9,10 @@ dependencies {
 
     implementation project(":ww-core")
     implementation project(":ww-api")
+    implementation project(":ww-db")
+
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.liquibase:liquibase-core'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.amqp:spring-rabbit-test'
