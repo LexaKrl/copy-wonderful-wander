@@ -22,7 +22,7 @@ public class RabbitConfig {
     @Bean
     Queue walkNotificationQueue() {
         return QueueBuilder
-                .durable(RabbitUtilities.WALK_NOTIFICATION_QUEUE)
+                .durable(RabbitUtilities.WALK_FINISHED_QUEUE)
                 .build();
     }
 
@@ -31,7 +31,7 @@ public class RabbitConfig {
         return BindingBuilder
                 .bind(walkNotificationQueue())
                 .to(notificationExchange())
-                .with(RabbitUtilities.WALK_NOTIFICATION_QUEUE);
+                .with(RabbitUtilities.WALK_FINISHED_QUEUE);
     }
 
     /* TODO define other parts of rabbit structure */
