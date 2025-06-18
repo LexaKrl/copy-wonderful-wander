@@ -23,9 +23,10 @@ build:
       - ww-api-gateway/build/libs/
       - ww-user-service/build/libs/
       - ww-photo-management-service/build/libs/
+      - ww-post-service/build/libs/
     expire_in: 1 days
-  only:
-    - main
+#  only:
+#    - main
 
 publish-image:
   stage: publish-image
@@ -36,11 +37,13 @@ publish-image:
     - docker build -t "$CI_REGISTRY_IMAGE/ww-api-gateway:latest" -f ww-api-gateway/Dockerfile .
     - docker build -t "$CI_REGISTRY_IMAGE/ww-user-service:latest" -f ww-user-service/Dockerfile .
     - docker build -t "$CI_REGISTRY_IMAGE/ww-photo-management-service:latest" -f ww-photo-management-service/Dockerfile .
+    - docker build -t "$CI_REGISTRY_IMAGE/ww-post-service:latest" -f ww-post-service/Dockerfile .
     - docker push "$CI_REGISTRY_IMAGE/ww-api-gateway:latest"
     - docker push "$CI_REGISTRY_IMAGE/ww-user-service:latest"
     - docker push "$CI_REGISTRY_IMAGE/ww-photo-management-service:latest"
-  only:
-    - main
+    - docker push "$CI_REGISTRY_IMAGE/ww-post-service:latest"
+#  only:
+#    - main
 
 deploy:
   stage: deploy
@@ -52,5 +55,5 @@ deploy:
   variables:
     BRANCH: main
     SSH: main
-  only:
-    - main
+#  only:
+#    - main

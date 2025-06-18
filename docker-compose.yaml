@@ -89,6 +89,16 @@ services:
     networks:
       - ww-network
 
+  mongodb-post-service:
+    container_name: mongodb-post-service
+    image: mongo
+    env_file:
+      - env/.post-service.env
+    volumes:
+      - mongodb-data:/data/db
+    networks:
+      - ww-network
+
   backend-api-gateway:
     container_name: api-gateway
     image: registry.gitlab.com/wonderful-wander-team/wonderful-wander/ww-api-gateway
@@ -129,6 +139,20 @@ services:
     networks:
       - ww-network
 
+  backend-post-service:
+    container_name: backend-post-service
+    image: registry.gitlab.com/wonderful-wander-team/wonderful-wander/ww-post-service
+    env_file:
+      - env/.post-service.env
+    depends_on:
+      - kafka-1
+      - kafka-2
+      - consul
+      - minio
+      - mongodb-post-service
+    networks:
+      - ww-network
+
   nginx:
     image: nginx
     restart: unless-stopped
@@ -152,6 +176,7 @@ volumes:
   postgres-user-service:
   postgres-photo-management-service:
   portainer-data:
+  mongodb-data:
 
 networks:
   ww-network:
