@@ -32,6 +32,11 @@ dependencies {
 
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
+	compileOnly("io.mongock:mongock-springboot:5.5.1")
+	implementation("io.mongock:mongodb-springdata-v4-driver:5.5.1")
+
+	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$openApiVersion"
+
 
 }
 
