@@ -2,7 +2,6 @@ package com.technokratos.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -22,5 +21,5 @@ public class UserData {
     private String email;
 
     @Column(name = "fcm_token")
-    private String FCMToken;
+    private String fcmToken;
 }
