@@ -1,45 +1,25 @@
-plugins {
-	id 'org.liquibase.gradle' version "$liquibasePluginVersion"
-}
-
 jar.enabled = false
 
-
 dependencies {
-//	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-aop'
-	implementation 'org.springframework.data:spring-data-commons'
-	implementation("org.springframework.boot:spring-boot-starter-data-mongodb:3.4.1")
-	implementation "org.mapstruct:mapstruct:$mapstructVersion"
-	annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
-	runtimeOnly 'org.postgresql:postgresql'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$openApiVersion"
+    implementation 'org.springframework.kafka:spring-kafka'
 
-	liquibaseRuntime 'org.liquibase:liquibase-core'
-	liquibaseRuntime "org.liquibase:liquibase-groovy-dsl:$liquibaseDslGroovyVersion"
-	liquibaseRuntime "info.picocli:picocli:$picocliVersion"
-	liquibaseRuntime 'org.postgresql:postgresql'
+    implementation "io.mongock:mongodb-springdata-v4-driver:$mongockVersion"
+    implementation "io.mongock:mongock-springboot:$mongockVersion"
 
-	implementation project(':ww-api')
-	implementation project(':ww-db')
-	implementation project(':ww-core')
+    runtimeOnly 'org.postgresql:postgresql'
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation project(':ww-api')
+    implementation project(':ww-core')
 
-	implementation 'org.springframework.kafka:spring-kafka'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.kafka:spring-kafka-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
-
-	compileOnly("io.mongock:mongock-springboot:5.5.1")
-	implementation("io.mongock:mongodb-springdata-v4-driver:5.5.1")
-
-	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$openApiVersion"
-
-
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
 }
 
 test {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }

@@ -1,6 +1,6 @@
 spring:
   application:
-    name: user-service
+    name: post-service
 
   profiles:
     active: ${SPRING_PROFILES_ACTIVE}

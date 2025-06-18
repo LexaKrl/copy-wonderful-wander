@@ -1,4 +1,9 @@
 spring:
-  profiles:
-    active: dev
+  application:
+    name: api-gateway
 
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE}
+
+server:
+  port: ${SERVER_PORT}

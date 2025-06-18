@@ -1,6 +1,9 @@
 spring:
+  application:
+    name: photo-management-service
+
   profiles:
-    active: dev
+    active: ${SPRING_PROFILES_ACTIVE}
 
 server:
-  port: 8086
+  port: ${SERVER_PORT}

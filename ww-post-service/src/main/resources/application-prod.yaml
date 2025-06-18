@@ -1,17 +1,7 @@
 spring:
-  servlet:
-    multipart:
-      max-file-size: 25MB
-      max-request-size: 30MB
-
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
-
-  liquibase:
-    change-log: classpath:/db/changelog/photo-management-service/changelog-master.xml
+  data:
+    mongodb:
+      uri: mongodb://${MONGO_HOST}:${MONGO_PORT}/${MONGO_INITDB_DATABASE}
 
   cloud:
     consul:
@@ -26,6 +16,11 @@ spring:
 
   kafka:
     bootstrap-servers: ${KAFKA_HOST_1}:${KAFKA_PORT_1}, ${KAFKA_HOST_2}:${KAFKA_PORT_2}
+    consumer:
+      bootstrap-servers: ${KAFKA_HOST_1}:${KAFKA_PORT_1}, ${KAFKA_HOST_2}:${KAFKA_PORT_2}
+      group-id: avatar-saved-events
+      properties:
+        spring-json-trusted-packages: com.technokratos.event
     producer:
       bootstrap-servers: ${KAFKA_HOST_1}:${KAFKA_PORT_1}, ${KAFKA_HOST_2}:${KAFKA_PORT_2}
       acks: all
@@ -37,13 +32,17 @@ spring:
         enable-idempotence: true
         max-in-flight-requests-per-connection: 5
 
+mongock:
+  enabled: true
+  migration-scan-package: com.technokratos.migrations
+
 springdoc:
   api-docs:
     enabled: true
-    path: /photos/v3/api-docs
+    path: /posts/v3/api-docs
   swagger-ui:
     enabled: true
-    path: /photos/swagger-ui.html
+    path: /posts/swagger-ui.html
 
 swagger:
   server-url: ${SWAGGER_SERVER_URL}
@@ -56,6 +55,3 @@ minio:
   bucket: ww-photos
   presigned-url-expiration: 600
 
-logging:
-  level:
-    org.springframework: INFO
