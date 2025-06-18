@@ -1,0 +1,42 @@
+spring:
+  datasource:
+    username:
+    password:
+    url:
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    change-log: classpath:/db/changelog/recommendation-service/changelog-master.xml
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        prefer-ip-address: true
+        instance-id: ${spring.application.name}:${random.value}
+        service-name: ${spring.application.name}
+        register: true
+        register-health-check: true
+  kafka:
+    bootstrap-servers: localhost:9092, localhost:9094
+    consumer:
+      bootstrap-servers: localhost:9092, localhost:9094
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      group-id: avatar-saved-events
+      properties:
+        spring-json-trusted-packages: com.technokratos.event
+    producer:
+      bootstrap-servers: localhost:9092, localhost:9094
+      acks: all
+      retries: 10
+      properties:
+        delivery-timeout-ms: 20000
+        linger-ms: 0
+        request-timeout-ms: 10000
+        enable-idempotence: true
+        max-in-flight-requests-per-connection: 5
+
+logging:
+  level:
+    org.springframework: INFO
+    org.jooq: WARN
