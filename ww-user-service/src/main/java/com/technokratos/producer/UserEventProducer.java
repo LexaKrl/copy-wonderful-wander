@@ -1,5 +1,6 @@
 package com.technokratos.producer;
 
+import com.technokratos.event.FcmTokenReceivedEvent;
 import com.technokratos.event.UserCreatedEvent;
 import com.technokratos.event.UserDeletedEvent;
 import com.technokratos.event.UserUpdatedEvent;
@@ -31,6 +32,13 @@ public class UserEventProducer {
         kafkaTemplate.send(
                 KafkaTopics.USER_DELETED_TOPIC,
                 userDeletedEvent
+        );
+    }
+
+    public void sendFcmTokenReceivedEvent(FcmTokenReceivedEvent fcmTokenReceivedEvent) {
+        kafkaTemplate.send(
+                KafkaTopics.FCM_TOKEN_RECEIVED_TOPIC,
+                fcmTokenReceivedEvent
         );
     }
 }
