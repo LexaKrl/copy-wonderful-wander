@@ -25,8 +25,8 @@ build:
       - ww-photo-management-service/build/libs/
       - ww-post-service/build/libs/
     expire_in: 1 days
-#  only:
-#    - main
+  only:
+    - main
 
 publish-image:
   stage: publish-image
@@ -42,8 +42,8 @@ publish-image:
     - docker push "$CI_REGISTRY_IMAGE/ww-user-service:latest"
     - docker push "$CI_REGISTRY_IMAGE/ww-photo-management-service:latest"
     - docker push "$CI_REGISTRY_IMAGE/ww-post-service:latest"
-#  only:
-#    - main
+  only:
+    - main
 
 deploy:
   stage: deploy
@@ -53,7 +53,7 @@ deploy:
     - ./deploy.sh
   environment: main
   variables:
-    BRANCH: feature/WANDER-32
+    BRANCH: main
     SSH: main
-#  only:
-#    - main
+  only:
+    - main

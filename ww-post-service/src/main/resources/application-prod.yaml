@@ -1,0 +1,57 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://${MONGO_HOST}:${MONGO_PORT}/${MONGO_INITDB_DATABASE}
+
+  cloud:
+    consul:
+      host: ${CONSUL_HOST}
+      port: ${CONSUL_PORT}
+      discovery:
+        prefer-ip-address: true
+        instance-id: ${spring.application.name}:${random.value}
+        service-name: ${spring.application.name}
+        register: true
+        register-health-check: true
+
+  kafka:
+    bootstrap-servers: ${KAFKA_HOST_1}:${KAFKA_PORT_1}, ${KAFKA_HOST_2}:${KAFKA_PORT_2}
+    consumer:
+      bootstrap-servers: ${KAFKA_HOST_1}:${KAFKA_PORT_1}, ${KAFKA_HOST_2}:${KAFKA_PORT_2}
+      group-id: avatar-saved-events
+      properties:
+        spring-json-trusted-packages: com.technokratos.event
+    producer:
+      bootstrap-servers: ${KAFKA_HOST_1}:${KAFKA_PORT_1}, ${KAFKA_HOST_2}:${KAFKA_PORT_2}
+      acks: all
+      retries: 10
+      properties:
+        delivery-timeout-ms: 20000
+        linger-ms: 0
+        request-timeout-ms: 10000
+        enable-idempotence: true
+        max-in-flight-requests-per-connection: 5
+
+mongock:
+  enabled: true
+  migration-scan-package: com.technokratos.migrations
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /posts/v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /posts/swagger-ui.html
+
+swagger:
+  server-url: ${SWAGGER_SERVER_URL}
+
+minio:
+  enabled: true
+  url: http://${MINIO_HOST}:${MINIO_PORT}
+  accessKey: ${MINIO_ROOT_USER}
+  secretKey: ${MINIO_ROOT_PASSWORD}
+  bucket: ww-photos
+  presigned-url-expiration: 600
+
